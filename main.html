@@ -6,7 +6,6 @@
   <title>بژمێری پسووڵە و وێنەکان</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
-  <script src="https://docs.opencv.org/4.5.5/opencv.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -97,7 +96,7 @@
 
     .preview-item {
       display: flex;
-      align-items;
+      align-items: center;
       gap: 10px;
       margin-bottom: 10px;
       background: #f9f9f9;
@@ -130,13 +129,6 @@
 
     #imageUpload, #imageUploadAuto {
       display: none;
-    }
-
-    .tip {
-      color: #004d40;
-      font-size: 14px;
-      margin-bottom: 10px;
-      text-align: center;
     }
   </style>
 </head>
@@ -173,7 +165,6 @@
 
     <!-- خوێندنی ژمارە لە وێنە -->
     <label for="imageUploadAuto" class="upload-label">خوێندنی ژمارەی کۆنترۆڵ لە وێنە</label>
-    <p class="tip">تکایە وێنەیەکی ڕوون ئەپلۆد بکە بەبێ تیشک یان شەوەی زۆر.</p>
     <input type="file" id="imageUploadAuto" accept="image/*">
     <div id="autoPreview" class="preview-list"></div>
 
@@ -182,241 +173,121 @@
 
     <p id="ocrStatus" class="loading"></p>
     <p id="ocrError" class="error"></p>
-    <p class="tip">ئەگەر ژمارەکان بە دروستی نەخوێندرانەوە، دەتوانیت Google Cloud Vision API بەکاربهێنیت بۆ وردییەکی باشتر: <a href="https://cloud.google.com/vision" target="_blank">زیاتر بزانە</a></p>
   </div>
 
   <script>
-    // Rates per kWh in IQD (modify as needed)
-    const rates = {
-      residential: 50,
-      commercial: 100,
-      small_industry: 150,
-      large_commercial: 200,
-      agriculture: 30
-    };
-
-    // Calculate cost based on category and kWh
     function calculateCost() {
+      const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
+      const kwh = parseFloat(kwhInput);
       const category = document.getElementById('categorySelect').value;
-      const kwhInput = document.getElementById('kwhInput').value;
-      const totalCostElement = document.getElementById('totalCost');
-      const errorElement = document.getElementById('error');
 
-      errorElement.textContent = '';
-      totalCostElement.textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
-
-      if (!kwhInput || isNaN(kwhInput) || kwhInput < 0) {
-        errorElement.textContent = 'تکایە ژمارەی kWh دروست بنووسە';
+      if (isNaN(kwh) || kwhInput === '') {
+        showError('تکایە ژمارەیەکی دروست بنووسە!');
         return;
       }
 
-      const kwh = parseFloat(kwhInput);
-      const cost = kwh * rates[category];
-      totalCostElement.textContent = `کۆی گشتی پسووڵە: ${cost.toLocaleString()} دینار`;
+      let cost = 0;
+      if (category === 'residential') {
+        if (kwh > 0) cost += Math.min(kwh, 400) * 72;
+        if (kwh > 400) cost += Math.min(kwh - 400, 400) * 108;
+        if (kwh > 800) cost += Math.min(kwh - 800, 400) * 175;
+        if (kwh > 1200) cost += Math.min(kwh - 1200, 400) * 265;
+        if (kwh > 1600) cost += (kwh - 1600) * 350;
+      } else if (category === 'commercial') cost = kwh * 185;
+      else if (category === 'small_industry') cost = kwh * 160;
+      else if (category === 'large_commercial') cost = kwh * 125;
+      else if (category === 'agriculture') cost = kwh * 60;
+
+      document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
+      document.getElementById('error').textContent = '';
     }
 
-    // Handle manual image upload and preview
-    document.getElementById('imageUpload').addEventListener('change', function(event) {
-      const files = event.target.files;
-      const previewList = document.getElementById('previewList');
-
-      for (let file of files) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const previewItem = document.createElement('div');
-          previewItem.className = 'preview-item';
-          previewItem.innerHTML = `
-            <img src="${e.target.result}" alt="Preview">
-            <p class="timestamp">${new Date().toLocaleString('ku')}</p>
-          `;
-          previewList.appendChild(previewItem);
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    // Check image clarity using variance of Laplacian (sharpness)
-    function checkImageClarity(canvas) {
-      const ctx = canvas.getContext('2d');
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const src = cv.matFromImageData(imageData);
-      const gray = new cv.Mat();
-      const laplacian = new cv.Mat();
-
-      // Convert to grayscale
-      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-      // Compute Laplacian variance (sharpness)
-      cv.Laplacian(gray, laplacian, cv.CV_64F);
-      const mean = new cv.Mat();
-      const stddev = new cv.Mat();
-      cv.meanStdDev(laplacian, mean, stddev);
-
-      const variance = stddev.data64F[0] * stddev.data64F[0];
-      src.delete();
-      gray.delete();
-      laplacian.delete();
-      mean.delete();
-      stddev.delete();
-
-      return variance > 50; // Threshold for clarity (adjust as needed)
+    function formatNumber(number) {
+      return Math.round(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
-    // Handle auto image upload and process directly
-    document.getElementById('imageUploadAuto').addEventListener('change', function(event) {
-      const file = event.target.files[0];
+    function showError(message) {
+      document.getElementById('error').textContent = message;
+      document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
+    }
+
+    // زیادکردنی وێنە بە دەستی
+    const imageUpload = document.getElementById('imageUpload');
+    const previewList = document.getElementById('previewList');
+    imageUpload.addEventListener('change', function () {
+      const file = this.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = new Image();
+        reader.onload = function (e) {
+          const previewItem = document.createElement('div');
+          previewItem.classList.add('preview-item');
+
+          const img = document.createElement('img');
           img.src = e.target.result;
-          img.onload = function() {
-            // Create a canvas to process the image
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
 
-            // Check image clarity
-            if (!checkImageClarity(canvas)) {
-              document.getElementById('ocrError').textContent = 'وێنەکە تەماویە. تکایە وێنەیەکی ڕوونتر ئەپلۆد بکە.';
-              return;
-            }
+          const timestamp = document.createElement('div');
+          timestamp.classList.add('timestamp');
 
-            // Load image into OpenCV
-            const src = cv.imread(canvas);
-            const gray = new cv.Mat();
-            const blurred = new cv.Mat();
-            const thresh = new cv.Mat();
+          const now = new Date();
+          const dateString = now.toLocaleString('ku-KU', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
 
-            // Convert to grayscale
-            cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-            // Apply Gaussian Blur to reduce noise
-            cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
-            // Apply adaptive thresholding to binarize
-            cv.adaptiveThreshold(blurred, thresh, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
-
-            // Find contours to locate digit area
-            const contours = new cv.MatVector();
-            const hierarchy = new cv.Mat();
-            cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
-
-            let digitArea = null;
-            for (let i = 0; i < contours.size(); i++) {
-              const contour = contours.get(i);
-              const rect = cv.boundingRect(contour);
-              const aspectRatio = rect.width / rect.height;
-              // Look for a wide rectangular area (likely the digit region)
-              if (rect.width > rect.height && aspectRatio > 3 && aspectRatio < 6 && rect.width > img.width * 0.3) {
-                digitArea = rect;
-                break;
-              }
-            }
-
-            if (!digitArea) {
-              document.getElementById('ocrError').textContent = 'نەتوانرا ناوچەی رەقەمەکان بدۆزرێتەوە. تکایە وێنەیەکی ڕوونتر ئەپلۆد بکە.';
-              src.delete();
-              gray.delete();
-              blurred.delete();
-              thresh.delete();
-              contours.delete();
-              hierarchy.delete();
-              return;
-            }
-
-            // Crop the digit area
-            const croppedCanvas = document.createElement('canvas');
-            const croppedCtx = croppedCanvas.getContext('2d');
-            croppedCanvas.width = digitArea.width;
-            croppedCanvas.height = digitArea.height;
-            croppedCtx.drawImage(canvas, digitArea.x, digitArea.y, digitArea.width, digitArea.height, 0, 0, digitArea.width, digitArea.height);
-
-            // Preprocess the cropped image
-            const processedCanvas = preprocessImage(croppedCanvas);
-
-            // Add cropped image to preview
-            const autoPreview = document.getElementById('autoPreview');
-            const previewItem = document.createElement('div');
-            previewItem.className = 'preview-item';
-            previewItem.innerHTML = `
-              <img src="${processedCanvas.toDataURL()}" alt="Processed Preview">
-              <p class="timestamp">${new Date().toLocaleString('ku')}</p>
-            `;
-            autoPreview.appendChild(previewItem);
-
-            // Perform OCR
-            processImage(processedCanvas);
-
-            // Clean up OpenCV resources
-            src.delete();
-            gray.delete();
-            blurred.delete();
-            thresh.delete();
-            contours.delete();
-            hierarchy.delete();
-          };
+          timestamp.textContent = `بەروار: ${dateString}`;
+          previewItem.appendChild(img);
+          previewItem.appendChild(timestamp);
+          previewList.insertBefore(previewItem, previewList.firstChild);
         };
         reader.readAsDataURL(file);
       }
     });
 
-    // Preprocess image for better OCR
-    function preprocessImage(canvas) {
-      const ctx = canvas.getContext('2d');
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
+    // خوێندنی ژمارەی وێنە بە Tesseract.js
+    const imageUploadAuto = document.getElementById('imageUploadAuto');
+    const autoPreview = document.getElementById('autoPreview');
+    const kwhInputAuto = document.getElementById('kwhInputAuto');
+    const ocrStatus = document.getElementById('ocrStatus');
+    const ocrError = document.getElementById('ocrError');
 
-      // Convert to grayscale and increase contrast
-      for (let i = 0; i < data.length; i += 4) {
-        const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        const highContrast = brightness > 100 ? 255 : 0; // Binarize for white digits on black
-        data[i] = data[i + 1] = data[i + 2] = highContrast;
-      }
-
-      ctx.putImageData(imageData, 0, 0);
-      return canvas;
-    }
-
-    // Process image with OCR
-    function processImage(canvas) {
-      const ocrStatus = document.getElementById('ocrStatus');
-      const ocrError = document.getElementById('ocrError');
-      const kwhInputAuto = document.getElementById('kwhInputAuto');
-
-      ocrStatus.textContent = 'چاوەڕوانبە...';
+    imageUploadAuto.addEventListener('change', function () {
+      const file = this.files[0];
       ocrError.textContent = '';
+      ocrStatus.textContent = '';
+      autoPreview.innerHTML = '';
 
-      Tesseract.recognize(
-        canvas,
-        'eng', // English for digits
-        {
-          logger: (m) => console.log(m),
-          tessedit_char_whitelist: '0123456789', // Restrict to digits
-          tessedit_pagesegmode: 6 // Single uniform block of text
-        }
-      ).then(({ data: { text } }) => {
-        ocrStatus.textContent = '';
-        // Extract only the first 4 or 5 digits (ignore the red digit)
-        const number = text.match(/\d{4,5}/);
-        if (number) {
-          const extractedNumber = number[0];
-          // Validate the number of digits
-          if (extractedNumber.length === 4 || extractedNumber.length === 5) {
-            kwhInputAuto.value = extractedNumber;
-            document.getElementById('kwhInput').value = extractedNumber; // Auto-fill manual input
-            calculateCost(); // Auto-calculate cost
-          } else {
-            ocrError.textContent = 'ژمارەی خوێندراوە ٤ یان ٥ رەقەمی دەبێت. تکایە وێنەیەکی ڕوونتر ئەپلۆد بکە.';
-          }
-        } else {
-          ocrError.textContent = 'نەتوانرا ژمارەی kWh بخوێنرێتەوە. تکایە وێنەیەکی ڕوونتر ئەپلۆد بکە.';
-        }
-      }).catch((err) => {
-        ocrStatus.textContent = '';
-        ocrError.textContent = 'هەڵەیەک لە خوێندنەوەی وێنە ڕوویدا. تکایە دووبارە هەوڵبدە یان وێنەیەکی ڕوونتر ئەپلۆد بکە.';
-        console.error(err);
-      });
-    }
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.style.maxWidth = '200px';
+          autoPreview.appendChild(img);
+
+          ocrStatus.textContent = "خوێندنەوەی ژمارە بەردەوامە...";
+
+         Tesseract.recognize(
+  e.target.result,
+  'eng',
+  { logger: m => console.log(m) }
+).then(({ data: { text } }) => {
+  ocrStatus.textContent = '';
+  const match = text.match(/\d{3,6}/);  // دیاریکردنی ژمارەی 3–6 خانە
+  if (match) {
+    kwhInputAuto.value = match[0];
+    document.getElementById('kwhInput').value = match[0]; // زیادکردن بە خۆکار ناو تێکست‌بۆکسەکە
+  } else {
+    ocrError.textContent = "نەیتوانرا ژمارەیەک بدۆزرێتەوە.";
+  }
+});
+
+        };
+        reader.readAsDataURL(file);
+      }
+    });
   </script>
 </body>
 </html>

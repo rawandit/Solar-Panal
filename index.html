@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ku">
 <head>
     <meta charset="UTF-8">
@@ -151,6 +112,18 @@
             text-align: center;
             margin-top: 15px;
         }
+        .stats {
+            margin-top: 20px;
+            background: #e0f2f1;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .visit-count, .online-count {
+            font-size: 16px;
+            color: #004d40;
+            margin-bottom: 10px;
+        }
         @media (max-width: 500px) {
             .container {
                 padding: 20px;
@@ -169,6 +142,7 @@
     <div class="container">
         <h1>بژمێری خەملاندنی پسووڵەی کارەبا</h1>
         <p class="developer">گەشەپێدراوە لەلایەن: رەوەند عومەر عەوێنەیی</p>
+
         <div class="input-group">
             <label for="categorySelect">جۆری پسووڵە هەڵبژێرە:</label>
             <select id="categorySelect">
@@ -179,21 +153,28 @@
                 <option value="agriculture">کشتوکاڵ</option>
             </select>
         </div>
+
         <div class="input-group">
             <label for="kwhInput">kWh بنووسە:</label>
             <input type="text" id="kwhInput" placeholder="ژمارەی kWh بنووسە">
         </div>
+
         <div class="button-group">
             <button onclick="calculateCost()">خەملاندن</button>
             <button class="reset-btn" onclick="resetForm()">ڕیسێتکردن</button>
         </div>
+
         <div class="result">
             <p id="totalCost" class="total">کۆی گشتی پسووڵە: ٠ دینار</p>
             <p id="error" class="error"></p>
+
+            <div class="stats">
+                <p id="visitCounter" class="visit-count">ژمارەی سەردانت لەم ڕاگێڕەدا: ...</p>
+                <p id="onlineUsers" class="online-count">بەکارهێنەری ئۆنلاین: ...</p>
+            </div>
         </div>
     </div>
-<!-- ژمارەی سەردانی ڕاگێڕ نیشان بدە -->
-<p id="visitCounter" style="text-align: center; margin-top: 10px; color: #00695c;"></p>
+
     <script>
         function calculateCost() {
             try {
@@ -209,7 +190,6 @@
                 let cost = 0;
 
                 if (category === 'residential') {
-                    // ماڵان: لۆجیکی قۆناغەکان
                     if (kwh > 0) {
                         const p1 = Math.min(kwh, 400);
                         cost += p1 * 72;
@@ -231,20 +211,15 @@
                         cost += p5 * 350;
                     }
                 } else if (category === 'commercial') {
-                    // بازرگانی: kWh * ١٨٠
                     cost = kwh * 185;
                 } else if (category === 'small_industry') {
-                    // پیشەسازی بچووک: kWh * ١٦٠
                     cost = kwh * 160;
                 } else if (category === 'large_commercial') {
-                    // بازرگانی گەورە: kWh * ١٢٥
                     cost = kwh * 125;
                 } else if (category === 'agriculture') {
-                    // کشتوکاڵ: kWh * ٦٠
                     cost = kwh * 60;
                 }
 
-                // نیشاندانی تەنها کۆی گشتی
                 document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
                 document.getElementById('error').textContent = '';
             } catch (e) {
@@ -267,24 +242,46 @@
             document.getElementById('error').textContent = message;
             document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
         }
-    </script>
-        <script>
-    // هەژمارکردنی ژمارەی سەردان لە ڕاگێڕەکەدا
-    (function () {
-        // تەنها ژمارەکە زیاد بکە ئەگەر تێچووە نەبوو
-        if (!localStorage.getItem('visited')) {
-            let count = parseInt(localStorage.getItem('visitCount') || '0');
-            count += 1;
-            localStorage.setItem('visitCount', count.toString());
-            localStorage.setItem('visited', 'true');
-        }
 
-        // نیشاندانی ژمارەی سەردان
-        document.addEventListener('DOMContentLoaded', function () {
-            const count = localStorage.getItem('visitCount') || '1';
-            document.getElementById('visitCounter').textContent = `ژمارەی سەردانت لەم ڕاگێڕەدا: ${count}`;
-        });
-    })();
-</script>
+        // هەژمارکردنی سەردان و ئۆنلاین
+        (function () {
+            if (!localStorage.getItem('visited')) {
+                let count = parseInt(localStorage.getItem('visitCount') || '0');
+                count += 1;
+                localStorage.setItem('visitCount', count.toString());
+                localStorage.setItem('visited', 'true');
+            }
+
+            function updateOnlineUsers() {
+                const id = 'user_' + Date.now();
+                sessionStorage.setItem('onlineUserId', id);
+                localStorage.setItem(id, Date.now());
+
+                for (let key in localStorage) {
+                    if (key.startsWith('user_')) {
+                        const lastSeen = parseInt(localStorage.getItem(key));
+                        if (Date.now() - lastSeen > 10000) {
+                            localStorage.removeItem(key);
+                        }
+                    }
+                }
+
+                let count = 0;
+                for (let key in localStorage) {
+                    if (key.startsWith('user_')) {
+                        count++;
+                    }
+                }
+
+                document.getElementById('visitCounter').textContent =
+                    `ژمارەی سەردانت لەم ڕاگێڕەدا: ${localStorage.getItem('visitCount') || 1}`;
+                document.getElementById('onlineUsers').textContent =
+                    `بەکارهێنەری ئۆنلاین: ${count}`;
+            }
+
+            updateOnlineUsers();
+            setInterval(updateOnlineUsers, 5000);
+        })();
+    </script>
 </body>
 </html>

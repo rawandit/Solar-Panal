@@ -196,11 +196,11 @@
   <script>
     // Rates per kWh in IQD (modify as needed)
     const rates = {
-      residential: 50,        // 50 IQD per kWh
-      commercial: 100,        // 100 IQD per kWh
-      small_industry: 150,    // 150 IQD per kWh
-      large_commercial: 200,  // 200 IQD per kWh
-      agriculture: 30         // 30 IQD per kWh
+      residential: 50,
+      commercial: 100,
+      small_industry: 150,
+      large_commercial: 200,
+      agriculture: 30
     };
 
     let cropper;
@@ -248,6 +248,122 @@
     // Handle auto image upload with cropping
     document.getElementById('imageUploadAuto').addEventListener('change', function(event) {
       const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const cropperImage = document.getElementById('cropperImage');
+          cropperImage.src = e.target.result;
+          cropperImage.style.display = 'block';
+          document.getElementById('cropperButtons').style.display = 'block';
+
+          // Initialize Cropper.js
+          if (cropper) cropper.destroy();
+          cropper = new Cropper(cropperImage, {
+            aspectRatio: NaN,
+            viewMode: 1,
+            autoCropArea: 0.8,
+            guides: true,
+            highlight: true,
+            dragMode: 'move',
+            cropBoxResizable: true
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Preprocess image for better OCR
+    function preprocessImage(canvas) {
+      const ctx = canvas.getContext('2d');
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      // Convert to grayscale and increase contrast
+      for (let i = 0; i < data.length; i += 4) {
+        const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        const highContrast = brightness > 128 ? 255 : 0; // Binarize
+        data[i] = data[i + 1] = data[i + 2] = highContrast;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      return canvas;
+    }
+
+    // Crop image and process with OCR
+    function cropImage() {
+      if (!cropper) return;
+
+      const canvas = cropper.getCroppedCanvas({
+        width: 600, // Increase resolution for better OCR
+        height: 400
+      });
+      const autoPreview = document.getElementById('autoPreview');
+      const ocrStatus = document.getElementById('ocrStatus');
+      const ocrError = document.getElementById('ocrError');
+      const kwhInputAuto = document.getElementById('kwhInputAuto');
+
+      ocrStatus.textContent = 'چاوەڕوانبە...';
+      ocrError.textContent = '';
+
+      // Add cropped image to preview
+      const previewItem = document.createElement('div');
+      previewItem.className = 'preview-item';
+      previewItem.innerHTML = `
+        <img src="${canvas.toDataURL()}" alt="Cropped Preview">
+        <p class="timestamp">${new Date().toLocaleString('ku')}</p>
+      `;
+      autoPreview.appendChild(previewItem);
+
+      // Preprocess the image
+      const processedCanvas = preprocessImage(canvas);
+
+      // Perform OCR with Tesseract.js
+      Tesseract.recognize(
+        processedCanvas,
+        'eng+ara', // Support both English and Arabic numbers
+        {
+          logger: (m) => console.log(m),
+          tessedit_char_whitelist: '0123456789٠١٢٣٤٥٦٧٨٩', // Restrict to digits
+          tessedit_pagesegmode: 6 // Assume a single uniform block of text
+        }
+      ).then(({ data: { text } }) => {
+        ocrStatus.textContent = '';
+        // Normalize Arabic numerals to English
+        const arabicToEnglish = {
+          '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+          '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+        };
+        let normalizedText = text.replace(/[٠١٢٣٤٥٦٧٨٩]/g, char => arabicToEnglish[char] || char);
+        const number = normalizedText.match(/\d+/);
+        if (number) {
+          kwhInputAuto.value = number[0];
+          document.getElementById('kwhInput').value = number[0]; // Auto-fill manual input
+          calculateCost(); // Auto-calculate cost
+        } else {
+          ocrError.textContent = 'نەتوانرا ژمارەی kWh بخوێنرێتەوە. تکایە وێنەیەکی ڕوونتر باربکە یان بەشی ژمارەکان بە دروستی هەڵبژێرە.';
+        }
+      }).catch((err) => {
+        ocrStatus.textContent = '';
+        ocrError.textContent = 'هەڵەیەک لە خوێندنەوەی وێنە ڕوویدا. تکایە دووبارە هەوڵبدە.';
+        console.error(err);
+      });
+
+      // Reset cropper
+      cropper.destroy();
+      document.getElementById('cropperImage').style.display = 'none';
+      document.getElementById('cropperButtons').style.display = 'none';
+    }
+
+    // Cancel cropping
+    function cancelCrop() {
+      if (cropper) cropper.destroy();
+      document.getElementById('cropperImage').style.display = 'none';
+      document.getElementById('cropperButtons').style.display = 'none';
+      document.getElementById('imageUploadAuto').value = '';
+    }
+  </script>
+</body>
+</html>      const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {

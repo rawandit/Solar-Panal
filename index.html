@@ -1,193 +1,43 @@
-<!DOCTYPE html>
-<html lang="ku">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>پڕۆژەی پسووڵە و وێنە</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      direction: rtl;
-      background: #e0f7fa;
-      padding: 20px;
+// زیادکردنی دوگمەکان
+const buttonsDiv = document.createElement('div');
+buttonsDiv.style.marginTop = '10px';
+
+// دوگمەی سڕینەوە
+const deleteBtn = document.createElement('button');
+deleteBtn.textContent = '🗑️ سڕینەوە';
+deleteBtn.style.background = '#c62828';
+deleteBtn.style.marginLeft = '10px';
+deleteBtn.onclick = () => previewItem.remove();
+
+// دوگمەی نوێکردنەوە
+const updateBtn = document.createElement('button');
+updateBtn.textContent = '🔄 نوێکردنەوە';
+updateBtn.style.background = '#2e7d32';
+updateBtn.onclick = () => {
+  const updateInput = document.createElement('input');
+  updateInput.type = 'file';
+  updateInput.accept = 'image/*';
+  updateInput.onchange = function () {
+    const updatedFile = this.files[0];
+    if (updatedFile) {
+      const updatedReader = new FileReader();
+      updatedReader.onload = function (ev) {
+        img.src = ev.target.result;
+        const updatedNow = new Date();
+        const updatedDate = updatedNow.toLocaleString('ku-KU', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        timestamp.textContent = `نوێکرایەوە: ${updatedDate}`;
+      };
+      updatedReader.readAsDataURL(updatedFile);
     }
+  };
+  updateInput.click();
+};
 
-    .container {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 800px;
-      margin: auto;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      text-align: center;
-      color: #00695c;
-      margin-bottom: 20px;
-    }
-
-    .input-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: bold;
-      color: #004d40;
-    }
-
-    select, input[type="file"] {
-      width: 100%;
-      padding: 10px;
-      border: 2px solid #b0bec5;
-      border-radius: 8px;
-    }
-
-    #previewList {
-      margin-top: 30px;
-    }
-
-    .preview-item {
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 15px;
-      background: #f9f9f9;
-    }
-
-    .preview-item img {
-      max-width: 100px;
-      max-height: 100px;
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    .timestamp {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 10px;
-    }
-
-    .preview-item button {
-      background-color: #0288d1;
-      border: none;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
-      margin-left: 5px;
-      transition: background 0.3s ease;
-    }
-
-    .preview-item button:hover {
-      background-color: #01579b;
-    }
-
-    .buttons-div {
-      display: flex;
-      gap: 10px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2>جۆری پسووڵە + وێنەکان</h2>
-
-    <div class="input-group">
-      <label for="category">جۆری پسووڵە هەلبژێرە:</label>
-      <select id="category">
-        <option value="residential">ماڵی</option>
-      </select>
-    </div>
-
-    <div class="input-group">
-      <label for="imageUpload">وێنەکە هەلبژێرە:</label>
-      <input type="file" id="imageUpload" accept="image/*" />
-    </div>
-
-    <div id="previewList"></div>
-  </div>
-
-  <script>
-    const imageUpload = document.getElementById("imageUpload");
-    const previewList = document.getElementById("previewList");
-
-    imageUpload.addEventListener("change", function () {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const previewItem = document.createElement("div");
-          previewItem.classList.add("preview-item");
-
-          const img = document.createElement("img");
-          img.src = e.target.result;
-
-          const timestamp = document.createElement("div");
-          timestamp.classList.add("timestamp");
-
-          const now = new Date();
-          const dateString = now.toLocaleString("ku-KU", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-          });
-
-          timestamp.textContent = `بەروار: ${dateString}`;
-
-          // دوگمەی سڕینەوە
-          const deleteBtn = document.createElement("button");
-          deleteBtn.textContent = "🗑️ سڕینەوە";
-          deleteBtn.onclick = () => previewItem.remove();
-
-          // دوگمەی نوێکردنەوە
-          const updateBtn = document.createElement("button");
-          updateBtn.textContent = "🔄 نوێکردنەوە";
-          updateBtn.onclick = () => {
-            const newInput = document.createElement("input");
-            newInput.type = "file";
-            newInput.accept = "image/*";
-            newInput.onchange = function () {
-              const newFile = this.files[0];
-              if (newFile) {
-                const newReader = new FileReader();
-                newReader.onload = function (event) {
-                  img.src = event.target.result;
-                  const newNow = new Date();
-                  const newDate = newNow.toLocaleString("ku-KU", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit"
-                  });
-                  timestamp.textContent = `نوێکرایەوە: ${newDate}`;
-                };
-                newReader.readAsDataURL(newFile);
-              }
-            };
-            newInput.click();
-          };
-
-          const buttonsDiv = document.createElement("div");
-          buttonsDiv.classList.add("buttons-div");
-          buttonsDiv.appendChild(updateBtn);
-          buttonsDiv.appendChild(deleteBtn);
-
-          previewItem.appendChild(img);
-          previewItem.appendChild(timestamp);
-          previewItem.appendChild(buttonsDiv);
-
-          previewList.insertBefore(previewItem, previewList.firstChild);
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  </script>
-</body>
-</html>
+buttonsDiv.appendChild(updateBtn);
+buttonsDiv

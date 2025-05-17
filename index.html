@@ -61,7 +61,7 @@
       font-size: 16px;
       cursor: pointer;
       transition: background 0.3s ease;
-      margin: 10px 0;
+      margin: 5px 5px 0 0;
     }
 
     button:hover {
@@ -89,11 +89,13 @@
     .preview-item {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 10px;
       margin-bottom: 10px;
       background: #f9f9f9;
       padding: 10px;
       border-radius: 10px;
+      flex-wrap: wrap;
     }
 
     .preview-item img {
@@ -121,6 +123,18 @@
 
     #imageUpload {
       display: none;
+    }
+
+    .action-buttons button {
+      font-size: 14px;
+      padding: 6px 12px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -189,7 +203,6 @@
       document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
     }
 
-    // وێنە
     const imageUpload = document.getElementById('imageUpload');
     const previewList = document.getElementById('previewList');
 
@@ -217,55 +230,51 @@
           });
 
           timestamp.textContent = `بەروار: ${dateString}`;
-// زیادکردنی دوگمەکان
-const buttonsDiv = document.createElement('div');
-buttonsDiv.style.marginTop = '10px';
 
-// دوگمەی سڕینەوە
-const deleteBtn = document.createElement('button');
-deleteBtn.textContent = '🗑️ سڕینەوە';
-deleteBtn.style.background = '#c62828';
-deleteBtn.style.marginLeft = '10px';
-deleteBtn.onclick = () => previewItem.remove();
+          // --- 🔁 دوگمەکان ---
+          const buttonsDiv = document.createElement('div');
+          buttonsDiv.className = 'action-buttons';
 
-// دوگمەی نوێکردنەوە
-const updateBtn = document.createElement('button');
-updateBtn.textContent = '🔄 نوێکردنەوە';
-updateBtn.style.background = '#2e7d32';
-updateBtn.onclick = () => {
-  const updateInput = document.createElement('input');
-  updateInput.type = 'file';
-  updateInput.accept = 'image/*';
-  updateInput.onchange = function () {
-    const updatedFile = this.files[0];
-    if (updatedFile) {
-      const updatedReader = new FileReader();
-      updatedReader.onload = function (ev) {
-        img.src = ev.target.result;
-        const updatedNow = new Date();
-        const updatedDate = updatedNow.toLocaleString('ku-KU', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        timestamp.textContent = `نوێکرایەوە: ${updatedDate}`;
-      };
-      updatedReader.readAsDataURL(updatedFile);
-    }
-  };
-  updateInput.click();
-};
+          const deleteBtn = document.createElement('button');
+          deleteBtn.textContent = '🗑️ سڕینەوە';
+          deleteBtn.style.background = '#c62828';
+          deleteBtn.onclick = () => previewItem.remove();
 
-buttonsDiv.appendChild(updateBtn);
-buttonsDiv.appendChild(deleteBtn);
+          const updateBtn = document.createElement('button');
+          updateBtn.textContent = '🔄 نوێکردنەوە';
+          updateBtn.style.background = '#2e7d32';
+          updateBtn.onclick = () => {
+            const updateInput = document.createElement('input');
+            updateInput.type = 'file';
+            updateInput.accept = 'image/*';
+            updateInput.onchange = function () {
+              const updatedFile = this.files[0];
+              if (updatedFile) {
+                const updatedReader = new FileReader();
+                updatedReader.onload = function (ev) {
+                  img.src = ev.target.result;
+                  const updatedNow = new Date();
+                  const updatedDate = updatedNow.toLocaleString('ku-KU', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  });
+                  timestamp.textContent = `نوێکرایەوە: ${updatedDate}`;
+                };
+                updatedReader.readAsDataURL(updatedFile);
+              }
+            };
+            updateInput.click();
+          };
 
-// زیادکردن بۆ تاقیکردنەوەی وێنە
-previewItem.appendChild(buttonsDiv);
+          buttonsDiv.appendChild(updateBtn);
+          buttonsDiv.appendChild(deleteBtn);
 
           previewItem.appendChild(img);
           previewItem.appendChild(timestamp);
+          previewItem.appendChild(buttonsDiv);
 
           previewList.insertBefore(previewItem, previewList.firstChild);
         };

@@ -192,7 +192,8 @@
             <p id="error" class="error"></p>
         </div>
     </div>
-
+<!-- ژمارەی سەردانی ڕاگێڕ نیشان بدە -->
+<p id="visitCounter" style="text-align: center; margin-top: 10px; color: #00695c;"></p>
     <script>
         function calculateCost() {
             try {
@@ -267,5 +268,23 @@
             document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
         }
     </script>
+        <script>
+    // هەژمارکردنی ژمارەی سەردان لە ڕاگێڕەکەدا
+    (function () {
+        // تەنها ژمارەکە زیاد بکە ئەگەر تێچووە نەبوو
+        if (!localStorage.getItem('visited')) {
+            let count = parseInt(localStorage.getItem('visitCount') || '0');
+            count += 1;
+            localStorage.setItem('visitCount', count.toString());
+            localStorage.setItem('visited', 'true');
+        }
+
+        // نیشاندانی ژمارەی سەردان
+        document.addEventListener('DOMContentLoaded', function () {
+            const count = localStorage.getItem('visitCount') || '1';
+            document.getElementById('visitCounter').textContent = `ژمارەی سەردانت لەم ڕاگێڕەدا: ${count}`;
+        });
+    })();
+</script>
 </body>
 </html>

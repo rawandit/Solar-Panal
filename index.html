@@ -15,9 +15,6 @@
             font-family: 'Noto Sans Arabic', sans-serif;
             background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
             direction: rtl;
         }
@@ -27,17 +24,12 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             padding: 30px;
             max-width: 700px;
-            width: 100%;
-            transition: transform 0.3s ease;
+            margin: auto;
         }
-        .container:hover {
-            transform: translateY(-5px);
-        }
-        h1 {
+        h1, h2, h3 {
             text-align: center;
             color: #00695c;
-            font-size: 28px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         .developer {
             text-align: center;
@@ -60,7 +52,6 @@
             border: 2px solid #b0bec5;
             border-radius: 8px;
             font-size: 16px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         input[type="text"]:focus, select:focus {
             border-color: #00695c;
@@ -72,6 +63,7 @@
             justify-content: center;
             gap: 15px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         button {
             background: #00695c;
@@ -81,11 +73,9 @@
             border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
         }
         button:hover {
             background: #004d40;
-            transform: scale(1.05);
         }
         .reset-btn {
             background: #d81b60;
@@ -97,7 +87,6 @@
             background: #f5f5f5;
             padding: 20px;
             border-radius: 8px;
-            font-size: 16px;
             text-align: center;
         }
         .total {
@@ -109,7 +98,6 @@
         .error {
             color: #d32f2f;
             font-weight: bold;
-            text-align: center;
             margin-top: 15px;
         }
         .stats {
@@ -117,13 +105,56 @@
             background: #e0f2f1;
             padding: 15px;
             border-radius: 10px;
-            text-align: center;
         }
         .visit-count, .online-count {
             font-size: 16px;
             color: #004d40;
             margin-bottom: 10px;
         }
+
+        .ad-section {
+            margin-top: 30px;
+            background: #f0f9f9;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .gallery-section {
+            margin-top: 30px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .gallery-section h3 {
+            color: #00695c;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .image-gallery img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .image-gallery img:hover {
+            transform: scale(1.05);
+        }
+
         @media (max-width: 500px) {
             .container {
                 padding: 20px;
@@ -167,11 +198,26 @@
         <div class="result">
             <p id="totalCost" class="total">کۆی گشتی پسووڵە: ٠ دینار</p>
             <p id="error" class="error"></p>
-
             <div class="stats">
-                <p id="visitCounter" class="visit-count">ژمارەی گشتی سەردانەکان: ...</p>
-                <p id="onlineUsers" class="online-count">بەکارهێنەری ئۆنلاین: ...</p>
+                <p id="visitCounter" class="visit-count">ژمارەی سەردانت: ...</p>
+                <p id="onlineUsers" class="online-count">ئۆنلاین: ...</p>
             </div>
+        </div>
+
+        <div class="ad-section">
+            <h2>ئاد / ڕیکلام</h2>
+            <img id="adImage" src="" alt="وێنەی ئاد" style="max-width: 100%; border-radius: 10px; margin-bottom: 10px; display: none;">
+            <p id="adDate" style="color: #00796b; font-weight: bold; margin-bottom: 10px; display: none;"></p>
+            <div class="button-group">
+                <button onclick="triggerImageUpload()">وێنە بگرە</button>
+                <button onclick="showAd()">وێنەی ئاد پیشان بدە</button>
+            </div>
+            <input type="file" id="imageUploader" accept="image/*" capture="environment" style="display: none;">
+        </div>
+
+        <div class="gallery-section">
+            <h3>وێنەکان</h3>
+            <div id="imageGallery" class="image-gallery"></div>
         </div>
     </div>
 
@@ -181,29 +227,21 @@
                 const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
                 const kwh = parseFloat(kwhInput);
                 const category = document.getElementById('categorySelect').value;
-
                 if (isNaN(kwh) || kwhInput === '') {
                     showError('تکایە ژمارەیەکی دروست بۆ kWh بنووسە!');
                     return;
                 }
-
                 let cost = 0;
-
                 if (category === 'residential') {
                     if (kwh > 0) cost += Math.min(kwh, 400) * 72;
                     if (kwh > 400) cost += Math.min(kwh - 400, 400) * 108;
                     if (kwh > 800) cost += Math.min(kwh - 800, 400) * 175;
                     if (kwh > 1200) cost += Math.min(kwh - 1200, 400) * 265;
                     if (kwh > 1600) cost += (kwh - 1600) * 350;
-                } else if (category === 'commercial') {
-                    cost = kwh * 185;
-                } else if (category === 'small_industry') {
-                    cost = kwh * 160;
-                } else if (category === 'large_commercial') {
-                    cost = kwh * 125;
-                } else if (category === 'agriculture') {
-                    cost = kwh * 60;
-                }
+                } else if (category === 'commercial') cost = kwh * 185;
+                else if (category === 'small_industry') cost = kwh * 160;
+                else if (category === 'large_commercial') cost = kwh * 125;
+                else if (category === 'agriculture') cost = kwh * 60;
 
                 document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
                 document.getElementById('error').textContent = '';
@@ -228,53 +266,85 @@
             document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
         }
 
-        // سەردان و بەکارهێنەری ئۆنلاین
-        (() => {
-            let totalVisits = localStorage.getItem('totalVisits');
-            if (!totalVisits) {
-                totalVisits = 1;
-            } else {
-                totalVisits = parseInt(totalVisits) + 1;
+        function triggerImageUpload() {
+            const uploader = document.getElementById('imageUploader');
+            uploader.setAttribute('capture', 'environment');
+            uploader.click();
+        }
+
+        document.getElementById('imageUploader').addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById('adImage');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+
+                    const now = new Date();
+                    const formattedDate = now.toLocaleDateString('ku-KU', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    const dateLabel = document.getElementById('adDate');
+                    dateLabel.textContent = `بەرواری ئاد: ${formattedDate}`;
+                    dateLabel.style.display = 'block';
+
+                    const gallery = document.getElementById('imageGallery');
+                    const newImage = document.createElement('img');
+                    newImage.src = e.target.result;
+                    gallery.appendChild(newImage);
+                };
+                reader.readAsDataURL(file);
             }
-            localStorage.setItem('totalVisits', totalVisits);
-            document.getElementById('visitCounter').textContent =
-                `ژمارەی گشتی سەردانەکان: ${formatNumber(totalVisits)}`;
+        });
 
-            const sessionId = `user_${Math.random().toString(36).substr(2, 9)}`;
-            sessionStorage.setItem('session_id', sessionId);
-            const timestamp = Date.now();
-            localStorage.setItem(sessionId, timestamp);
+        function showAd() {
+            const img = document.getElementById('adImage');
+            if (img.src && img.src !== window.location.href) {
+                img.style.display = 'block';
+                document.getElementById('adDate').style.display = 'block';
+            } else {
+                alert('تکایە یەکەم وێنە بگرە بۆ ئاد.');
+            }
+        }
 
-            function cleanOldSessions() {
-                const now = Date.now();
-                const expiryTime = 15000;
+        (function () {
+            if (!localStorage.getItem('visited')) {
+                let count = parseInt(localStorage.getItem('visitCount') || '0');
+                count += 1;
+                localStorage.setItem('visitCount', count.toString());
+                localStorage.setItem('visited', 'true');
+            }
+
+            function updateOnlineUsers() {
+                const id = 'user_' + Date.now();
+                sessionStorage.setItem('onlineUserId', id);
+                localStorage.setItem(id, Date.now());
+
                 for (let key in localStorage) {
                     if (key.startsWith('user_')) {
-                        const lastActive = parseInt(localStorage.getItem(key));
-                        if (now - lastActive > expiryTime) {
+                        const lastSeen = parseInt(localStorage.getItem(key));
+                        if (Date.now() - lastSeen > 10000) {
                             localStorage.removeItem(key);
                         }
                     }
                 }
-            }
 
-            function updateOnlineCount() {
-                cleanOldSessions();
-                localStorage.setItem(sessionId, Date.now());
-
-                let onlineCount = 0;
+                let count = 0;
                 for (let key in localStorage) {
-                    if (key.startsWith('user_')) {
-                        onlineCount++;
-                    }
+                    if (key.startsWith('user_')) count++;
                 }
 
+                document.getElementById('visitCounter').textContent =
+                    `ژمارەی سەردانت: ${localStorage.getItem('visitCount') || 1}`;
                 document.getElementById('onlineUsers').textContent =
-                    `بەکارهێنەری ئۆنلاین: ${onlineCount}`;
+                    `ئۆنلاین: ${count}`;
             }
 
-            updateOnlineCount();
-            setInterval(updateOnlineCount, 5000);
+            updateOnlineUsers();
+            setInterval(updateOnlineUsers, 5000);
         })();
     </script>
 </body>

@@ -3,284 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>بژمێری پسووڵە و وێنەکان</title>
+  <title>چوونە ژوورەوە وەک گویست</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
       font-family: 'Noto Sans Arabic', sans-serif;
       background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
       min-height: 100vh;
-      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       direction: rtl;
     }
 
-    .container {
-      max-width: 800px;
-      margin: auto;
+    .login-container {
+      max-width: 400px;
+      width: 100%;
       background: #fff;
       padding: 30px;
       border-radius: 16px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
 
-    h1 {
+    .login-container h2 {
       text-align: center;
       color: #00695c;
-      font-size: 28px;
       margin-bottom: 20px;
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #004d40;
-      font-weight: bold;
-    }
-
-    select, input[type="text"], input[type="file"] {
+    .login-container button {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 2px solid #b0bec5;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    button {
       background: #00695c;
       color: white;
-      padding: 12px 24px;
+      padding: 12px;
       border: none;
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
-      transition: background 0.3s ease;
-      margin: 5px 5px 0 0;
     }
 
-    button:hover {
+    .login-container button:hover {
       background: #004d40;
-    }
-
-    .result, .preview-list {
-      margin-top: 20px;
-    }
-
-    .total {
-      font-weight: bold;
-      font-size: 18px;
-      color: #00695c;
-      margin-top: 15px;
-    }
-
-    .error {
-      color: #d32f2f;
-      font-weight: bold;
-      text-align: center;
-      margin-top: 15px;
-    }
-
-    .preview-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-      background: #f9f9f9;
-      padding: 10px;
-      border-radius: 10px;
-      flex-wrap: wrap;
-    }
-
-    .preview-item img {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    .timestamp {
-      font-size: 14px;
-      color: #555;
-    }
-
-    .upload-label {
-      display: inline-block;
-      background: #00695c;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-bottom: 10px;
-    }
-
-    #imageUpload {
-      display: none;
-    }
-
-    .action-buttons button {
-      font-size: 14px;
-      padding: 6px 12px;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>بژمێری پسووڵە و وێنەکان</h1>
-
-    <label for="categorySelect">جۆری پسووڵە:</label>
-    <select id="categorySelect">
-      <option value="residential">ماڵان</option>
-      <option value="commercial">بازرگانی</option>
-      <option value="small_industry">پیشەسازی بچووک</option>
-      <option value="large_commercial">بازرگانی گەورە</option>
-      <option value="agriculture">کشتوکاڵ</option>
-    </select>
-
-    <label for="kwhInput">kWh بنووسە:</label>
-    <input type="text" id="kwhInput" placeholder="ژمارەی kWh">
-
-    <button onclick="calculateCost()">خەملاندن</button>
-    <p id="totalCost" class="total">کۆی گشتی پسووڵە: ٠ دینار</p>
-    <p id="error" class="error"></p>
-
-    <hr style="margin: 30px 0;">
-
-    <label for="imageUpload" class="upload-label">زیادکردنی وێنە</label>
-    <input type="file" id="imageUpload" accept="image/*">
-
-    <div id="previewList" class="preview-list"></div>
+  <div class="login-container">
+    <h2>بەخێربێیت گویست 👋</h2>
+    <button onclick="continueAsGuest()">چوونە ژوورەوە وەک گویست</button>
   </div>
 
   <script>
-    function calculateCost() {
-      const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
-      const kwh = parseFloat(kwhInput);
-      const category = document.getElementById('categorySelect').value;
-
-      if (isNaN(kwh) || kwhInput === '') {
-        showError('تکایە ژمارەیەکی دروست بنووسە!');
-        return;
-      }
-
-      let cost = 0;
-
-      if (category === 'residential') {
-        if (kwh > 0) cost += Math.min(kwh, 400) * 72;
-        if (kwh > 400) cost += Math.min(kwh - 400, 400) * 108;
-        if (kwh > 800) cost += Math.min(kwh - 800, 400) * 175;
-        if (kwh > 1200) cost += Math.min(kwh - 1200, 400) * 265;
-        if (kwh > 1600) cost += (kwh - 1600) * 350;
-      } else if (category === 'commercial') cost = kwh * 185;
-      else if (category === 'small_industry') cost = kwh * 160;
-      else if (category === 'large_commercial') cost = kwh * 125;
-      else if (category === 'agriculture') cost = kwh * 60;
-
-      document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
-      document.getElementById('error').textContent = '';
+    function continueAsGuest() {
+      localStorage.setItem("guest", "true");  // تۆمارکردنی گویست
+      window.location.href = "index.html";    // گواستنەوە بۆ پەیجی سەرەکی
     }
-
-    function formatNumber(number) {
-      return Math.round(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    }
-
-    function showError(message) {
-      document.getElementById('error').textContent = message;
-      document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
-    }
-
-    const imageUpload = document.getElementById('imageUpload');
-    const previewList = document.getElementById('previewList');
-
-    imageUpload.addEventListener('change', function () {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const previewItem = document.createElement('div');
-          previewItem.classList.add('preview-item');
-
-          const img = document.createElement('img');
-          img.src = e.target.result;
-
-          const timestamp = document.createElement('div');
-          timestamp.classList.add('timestamp');
-
-          const now = new Date();
-          const dateString = now.toLocaleString('ku-KU', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          });
-
-          timestamp.textContent = `بەروار: ${dateString}`;
-
-          // --- 🔁 دوگمەکان ---
-          const buttonsDiv = document.createElement('div');
-          buttonsDiv.className = 'action-buttons';
-
-          const deleteBtn = document.createElement('button');
-          deleteBtn.textContent = '🗑️ سڕینەوە';
-          deleteBtn.style.background = '#c62828';
-          deleteBtn.onclick = () => previewItem.remove();
-
-          const updateBtn = document.createElement('button');
-          updateBtn.textContent = '🔄 نوێکردنەوە';
-          updateBtn.style.background = '#2e7d32';
-          updateBtn.onclick = () => {
-            const updateInput = document.createElement('input');
-            updateInput.type = 'file';
-            updateInput.accept = 'image/*';
-            updateInput.onchange = function () {
-              const updatedFile = this.files[0];
-              if (updatedFile) {
-                const updatedReader = new FileReader();
-                updatedReader.onload = function (ev) {
-                  img.src = ev.target.result;
-                  const updatedNow = new Date();
-                  const updatedDate = updatedNow.toLocaleString('ku-KU', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  });
-                  timestamp.textContent = `نوێکرایەوە: ${updatedDate}`;
-                };
-                updatedReader.readAsDataURL(updatedFile);
-              }
-            };
-            updateInput.click();
-          };
-
-          buttonsDiv.appendChild(updateBtn);
-          buttonsDiv.appendChild(deleteBtn);
-
-          previewItem.appendChild(img);
-          previewItem.appendChild(timestamp);
-          previewItem.appendChild(buttonsDiv);
-
-          previewList.insertBefore(previewItem, previewList.firstChild);
-        };
-        reader.readAsDataURL(file);
-      }
-    });
   </script>
 </body>
 </html>

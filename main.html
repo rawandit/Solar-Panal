@@ -1,79 +1,107 @@
 <!DOCTYPE html>
 <html lang="ku">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>پسووڵە و وێنە کراپ</title>
-
-  <!-- ڕەنگ و ڕووکاری ناوەڕۆک -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بژمێری پسووڵە و وێنەکان</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Noto Sans Arabic', sans-serif;
-      background: #e0f7fa;
+      background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+      min-height: 100vh;
       padding: 20px;
       direction: rtl;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 800px;
       margin: auto;
       background: #fff;
       padding: 30px;
       border-radius: 16px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
 
     h1 {
       text-align: center;
       color: #00695c;
+      font-size: 28px;
       margin-bottom: 20px;
     }
 
-    input, select, button {
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #004d40;
+      font-weight: bold;
+    }
+
+    select, input[type="text"], input[type="file"] {
       width: 100%;
       padding: 12px;
       margin-bottom: 20px;
-      border: 2px solid #ccc;
+      border: 2px solid #b0bec5;
       border-radius: 8px;
       font-size: 16px;
     }
 
-    .upload-label {
-      display: inline-block;
+    button {
       background: #00695c;
       color: white;
-      padding: 10px 20px;
+      padding: 12px 24px;
+      border: none;
       border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
+      transition: background 0.3s ease;
+      margin: 10px 0;
     }
 
-    #imageUpload {
-      display: none;
+    button:hover {
+      background: #004d40;
     }
 
-    #selectedImage {
-      max-width: 100%;
+    .result, .preview-list {
+      margin-top: 20px;
+    }
+
+    .total {
+      font-weight: bold;
+      font-size: 18px;
+      color: #00695c;
+      margin-top: 15px;
+    }
+
+    .error {
+      color: #d32f2f;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .loading {
+      color: #666;
+      font-weight: bold;
+      text-align: center;
       margin-top: 10px;
-      display: none;
-      border-radius: 10px;
-    }
-
-    #cropButton {
-      display: none;
-      background: #00796b;
-      color: white;
     }
 
     .preview-item {
       display: flex;
       align-items: center;
       gap: 10px;
-      background: #f5f5f5;
-      padding: 10px;
-      border-radius: 8px;
       margin-bottom: 10px;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 10px;
     }
 
     .preview-item img {
@@ -89,59 +117,76 @@
       color: #555;
     }
 
-    .total {
-      font-weight: bold;
-      color: #00695c;
-      font-size: 18px;
+    .upload-label {
+      display: inline-block;
+      background: #00695c;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    #imageUpload, #imageUploadAuto {
+      display: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>پسووڵە و کراپکردنی وێنە</h1>
+    <h1>بژمێری پسووڵە و وێنەکان</h1>
 
-    <!-- هەڵبژاردنی جۆر -->
+    <!-- جۆری پسووڵە -->
     <label for="categorySelect">جۆری پسووڵە:</label>
     <select id="categorySelect">
-      <option value="residential">ماڵی</option>
+      <option value="residential">ماڵان</option>
       <option value="commercial">بازرگانی</option>
       <option value="small_industry">پیشەسازی بچووک</option>
       <option value="large_commercial">بازرگانی گەورە</option>
       <option value="agriculture">کشتوکاڵ</option>
     </select>
 
-    <!-- داخڵکردنی kWh -->
+    <!-- kWh -->
     <label for="kwhInput">kWh بنووسە:</label>
     <input type="text" id="kwhInput" placeholder="ژمارەی kWh">
 
-    <button onclick="calculateCost()">خەرجی پەیوەندیدار</button>
-    <p id="totalCost" class="total">کۆی پسووڵە: ٠ دینار</p>
+    <button onclick="calculateCost()">خەملاندن</button>
+    <p id="totalCost" class="total">کۆی گشتی پسووڵە: ٠ دینار</p>
+    <p id="error" class="error"></p>
 
-    <hr>
+    <hr style="margin: 30px 0;">
 
-    <!-- وێنە و کراپ -->
+    <!-- زیادکردنی وێنە بە دەستی -->
     <label for="imageUpload" class="upload-label">زیادکردنی وێنە</label>
     <input type="file" id="imageUpload" accept="image/*">
-
-    <img id="selectedImage" />
-    <button id="cropButton">کراپکردن</button>
-
-    <!-- لیستی وێنە -->
     <div id="previewList" class="preview-list"></div>
+
+    <hr style="margin: 30px 0;">
+
+    <!-- خوێندنی ژمارە لە وێنە -->
+    <label for="imageUploadAuto" class="upload-label">خوێندنی ژمارەی کۆنترۆڵ لە وێنە</label>
+    <input type="file" id="imageUploadAuto" accept="image/*">
+    <div id="autoPreview" class="preview-list"></div>
+
+    <label for="kwhInputAuto">kWh بخوێنرێتەوە:</label>
+    <input type="text" id="kwhInputAuto" placeholder="ژمارەی خوێندراو" readonly>
+
+    <p id="ocrStatus" class="loading"></p>
+    <p id="ocrError" class="error"></p>
   </div>
 
-  <!-- Script -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
   <script>
     function calculateCost() {
       const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
       const kwh = parseFloat(kwhInput);
       const category = document.getElementById('categorySelect').value;
 
-      let cost = 0;
-      if (isNaN(kwh)) return;
+      if (isNaN(kwh) || kwhInput === '') {
+        showError('تکایە ژمارەیەکی دروست بنووسە!');
+        return;
+      }
 
+      let cost = 0;
       if (category === 'residential') {
         if (kwh > 0) cost += Math.min(kwh, 400) * 72;
         if (kwh > 400) cost += Math.min(kwh - 400, 400) * 108;
@@ -153,60 +198,94 @@
       else if (category === 'large_commercial') cost = kwh * 125;
       else if (category === 'agriculture') cost = kwh * 60;
 
-      document.getElementById('totalCost').textContent = `کۆی پسووڵە: ${Math.round(cost).toLocaleString()} دینار`;
+      document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
+      document.getElementById('error').textContent = '';
     }
 
-    const imageUpload = document.getElementById('imageUpload');
-    const selectedImage = document.getElementById('selectedImage');
-    const cropButton = document.getElementById('cropButton');
-    const previewList = document.getElementById('previewList');
-    let cropper;
+    function formatNumber(number) {
+      return Math.round(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
 
+    function showError(message) {
+      document.getElementById('error').textContent = message;
+      document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
+    }
+
+    // زیادکردنی وێنە بە دەستی
+    const imageUpload = document.getElementById('imageUpload');
+    const previewList = document.getElementById('previewList');
     imageUpload.addEventListener('change', function () {
       const file = this.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-          selectedImage.src = e.target.result;
-          selectedImage.style.display = 'block';
-          cropButton.style.display = 'inline-block';
+          const previewItem = document.createElement('div');
+          previewItem.classList.add('preview-item');
 
-          if (cropper) cropper.destroy();
-          cropper = new Cropper(selectedImage, {
-            aspectRatio: NaN,
-            viewMode: 1
+          const img = document.createElement('img');
+          img.src = e.target.result;
+
+          const timestamp = document.createElement('div');
+          timestamp.classList.add('timestamp');
+
+          const now = new Date();
+          const dateString = now.toLocaleString('ku-KU', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
           });
+
+          timestamp.textContent = `بەروار: ${dateString}`;
+          previewItem.appendChild(img);
+          previewItem.appendChild(timestamp);
+          previewList.insertBefore(previewItem, previewList.firstChild);
         };
         reader.readAsDataURL(file);
       }
     });
 
-    cropButton.addEventListener('click', function () {
-      if (cropper) {
-        const canvas = cropper.getCroppedCanvas();
-        const croppedData = canvas.toDataURL('image/jpeg');
+    // خوێندنی ژمارەی وێنە بە Tesseract.js
+    const imageUploadAuto = document.getElementById('imageUploadAuto');
+    const autoPreview = document.getElementById('autoPreview');
+    const kwhInputAuto = document.getElementById('kwhInputAuto');
+    const ocrStatus = document.getElementById('ocrStatus');
+    const ocrError = document.getElementById('ocrError');
 
-        // OCR بخوێنەوە
-        Tesseract.recognize(croppedData, 'eng').then(({ data: { text } }) => {
-          const match = text.match(/\d{2,6}/);
-          if (match) document.getElementById('kwhInput').value = match[0];
-        });
+    imageUploadAuto.addEventListener('change', function () {
+      const file = this.files[0];
+      ocrError.textContent = '';
+      ocrStatus.textContent = '';
+      autoPreview.innerHTML = '';
 
-        // زیادکردن بۆ لیست
-        const previewItem = document.createElement('div');
-        previewItem.classList.add('preview-item');
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.style.maxWidth = '200px';
+          autoPreview.appendChild(img);
 
-        const img = document.createElement('img');
-        img.src = croppedData;
-        previewItem.appendChild(img);
+          ocrStatus.textContent = "خوێندنەوەی ژمارە بەردەوامە...";
 
-        const now = new Date();
-        const timestamp = document.createElement('div');
-        timestamp.classList.add('timestamp');
-        timestamp.textContent = `بەروار: ${now.toLocaleString('ku-KU')}`;
-        previewItem.appendChild(timestamp);
+         Tesseract.recognize(
+  e.target.result,
+  'eng',
+  { logger: m => console.log(m) }
+).then(({ data: { text } }) => {
+  ocrStatus.textContent = '';
+  const match = text.match(/\d{3,6}/);  // دیاریکردنی ژمارەی 3–6 خانە
+  if (match) {
+    kwhInputAuto.value = match[0];
+    document.getElementById('kwhInput').value = match[0]; // زیادکردن بە خۆکار ناو تێکست‌بۆکسەکە
+  } else {
+    ocrError.textContent = "نەیتوانرا ژمارەیەک بدۆزرێتەوە.";
+  }
+});
 
-        previewList.insertBefore(previewItem, previewList.firstChild);
+        };
+        reader.readAsDataURL(file);
       }
     });
   </script>

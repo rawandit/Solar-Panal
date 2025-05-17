@@ -3,20 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>بژمێری پسووڵە و وێنەکان</title>
+  <title>خوێندنەوەی ژمارە لە وێنە</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Noto Sans Arabic', sans-serif;
-      background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-      min-height: 100vh;
-      padding: 20px;
+      background: #e0f7fa;
+      padding: 30px;
       direction: rtl;
     }
 
@@ -26,222 +22,106 @@
       background: #fff;
       padding: 30px;
       border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
 
     h1 {
       text-align: center;
       color: #00695c;
-      font-size: 28px;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
     label {
-      display: block;
-      margin-bottom: 8px;
-      color: #004d40;
       font-weight: bold;
+      color: #004d40;
+      margin-bottom: 5px;
+      display: block;
     }
 
-    select, input[type="text"], input[type="file"] {
+    input[type="file"], input[type="text"] {
       width: 100%;
       padding: 12px;
+      font-size: 16px;
       margin-bottom: 20px;
-      border: 2px solid #b0bec5;
+      border: 2px solid #ccc;
       border-radius: 8px;
-      font-size: 16px;
     }
 
-    button {
-      background: #00695c;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      margin: 10px 0;
+    img {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
     }
 
-    button:hover {
-      background: #004d40;
-    }
-
-    .result, .preview-list {
-      margin-top: 20px;
-    }
-
-    .total {
+    .loading {
+      color: #ff9800;
       font-weight: bold;
-      font-size: 18px;
-      color: #00695c;
-      margin-top: 15px;
     }
 
     .error {
-      color: #d32f2f;
+      color: red;
       font-weight: bold;
-      text-align: center;
-      margin-top: 15px;
-    }
-
-    .preview-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 15px;
-      margin-bottom: 15px;
-      background: #f9f9f9;
-      padding: 12px;
-      border-radius: 10px;
-    }
-
-    .preview-item img {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    .timestamp {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 5px;
-    }
-
-    .upload-label {
-      display: inline-block;
-      background: #00695c;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-bottom: 10px;
-    }
-
-    #imageUpload {
-      display: none;
-    }
-
-    .text-box {
-      padding: 8px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 100%;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>بژمێری پسووڵە و وێنەکان</h1>
+    <h1>خوێندنەوەی ژمارە لە وێنەی کۆنترۆڵ</h1>
 
-    <label for="categorySelect">جۆری پسووڵە:</label>
-    <select id="categorySelect">
-      <option value="residential">ماڵان</option>
-      <option value="commercial">بازرگانی</option>
-      <option value="small_industry">پیشەسازی بچووک</option>
-      <option value="large_commercial">بازرگانی گەورە</option>
-      <option value="agriculture">کشتوکاڵ</option>
-    </select>
-
-    <label for="kwhInput">kWh بنووسە:</label>
-    <input type="text" id="kwhInput" placeholder="ژمارەی kWh">
-
-    <button onclick="calculateCost()">خەملاندن</button>
-    <p id="totalCost" class="total">کۆی گشتی پسووڵە: ٠ دینار</p>
-    <p id="error" class="error"></p>
-
-    <hr style="margin: 30px 0;">
-
-    <label for="imageUpload" class="upload-label">زیادکردنی وێنە</label>
+    <label for="imageUpload">وێنە هەڵبژێرە:</label>
     <input type="file" id="imageUpload" accept="image/*">
 
-    <div id="previewList" class="preview-list"></div>
+    <div id="previewContainer"></div>
+
+    <label for="kwhInput">kWh:</label>
+    <input type="text" id="kwhInput" readonly>
+
+    <p id="status" class="loading"></p>
+    <p id="error" class="error"></p>
   </div>
 
   <script>
-    function calculateCost() {
-      const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
-      const kwh = parseFloat(kwhInput);
-      const category = document.getElementById('categorySelect').value;
-
-      if (isNaN(kwh) || kwhInput === '') {
-        showError('تکایە ژمارەیەکی دروست بنووسە!');
-        return;
-      }
-
-      let cost = 0;
-
-      if (category === 'residential') {
-        if (kwh > 0) cost += Math.min(kwh, 400) * 72;
-        if (kwh > 400) cost += Math.min(kwh - 400, 400) * 108;
-        if (kwh > 800) cost += Math.min(kwh - 800, 400) * 175;
-        if (kwh > 1200) cost += Math.min(kwh - 1200, 400) * 265;
-        if (kwh > 1600) cost += (kwh - 1600) * 350;
-      } else if (category === 'commercial') cost = kwh * 185;
-      else if (category === 'small_industry') cost = kwh * 160;
-      else if (category === 'large_commercial') cost = kwh * 125;
-      else if (category === 'agriculture') cost = kwh * 60;
-
-      document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
-      document.getElementById('error').textContent = '';
-    }
-
-    function formatNumber(number) {
-      return Math.round(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    }
-
-    function showError(message) {
-      document.getElementById('error').textContent = message;
-      document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
-    }
-
     const imageUpload = document.getElementById('imageUpload');
-    const previewList = document.getElementById('previewList');
+    const previewContainer = document.getElementById('previewContainer');
+    const kwhInput = document.getElementById('kwhInput');
+    const status = document.getElementById('status');
+    const error = document.getElementById('error');
 
     imageUpload.addEventListener('change', function () {
       const file = this.files[0];
+      error.textContent = '';
+      status.textContent = '';
+      previewContainer.innerHTML = '';
+
       if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-          const previewItem = document.createElement('div');
-          previewItem.classList.add('preview-item');
-
           const img = document.createElement('img');
           img.src = e.target.result;
+          previewContainer.appendChild(img);
 
-          const timestamp = document.createElement('div');
-          timestamp.classList.add('timestamp');
+          status.textContent = "خوێندراوە، تکایە چاوەڕێ بکە...";
 
-          const now = new Date();
-          const dateString = now.toLocaleString('ku-KU', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+          Tesseract.recognize(
+            e.target.result,
+            'eng',
+            {
+              logger: m => console.log(m)
+            }
+          ).then(({ data: { text } }) => {
+            status.textContent = '';
+            const match = text.match(/\d{3,6}/);
+            if (match) {
+              kwhInput.value = match[0];
+            } else {
+              error.textContent = "نەیتوانرا ژمارە بدۆزرێتەوە.";
+            }
+          }).catch(err => {
+            status.textContent = '';
+            error.textContent = "هەڵەیەک ڕویدا لە کاتی خوێندنەوە.";
+            console.error(err);
           });
-
-          timestamp.textContent = `بەروار: ${dateString}`;
-
-          const inputBox = document.createElement('input');
-          inputBox.type = 'text';
-          inputBox.placeholder = 'ژمارە بنووسە...';
-          inputBox.className = 'text-box';
-
-          const contentBox = document.createElement('div');
-          contentBox.style.display = 'flex';
-          contentBox.style.flexDirection = 'column';
-          contentBox.style.flex = '1';
-          contentBox.appendChild(timestamp);
-          contentBox.appendChild(inputBox);
-
-          previewItem.appendChild(img);
-          previewItem.appendChild(contentBox);
-
-          previewList.insertBefore(previewItem, previewList.firstChild);
         };
         reader.readAsDataURL(file);
       }

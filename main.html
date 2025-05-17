@@ -6,6 +6,7 @@
   <title>بژمێری پسووڵە و وێنەکان</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
+  <script src="https://docs.opencv.org/4.5.5/opencv.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -234,6 +235,32 @@
       }
     });
 
+    // Check image clarity using variance of Laplacian (sharpness)
+    function checkImageClarity(canvas) {
+      const ctx = canvas.getContext('2d');
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const src = cv.matFromImageData(imageData);
+      const gray = new cv.Mat();
+      const laplacian = new cv.Mat();
+
+      // Convert to grayscale
+      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+      // Compute Laplacian variance (sharpness)
+      cv.Laplacian(gray, laplacian, cv.CV_64F);
+      const mean = new cv.Mat();
+      const stddev = new cv.Mat();
+      cv.meanStdDev(laplacian, mean, stddev);
+
+      const variance = stddev.data64F[0] * stddev.data64F[0];
+      src.delete();
+      gray.delete();
+      laplacian.delete();
+      mean.delete();
+      stddev.delete();
+
+      return variance > 50; // Threshold for clarity (adjust as needed)
+    }
+
     // Handle auto image upload and process directly
     document.getElementById('imageUploadAuto').addEventListener('change', function(event) {
       const file = event.target.files[0];
@@ -250,17 +277,59 @@
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
 
-            // Auto-crop the area where digits are likely to be (middle section)
-            const cropX = img.width * 0.2; // Start 20% from the left
-            const cropY = img.height * 0.3; // Start 30% from the top
-            const cropWidth = img.width * 0.6; // 60% of the width
-            const cropHeight = img.height * 0.2; // 20% of the height
+            // Check image clarity
+            if (!checkImageClarity(canvas)) {
+              document.getElementById('ocrError').textContent = 'وێنەکە تەماویە. تکایە وێنەیەکی ڕوونتر ئەپلۆد بکە.';
+              return;
+            }
 
+            // Load image into OpenCV
+            const src = cv.imread(canvas);
+            const gray = new cv.Mat();
+            const blurred = new cv.Mat();
+            const thresh = new cv.Mat();
+
+            // Convert to grayscale
+            cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+            // Apply Gaussian Blur to reduce noise
+            cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
+            // Apply adaptive thresholding to binarize
+            cv.adaptiveThreshold(blurred, thresh, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
+
+            // Find contours to locate digit area
+            const contours = new cv.MatVector();
+            const hierarchy = new cv.Mat();
+            cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+            let digitArea = null;
+            for (let i = 0; i < contours.size(); i++) {
+              const contour = contours.get(i);
+              const rect = cv.boundingRect(contour);
+              const aspectRatio = rect.width / rect.height;
+              // Look for a wide rectangular area (likely the digit region)
+              if (rect.width > rect.height && aspectRatio > 3 && aspectRatio < 6 && rect.width > img.width * 0.3) {
+                digitArea = rect;
+                break;
+              }
+            }
+
+            if (!digitArea) {
+              document.getElementById('ocrError').textContent = 'نەتوانرا ناوچەی رەقەمەکان بدۆزرێتەوە. تکایە وێنەیەکی ڕوونتر ئەپلۆد بکە.';
+              src.delete();
+              gray.delete();
+              blurred.delete();
+              thresh.delete();
+              contours.delete();
+              hierarchy.delete();
+              return;
+            }
+
+            // Crop the digit area
             const croppedCanvas = document.createElement('canvas');
             const croppedCtx = croppedCanvas.getContext('2d');
-            croppedCanvas.width = cropWidth;
-            croppedCanvas.height = cropHeight;
-            croppedCtx.drawImage(canvas, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+            croppedCanvas.width = digitArea.width;
+            croppedCanvas.height = digitArea.height;
+            croppedCtx.drawImage(canvas, digitArea.x, digitArea.y, digitArea.width, digitArea.height, 0, 0, digitArea.width, digitArea.height);
 
             // Preprocess the cropped image
             const processedCanvas = preprocessImage(croppedCanvas);
@@ -277,6 +346,14 @@
 
             // Perform OCR
             processImage(processedCanvas);
+
+            // Clean up OpenCV resources
+            src.delete();
+            gray.delete();
+            blurred.delete();
+            thresh.delete();
+            contours.delete();
+            hierarchy.delete();
           };
         };
         reader.readAsDataURL(file);

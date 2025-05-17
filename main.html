@@ -269,24 +269,21 @@
 
           ocrStatus.textContent = "خوێندنەوەی ژمارە بەردەوامە...";
 
-          Tesseract.recognize(
-            e.target.result,
-            'eng',
-            { logger: m => console.log(m) }
-          ).then(({ data: { text } }) => {
-            ocrStatus.textContent = '';
-            const match = text.match(/\d{3,6}/);
-            if (match) {
-              kwhInputAuto.value = match[0];
-              document.getElementById('kwhInput').value = match[0]; // بگۆڕە ناو تێکستبۆکسە سەرەکیەکە
-            } else {
-              ocrError.textContent = "نەیتوانرا ژمارەیەک بدۆزرێتەوە.";
-            }
-          }).catch(err => {
-            ocrStatus.textContent = '';
-            ocrError.textContent = "هەڵەیەک ڕویدا لە کاتی خوێندنەوە.";
-            console.error(err);
-          });
+         Tesseract.recognize(
+  e.target.result,
+  'eng',
+  { logger: m => console.log(m) }
+).then(({ data: { text } }) => {
+  ocrStatus.textContent = '';
+  const match = text.match(/\d{3,6}/);  // دیاریکردنی ژمارەی 3–6 خانە
+  if (match) {
+    kwhInputAuto.value = match[0];
+    document.getElementById('kwhInput').value = match[0]; // زیادکردن بە خۆکار ناو تێکست‌بۆکسەکە
+  } else {
+    ocrError.textContent = "نەیتوانرا ژمارەیەک بدۆزرێتەوە.";
+  }
+});
+
         };
         reader.readAsDataURL(file);
       }

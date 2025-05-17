@@ -3,100 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>چوونە ژوورەوە</title>
+  <title>چوونەژوورەوە</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       font-family: sans-serif;
-      background: linear-gradient(135deg, #b2ebf2, #80deea);
+      background: linear-gradient(to right, #4facfe, #00f2fe);
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      margin: 0;
       direction: rtl;
     }
-
     .login-box {
-      background: white;
-      padding: 40px;
+      background: #fff;
+      padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-      width: 100%;
-      max-width: 400px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       text-align: center;
     }
-
-    h2 {
-      margin-bottom: 20px;
-      color: #006064;
-    }
-
-    input[type="text"] {
+    input {
+      padding: 10px;
       width: 100%;
-      padding: 12px;
       margin-bottom: 20px;
-      border: 1px solid #ccc;
       border-radius: 8px;
+      border: 1px solid #ccc;
       font-size: 16px;
     }
-
     button {
-      background: #006064;
+      padding: 10px 20px;
+      background-color: #0288d1;
       color: white;
-      padding: 12px 24px;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
       cursor: pointer;
-      transition: background 0.3s ease;
-      width: 100%;
+      font-size: 16px;
     }
-
     button:hover {
-      background: #004d40;
-    }
-
-    .error {
-      color: red;
-      margin-top: 10px;
+      background-color: #01579b;
     }
   </style>
 </head>
 <body>
-
   <div class="login-box">
-    <h2>بەخێربێیت</h2>
-    <input type="text" id="guestName" placeholder="ناوی خۆت بنووسە...">
-    <button onclick="login()">چوونە ژوورەوە</button>
-    <p id="error" class="error"></p>
+    <h2>چوونە ژوورەوە</h2>
+    <input type="text" id="username" placeholder="ناو بنووسە (بۆ نموونە: میوان)">
+    <button onclick="login()">چوونەژوورەوە</button>
   </div>
 
   <script>
     function login() {
-      const nameInput = document.getElementById("guestName").value.trim();
-      const error = document.getElementById("error");
-
-      if (nameInput === "") {
-        error.textContent = "تکایە ناوەکە بنووسە!";
-        return;
+      const name = document.getElementById('username').value.trim();
+      if (name) {
+        localStorage.setItem("guest", name);
+        window.location.href = "main.html";
+      } else {
+        alert("تکایە ناو بنووسە");
       }
-
-      // پاش چوونە ژوورەوە، ناوەکە بخە ناو localStorage
-      localStorage.setItem("guest", nameInput);
-
-      // گواستنەوە بۆ پەیجی سەرەکی
-      window.location.href = "main.html";
-    }
-
-    // ئەگەر بەکارهێنەر لە ڕابردو login کردبوو، ڕاستەوخۆ بچۆ بەرەو ناوەڕۆک
-    if (localStorage.getItem("guest")) {
-      window.location.href = "main.html";
     }
   </script>
-
 </body>
 </html>

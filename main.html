@@ -259,9 +259,9 @@
           // Initialize Cropper.js
           if (cropper) cropper.destroy();
           cropper = new Cropper(cropperImage, {
-            aspectRatio: NaN,
+            aspectRatio: 5 / 1, // Force a wide rectangle for digits
             viewMode: 1,
-            autoCropArea: 0.8,
+            autoCropArea: 0.5,
             guides: true,
             highlight: true,
             dragMode: 'move',
@@ -281,7 +281,7 @@
       // Convert to grayscale and increase contrast
       for (let i = 0; i < data.length; i += 4) {
         const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        const highContrast = brightness > 128 ? 255 : 0; // Binarize
+        const highContrast = brightness > 100 ? 255 : 0; // Binarize for white digits on black
         data[i] = data[i + 1] = data[i + 2] = highContrast;
       }
 
@@ -294,8 +294,8 @@
       if (!cropper) return;
 
       const canvas = cropper.getCroppedCanvas({
-        width: 600, // Increase resolution for better OCR
-        height: 400
+        width: 800, // Higher resolution for better OCR
+        height: 160
       });
       const autoPreview = document.getElementById('autoPreview');
       const ocrStatus = document.getElementById('ocrStatus');
@@ -320,27 +320,22 @@
       // Perform OCR with Tesseract.js
       Tesseract.recognize(
         processedCanvas,
-        'eng+ara', // Support both English and Arabic numbers
+        'eng', // English for digits
         {
           logger: (m) => console.log(m),
-          tessedit_char_whitelist: '0123456789٠١٢٣٤٥٦٧٨٩', // Restrict to digits
-          tessedit_pagesegmode: 6 // Assume a single uniform block of text
+          tessedit_char_whitelist: '0123456789', // Restrict to digits
+          tessedit_pagesegmode: 6 // Single uniform block of text
         }
       ).then(({ data: { text } }) => {
         ocrStatus.textContent = '';
-        // Normalize Arabic numerals to English
-        const arabicToEnglish = {
-          '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
-          '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
-        };
-        let normalizedText = text.replace(/[٠١٢٣٤٥٦٧٨٩]/g, char => arabicToEnglish[char] || char);
-        const number = normalizedText.match(/\d+/);
+        // Extract only the first 5 digits (ignore the red digit)
+        const number = text.match(/\d{4,5}/);
         if (number) {
           kwhInputAuto.value = number[0];
           document.getElementById('kwhInput').value = number[0]; // Auto-fill manual input
           calculateCost(); // Auto-calculate cost
         } else {
-          ocrError.textContent = 'نەتوانرا ژمارەی kWh بخوێنرێتەوە. تکایە وێنەیەکی ڕوونتر باربکە یان بەشی ژمارەکان بە دروستی هەڵبژێرە.';
+          ocrError.textContent = 'نەتوانرا ژمارەی kWh بخوێنرێتەوە. تکایە تەنها بەشی رەقەمە سپییەکان هەڵبژێرە (بەبێ رەقەمی سور).';
         }
       }).catch((err) => {
         ocrStatus.textContent = '';

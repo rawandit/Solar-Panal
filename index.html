@@ -3,61 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>چوونە ژوورەوە وەک گویست</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+  <title>چوونە ژوورەوە</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Noto Sans Arabic', sans-serif;
-      background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-      min-height: 100vh;
+      font-family: sans-serif;
+      background: linear-gradient(135deg, #b2ebf2, #80deea);
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
       direction: rtl;
     }
 
-    .login-container {
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      width: 100%;
       max-width: 400px;
-      width: 100%;
-      background: #fff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
-
-    .login-container h2 {
       text-align: center;
-      color: #00695c;
-      margin-bottom: 20px;
     }
 
-    .login-container button {
+    h2 {
+      margin-bottom: 20px;
+      color: #006064;
+    }
+
+    input[type="text"] {
       width: 100%;
-      background: #00695c;
-      color: white;
       padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #006064;
+      color: white;
+      padding: 12px 24px;
       border: none;
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
+      transition: background 0.3s ease;
+      width: 100%;
     }
 
-    .login-container button:hover {
+    button:hover {
       background: #004d40;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>بەخێربێیت گویست 👋</h2>
-    <button onclick="continueAsGuest()">چوونە ژوورەوە وەک گویست</button>
+
+  <div class="login-box">
+    <h2>بەخێربێیت</h2>
+    <input type="text" id="guestName" placeholder="ناوی خۆت بنووسە...">
+    <button onclick="login()">چوونە ژوورەوە</button>
+    <p id="error" class="error"></p>
   </div>
 
   <script>
-    function continueAsGuest() {
-      localStorage.setItem("guest", "true");  // تۆمارکردنی گویست
-      window.location.href = "index.html";    // گواستنەوە بۆ پەیجی سەرەکی
+    function login() {
+      const nameInput = document.getElementById("guestName").value.trim();
+      const error = document.getElementById("error");
+
+      if (nameInput === "") {
+        error.textContent = "تکایە ناوەکە بنووسە!";
+        return;
+      }
+
+      // پاش چوونە ژوورەوە، ناوەکە بخە ناو localStorage
+      localStorage.setItem("guest", nameInput);
+
+      // گواستنەوە بۆ پەیجی سەرەکی
+      window.location.href = "main.html";
+    }
+
+    // ئەگەر بەکارهێنەر لە ڕابردو login کردبوو، ڕاستەوخۆ بچۆ بەرەو ناوەڕۆک
+    if (localStorage.getItem("guest")) {
+      window.location.href = "main.html";
     }
   </script>
+
 </body>
 </html>

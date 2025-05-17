@@ -141,6 +141,13 @@
     .cropper-buttons {
       text-align: center;
     }
+
+    .tip {
+      color: #004d40;
+      font-size: 14px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -176,6 +183,7 @@
 
     <!-- خوێندنی ژمارە لە وێنە -->
     <label for="imageUploadAuto" class="upload-label">خوێندنی ژمارەی کۆنترۆڵ لە وێنە</label>
+    <p class="tip">تکایە وێنەیەکی ڕوون ئەپلۆد بکە بەبێ تیشک یان شەوەی زۆر، وە تەنها بەشی رەقەمە سپییەکان هەڵبژێرە.</p>
     <input type="file" id="imageUploadAuto" accept="image/*">
     <div id="cropperContainer" class="cropper-container">
       <img id="cropperImage" style="max-width: 100%; display: none;">
@@ -191,6 +199,7 @@
 
     <p id="ocrStatus" class="loading"></p>
     <p id="ocrError" class="error"></p>
+    <p class="tip">ئەگەر ژمارەکان بە دروستی نەخوێندرانەوە، دەتوانیت Google Cloud Vision API بەکاربهێنیت بۆ وردییەکی باشتر: <a href="https://cloud.google.com/vision" target="_blank">زیاتر بزانە</a></p>
   </div>
 
   <script>
@@ -256,16 +265,26 @@
           cropperImage.style.display = 'block';
           document.getElementById('cropperButtons').style.display = 'block';
 
-          // Initialize Cropper.js
+          // Initialize Cropper.js with auto-selection for digits
           if (cropper) cropper.destroy();
           cropper = new Cropper(cropperImage, {
-            aspectRatio: 5 / 1, // Force a wide rectangle for digits
+            aspectRatio: 5 / 1, // Wide rectangle for digits
             viewMode: 1,
             autoCropArea: 0.5,
             guides: true,
             highlight: true,
             dragMode: 'move',
-            cropBoxResizable: true
+            cropBoxResizable: true,
+            ready: function() {
+              // Auto-select the middle area where digits are likely to be
+              const containerData = cropper.getContainerData();
+              cropper.setCropBoxData({
+                left: containerData.width * 0.2, // Start 20% from the left
+                top: containerData.height * 0.3, // Start 30% from the top
+                width: containerData.width * 0.6, // 60% of the width
+                height: containerData.height * 0.2 // 20% of the height
+              });
+            }
           });
         };
         reader.readAsDataURL(file);
@@ -328,18 +347,24 @@
         }
       ).then(({ data: { text } }) => {
         ocrStatus.textContent = '';
-        // Extract only the first 5 digits (ignore the red digit)
+        // Extract only the first 4 or 5 digits (ignore the red digit)
         const number = text.match(/\d{4,5}/);
         if (number) {
-          kwhInputAuto.value = number[0];
-          document.getElementById('kwhInput').value = number[0]; // Auto-fill manual input
-          calculateCost(); // Auto-calculate cost
+          const extractedNumber = number[0];
+          // Validate the number of digits
+          if (extractedNumber.length === 4 || extractedNumber.length === 5) {
+            kwhInputAuto.value = extractedNumber;
+            document.getElementById('kwhInput').value = extractedNumber; // Auto-fill manual input
+            calculateCost(); // Auto-calculate cost
+          } else {
+            ocrError.textContent = 'ژمارەی خوێندراوە ٤ یان ٥ رەقەمی دەبێت. تکایە دووبارە هەوڵبدە یان وێنەیەکی ڕوونتر ئەپلۆد بکە.';
+          }
         } else {
           ocrError.textContent = 'نەتوانرا ژمارەی kWh بخوێنرێتەوە. تکایە تەنها بەشی رەقەمە سپییەکان هەڵبژێرە (بەبێ رەقەمی سور).';
         }
       }).catch((err) => {
         ocrStatus.textContent = '';
-        ocrError.textContent = 'هەڵەیەک لە خوێندنەوەی وێنە ڕوویدا. تکایە دووبارە هەوڵبدە.';
+        ocrError.textContent = 'هەڵەیەک لە خوێندنەوەی وێنە ڕوویدا. تکایە دووبارە هەوڵبدە یان وێنەیەکی ڕوونتر ئەپلۆد بکە.';
         console.error(err);
       });
 

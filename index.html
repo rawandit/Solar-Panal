@@ -3,70 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>بژمێری خەملاندنی پسووڵەی کارەبا</title>
+  <title>بژمێری پسووڵە و وێنەکان</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Noto Sans Arabic', sans-serif;
       background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       padding: 20px;
       direction: rtl;
     }
+
     .container {
-      background: white;
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
       border-radius: 16px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      padding: 30px;
-      max-width: 700px;
-      width: 100%;
-      transition: transform 0.3s ease;
     }
-    .container:hover { transform: translateY(-5px); }
+
     h1 {
       text-align: center;
       color: #00695c;
       font-size: 28px;
-      margin-bottom: 10px;
-    }
-    .developer {
-      text-align: center;
-      color: #555;
-      font-size: 16px;
       margin-bottom: 20px;
     }
-    .input-group {
-      margin-bottom: 20px;
-    }
+
     label {
       display: block;
       margin-bottom: 8px;
       color: #004d40;
       font-weight: bold;
     }
-    input[type="text"], select {
+
+    select, input[type="text"], input[type="file"] {
       width: 100%;
       padding: 12px;
+      margin-bottom: 20px;
       border: 2px solid #b0bec5;
       border-radius: 8px;
       font-size: 16px;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
-    input[type="text"]:focus, select:focus {
-      border-color: #00695c;
-      box-shadow: 0 0 8px rgba(0, 105, 92, 0.2);
-      outline: none;
-    }
-    .button-group {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
+
     button {
       background: #00695c;
       color: white;
@@ -75,137 +60,123 @@
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
+      transition: background 0.3s ease;
+      margin: 10px 0;
     }
+
     button:hover {
       background: #004d40;
-      transform: scale(1.05);
     }
-    .reset-btn {
-      background: #d81b60;
+
+    .result, .preview-list {
+      margin-top: 20px;
     }
-    .reset-btn:hover {
-      background: #b71c1c;
-    }
-    .result {
-      background: #f5f5f5;
-      padding: 20px;
-      border-radius: 8px;
-      font-size: 16px;
-      text-align: center;
-    }
+
     .total {
       font-weight: bold;
       font-size: 18px;
       color: #00695c;
       margin-top: 15px;
     }
+
     .error {
       color: #d32f2f;
       font-weight: bold;
       text-align: center;
       margin-top: 15px;
     }
-    .stats {
-      margin-top: 20px;
-      background: #e0f2f1;
-      padding: 15px;
+
+    .preview-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      background: #f9f9f9;
+      padding: 10px;
       border-radius: 10px;
-      text-align: center;
     }
-    .visit-count, .online-count {
-      font-size: 16px;
-      color: #004d40;
+
+    .preview-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .timestamp {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .upload-label {
+      display: inline-block;
+      background: #00695c;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
       margin-bottom: 10px;
     }
-    @media (max-width: 500px) {
-      .container { padding: 20px; }
-      h1 { font-size: 24px; }
-      button {
-        padding: 10px 20px;
-        font-size: 14px;
-      }
+
+    #imageUpload {
+      display: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>بژمێری خەملاندنی پسووڵەی کارەبا</h1>
-    <p class="developer">گەشەپێدراوە لەلایەن: رەوەند عومەر عەوێنەیی</p>
+    <h1>بژمێری پسووڵە و وێنەکان</h1>
 
-    <div class="input-group">
-      <label for="categorySelect">جۆری پسووڵە هەڵبژێرە:</label>
-      <select id="categorySelect">
-        <option value="residential">ماڵان</option>
-        <option value="commercial">بازرگانی</option>
-        <option value="small_industry">پیشەسازی بچووک</option>
-        <option value="large_commercial">بازرگانی گەورە</option>
-        <option value="agriculture">کشتوکاڵ</option>
-      </select>
-    </div>
+    <label for="categorySelect">جۆری پسووڵە:</label>
+    <select id="categorySelect">
+      <option value="residential">ماڵان</option>
+      <option value="commercial">بازرگانی</option>
+      <option value="small_industry">پیشەسازی بچووک</option>
+      <option value="large_commercial">بازرگانی گەورە</option>
+      <option value="agriculture">کشتوکاڵ</option>
+    </select>
 
-    <div class="input-group">
-      <label for="kwhInput">kWh بنووسە:</label>
-      <input type="text" id="kwhInput" placeholder="ژمارەی kWh بنووسە">
-    </div>
+    <label for="kwhInput">kWh بنووسە:</label>
+    <input type="text" id="kwhInput" placeholder="ژمارەی kWh">
 
-    <div class="button-group">
-      <button onclick="calculateCost()">خەملاندن</button>
-      <button class="reset-btn" onclick="resetForm()">ڕیسێتکردن</button>
-    </div>
+    <button onclick="calculateCost()">خەملاندن</button>
+    <p id="totalCost" class="total">کۆی گشتی پسووڵە: ٠ دینار</p>
+    <p id="error" class="error"></p>
 
-    <div class="result">
-      <p id="totalCost" class="total">کۆی گشتی پسووڵە: ٠ دینار</p>
-      <p id="error" class="error"></p>
+    <hr style="margin: 30px 0;">
 
-      <div class="stats">
-        <p id="visitCounter" class="visit-count">ژمارەی سەردانت لەم ڕاگێڕەدا: ...</p>
-        <p id="onlineUsers" class="online-count">بەکارهێنەری ئۆنلاین: ...</p>
-      </div>
-    </div>
+    <label for="imageUpload" class="upload-label">زیادکردنی وێنە</label>
+    <input type="file" id="imageUpload" accept="image/*">
+
+    <div id="previewList" class="preview-list"></div>
   </div>
 
   <script>
     function calculateCost() {
-      try {
-        const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
-        const kwh = parseFloat(kwhInput);
-        const category = document.getElementById('categorySelect').value;
+      const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
+      const kwh = parseFloat(kwhInput);
+      const category = document.getElementById('categorySelect').value;
 
-        if (isNaN(kwh) || kwhInput === '') {
-          showError('تکایە ژمارەیەکی دروست بۆ kWh بنووسە!');
-          return;
-        }
-
-        let cost = 0;
-
-        if (category === 'residential') {
-          if (kwh > 0) cost += Math.min(kwh, 400) * 72;
-          if (kwh > 400) cost += Math.min(kwh - 400, 400) * 108;
-          if (kwh > 800) cost += Math.min(kwh - 800, 400) * 175;
-          if (kwh > 1200) cost += Math.min(kwh - 1200, 400) * 265;
-          if (kwh > 1600) cost += (kwh - 1600) * 350;
-        } else if (category === 'commercial') {
-          cost = kwh * 185;
-        } else if (category === 'small_industry') {
-          cost = kwh * 160;
-        } else if (category === 'large_commercial') {
-          cost = kwh * 125;
-        } else if (category === 'agriculture') {
-          cost = kwh * 60;
-        }
-
-        document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
-        document.getElementById('error').textContent = '';
-      } catch (e) {
-        showError(`هەڵەیەک ڕوویدا: ${e.message}`);
+      if (isNaN(kwh) || kwhInput === '') {
+        showError('تکایە ژمارەیەکی دروست بنووسە!');
+        return;
       }
-    }
 
-    function resetForm() {
-      document.getElementById('kwhInput').value = '';
-      document.getElementById('categorySelect').value = 'residential';
-      document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
+      let cost = 0;
+
+      if (category === 'residential') {
+        if (kwh > 0) cost += Math.min(kwh, 400) * 72;
+        if (kwh > 400) cost += Math.min(kwh - 400, 400) * 108;
+        if (kwh > 800) cost += Math.min(kwh - 800, 400) * 175;
+        if (kwh > 1200) cost += Math.min(kwh - 1200, 400) * 265;
+        if (kwh > 1600) cost += (kwh - 1600) * 350;
+      } else if (category === 'commercial') cost = kwh * 185;
+      else if (category === 'small_industry') cost = kwh * 160;
+      else if (category === 'large_commercial') cost = kwh * 125;
+      else if (category === 'agriculture') cost = kwh * 60;
+
+      document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
       document.getElementById('error').textContent = '';
     }
 
@@ -218,43 +189,43 @@
       document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
     }
 
-    // سەردان و ئۆنلاین
-    (function () {
-      if (!localStorage.getItem('visited')) {
-        let count = parseInt(localStorage.getItem('visitCount') || '0');
-        count += 1;
-        localStorage.setItem('visitCount', count.toString());
-        localStorage.setItem('visited', 'true');
+    // وێنە
+    const imageUpload = document.getElementById('imageUpload');
+    const previewList = document.getElementById('previewList');
+
+    imageUpload.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const previewItem = document.createElement('div');
+          previewItem.classList.add('preview-item');
+
+          const img = document.createElement('img');
+          img.src = e.target.result;
+
+          const timestamp = document.createElement('div');
+          timestamp.classList.add('timestamp');
+
+          const now = new Date();
+          const dateString = now.toLocaleString('ku-KU', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          timestamp.textContent = `بەروار: ${dateString}`;
+
+          previewItem.appendChild(img);
+          previewItem.appendChild(timestamp);
+
+          previewList.insertBefore(previewItem, previewList.firstChild);
+        };
+        reader.readAsDataURL(file);
       }
-
-      function updateOnlineUsers() {
-        const id = 'user_' + Date.now();
-        sessionStorage.setItem('onlineUserId', id);
-        localStorage.setItem(id, Date.now());
-
-        for (let key in localStorage) {
-          if (key.startsWith('user_')) {
-            const lastSeen = parseInt(localStorage.getItem(key));
-            if (Date.now() - lastSeen > 10000) {
-              localStorage.removeItem(key);
-            }
-          }
-        }
-
-        let count = 0;
-        for (let key in localStorage) {
-          if (key.startsWith('user_')) count++;
-        }
-
-        document.getElementById('visitCounter').textContent =
-          `ژمارەی سەردانت لەم ڕاگێڕەدا: ${localStorage.getItem('visitCount') || 1}`;
-        document.getElementById('onlineUsers').textContent =
-          `بەکارهێنەری ئۆنلاین: ${count}`;
-      }
-
-      updateOnlineUsers();
-      setInterval(updateOnlineUsers, 5000);
-    })();
+    });
   </script>
 </body>
 </html>

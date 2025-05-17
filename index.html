@@ -1,351 +1,127 @@
 <!DOCTYPE html>
 <html lang="ku">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بژمێری خەملاندنی پسووڵەی کارەبا</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Noto Sans Arabic', sans-serif;
-            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-            min-height: 100vh;
-            padding: 20px;
-            direction: rtl;
-        }
-        .container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            max-width: 700px;
-            margin: auto;
-        }
-        h1, h2, h3 {
-            text-align: center;
-            color: #00695c;
-            margin-bottom: 15px;
-        }
-        .developer {
-            text-align: center;
-            color: #555;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-        .input-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #004d40;
-            font-weight: bold;
-        }
-        input[type="text"], select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #b0bec5;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        input[type="text"]:focus, select:focus {
-            border-color: #00695c;
-            box-shadow: 0 0 8px rgba(0, 105, 92, 0.2);
-            outline: none;
-        }
-        .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        button {
-            background: #00695c;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #004d40;
-        }
-        .reset-btn {
-            background: #d81b60;
-        }
-        .reset-btn:hover {
-            background: #b71c1c;
-        }
-        .result {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .total {
-            font-weight: bold;
-            font-size: 18px;
-            color: #00695c;
-            margin-top: 15px;
-        }
-        .error {
-            color: #d32f2f;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-        .stats {
-            margin-top: 20px;
-            background: #e0f2f1;
-            padding: 15px;
-            border-radius: 10px;
-        }
-        .visit-count, .online-count {
-            font-size: 16px;
-            color: #004d40;
-            margin-bottom: 10px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>کارکردن بە وێنە</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      direction: rtl;
+      padding: 20px;
+      background: #f0f0f0;
+    }
 
-        .ad-section {
-            margin-top: 30px;
-            background: #f0f9f9;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
 
-        .gallery-section {
-            margin-top: 30px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        }
+    .preview {
+      margin-top: 15px;
+      text-align: center;
+    }
 
-        .gallery-section h3 {
-            color: #00695c;
-            margin-bottom: 10px;
-            text-align: center;
-        }
+    img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
 
-        .image-gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-        .image-gallery img {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
+    button {
+      padding: 10px 20px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
 
-        .image-gallery img:hover {
-            transform: scale(1.05);
-        }
+    button:hover {
+      background-color: #004d40;
+    }
 
-        @media (max-width: 500px) {
-            .container {
-                padding: 20px;
-            }
-            h1 {
-                font-size: 24px;
-            }
-            button {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-        }
-    </style>
+    .grayscale {
+      filter: grayscale(100%);
+    }
+
+    .date-text {
+      text-align: center;
+      color: #555;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>بژمێری خەملاندنی پسووڵەی کارەبا</h1>
-        <p class="developer">گەشەپێدراوە لەلایەن: رەوەند عومەر عەوێنەیی</p>
 
-        <div class="input-group">
-            <label for="categorySelect">جۆری پسووڵە هەڵبژێرە:</label>
-            <select id="categorySelect">
-                <option value="residential">ماڵان</option>
-                <option value="commercial">بازرگانی</option>
-                <option value="small_industry">پیشەسازی بچووک</option>
-                <option value="large_commercial">بازرگانی گەورە</option>
-                <option value="agriculture">کشتوکاڵ</option>
-            </select>
-        </div>
+<div class="container">
+  <h2>زیادکردنی وێنە </h2>
 
-        <div class="input-group">
-            <label for="kwhInput">kWh بنووسە:</label>
-            <input type="text" id="kwhInput" placeholder="ژمارەی kWh بنووسە">
-        </div>
+  <input type="file" accept="image/*" capture="environment" onchange="previewImage(event)">
+  
+  <div class="preview">
+    <img id="selectedImage" alt="وێنە پیشاندراوە" style="display: none;">
+  </div>
 
-        <div class="button-group">
-            <button onclick="calculateCost()">خەملاندن</button>
-            <button class="reset-btn" onclick="resetForm()">ڕیسێتکردن</button>
-        </div>
+  <div class="button-group">
+    <button onclick="convertToAd()">ئەم وێنەیە بیکەرەوە بۆ ئاد</button>
+    <button onclick="removeImage()">سڕینەوەی وێنە</button>
+  </div>
 
-        <div class="result">
-            <p id="totalCost" class="total">کۆی گشتی پسووڵە: ٠ دینار</p>
-            <p id="error" class="error"></p>
-            <div class="stats">
-                <p id="visitCounter" class="visit-count">ژمارەی سەردانت: ...</p>
-                <p id="onlineUsers" class="online-count">ئۆنلاین: ...</p>
-            </div>
-        </div>
+  <div class="date-text" id="dateDisplay"></div>
+</div>
 
-        <div class="ad-section">
-            <h2>ئاد / ڕیکلام</h2>
-            <img id="adImage" src="" alt="وێنەی ئاد" style="max-width: 100%; border-radius: 10px; margin-bottom: 10px; display: none;">
-            <p id="adDate" style="color: #00796b; font-weight: bold; margin-bottom: 10px; display: none;"></p>
-            <div class="button-group">
-                <button onclick="triggerImageUpload()">وێنە بگرە</button>
-                <button onclick="showAd()">وێنەی ئاد پیشان بدە</button>
-            </div>
-            <input type="file" id="imageUploader" accept="image/*" capture="environment" style="display: none;">
-        </div>
+<script>
+  function previewImage(event) {
+    const image = document.getElementById('selectedImage');
+    image.src = URL.createObjectURL(event.target.files[0]);
+    image.style.display = 'block';
+    image.classList.remove('grayscale');
+    document.getElementById('dateDisplay').textContent = '';
+  }
 
-        <div class="gallery-section">
-            <h3>وێنەکان</h3>
-            <div id="imageGallery" class="image-gallery"></div>
-        </div>
-    </div>
+  function convertToAd() {
+    const image = document.getElementById('selectedImage');
+    if (image.src) {
+      const date = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('dateDisplay').textContent = `ئەم وێنەیە لە بەرواری: ${date.toLocaleDateString('ku-IQ', options)}`;
+    } else {
+      alert('تکایە وێنەیەک هەڵبژێرە!');
+    }
+  }
 
-    <script>
-        function calculateCost() {
-            try {
-                const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
-                const kwh = parseFloat(kwhInput);
-                const category = document.getElementById('categorySelect').value;
-                if (isNaN(kwh) || kwhInput === '') {
-                    showError('تکایە ژمارەیەکی دروست بۆ kWh بنووسە!');
-                    return;
-                }
-                let cost = 0;
-                if (category === 'residential') {
-                    if (kwh > 0) cost += Math.min(kwh, 400) * 72;
-                    if (kwh > 400) cost += Math.min(kwh - 400, 400) * 108;
-                    if (kwh > 800) cost += Math.min(kwh - 800, 400) * 175;
-                    if (kwh > 1200) cost += Math.min(kwh - 1200, 400) * 265;
-                    if (kwh > 1600) cost += (kwh - 1600) * 350;
-                } else if (category === 'commercial') cost = kwh * 185;
-                else if (category === 'small_industry') cost = kwh * 160;
-                else if (category === 'large_commercial') cost = kwh * 125;
-                else if (category === 'agriculture') cost = kwh * 60;
+  function makeBlackAndWhite() {
+    const image = document.getElementById('selectedImage');
+    if (image.src) {
+      image.classList.add('grayscale');
+    } else {
+      alert('تکایە وێنەیەک یەکەم بینە!');
+    }
+  }
 
-                document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
-                document.getElementById('error').textContent = '';
-            } catch (e) {
-                showError(`هەڵەیەک ڕوویدا: ${e.message}`);
-            }
-        }
+  function removeImage() {
+    const image = document.getElementById('selectedImage');
+    image.src = '';
+    image.style.display = 'none';
+    image.classList.remove('grayscale');
+    document.getElementById('dateDisplay').textContent = '';
+  }
+</script>
 
-        function resetForm() {
-            document.getElementById('kwhInput').value = '';
-            document.getElementById('categorySelect').value = 'residential';
-            document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
-            document.getElementById('error').textContent = '';
-        }
-
-        function formatNumber(number) {
-            return Math.round(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
-
-        function showError(message) {
-            document.getElementById('error').textContent = message;
-            document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
-        }
-
-        function triggerImageUpload() {
-            const uploader = document.getElementById('imageUploader');
-            uploader.setAttribute('capture', 'environment');
-            uploader.click();
-        }
-
-        document.getElementById('imageUploader').addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const img = document.getElementById('adImage');
-                    img.src = e.target.result;
-                    img.style.display = 'block';
-
-                    const now = new Date();
-                    const formattedDate = now.toLocaleDateString('ku-KU', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                    const dateLabel = document.getElementById('adDate');
-                    dateLabel.textContent = `بەرواری ئاد: ${formattedDate}`;
-                    dateLabel.style.display = 'block';
-
-                    const gallery = document.getElementById('imageGallery');
-                    const newImage = document.createElement('img');
-                    newImage.src = e.target.result;
-                    gallery.appendChild(newImage);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        function showAd() {
-            const img = document.getElementById('adImage');
-            if (img.src && img.src !== window.location.href) {
-                img.style.display = 'block';
-                document.getElementById('adDate').style.display = 'block';
-            } else {
-                alert('تکایە یەکەم وێنە بگرە بۆ ئاد.');
-            }
-        }
-
-        (function () {
-            if (!localStorage.getItem('visited')) {
-                let count = parseInt(localStorage.getItem('visitCount') || '0');
-                count += 1;
-                localStorage.setItem('visitCount', count.toString());
-                localStorage.setItem('visited', 'true');
-            }
-
-            function updateOnlineUsers() {
-                const id = 'user_' + Date.now();
-                sessionStorage.setItem('onlineUserId', id);
-                localStorage.setItem(id, Date.now());
-
-                for (let key in localStorage) {
-                    if (key.startsWith('user_')) {
-                        const lastSeen = parseInt(localStorage.getItem(key));
-                        if (Date.now() - lastSeen > 10000) {
-                            localStorage.removeItem(key);
-                        }
-                    }
-                }
-
-                let count = 0;
-                for (let key in localStorage) {
-                    if (key.startsWith('user_')) count++;
-                }
-
-                document.getElementById('visitCounter').textContent =
-                    `ژمارەی سەردانت: ${localStorage.getItem('visitCount') || 1}`;
-                document.getElementById('onlineUsers').textContent =
-                    `ئۆنلاین: ${count}`;
-            }
-
-            updateOnlineUsers();
-            setInterval(updateOnlineUsers, 5000);
-        })();
-    </script>
 </body>
 </html>

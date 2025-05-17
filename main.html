@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="ku">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>بژمێری پسووڵە و وێنەکان</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
   <style>
     * {
@@ -133,6 +132,15 @@
     #imageUpload, #imageUploadAuto {
       display: none;
     }
+
+    .cropper-container {
+      max-width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .cropper-buttons {
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -169,6 +177,13 @@
     <!-- خوێندنی ژمارە لە وێنە -->
     <label for="imageUploadAuto" class="upload-label">خوێندنی ژمارەی کۆنترۆڵ لە وێنە</label>
     <input type="file" id="imageUploadAuto" accept="image/*">
+    <div id="cropperContainer" class="cropper-container">
+      <img id="cropperImage" style="max-width: 100%; display: none;">
+    </div>
+    <div id="cropperButtons" class="cropper-buttons" style="display: none;">
+      <button onclick="cropImage()">بڕینی وێنە</button>
+      <button onclick="cancelCrop()">هەڵوەشاندنەوە</button>
+    </div>
     <div id="autoPreview" class="preview-list"></div>
 
     <label for="kwhInputAuto">kWh بخوێنرێتەوە:</label>
@@ -179,7 +194,135 @@
   </div>
 
   <script>
-    // JavaScript handling and OCR code would go here
+    // Rates per kWh in IQD (modify as needed)
+    const rates = {
+      residential: 50,        // 50 IQD per kWh
+      commercial: 100,        // 100 IQD per kWh
+      small_industry: 150,    // 150 IQD per kWh
+      large_commercial: 200,  // 200 IQD per kWh
+      agriculture: 30         // 30 IQD per kWh
+    };
+
+    let cropper;
+
+    // Calculate cost based on category and kWh
+    function calculateCost() {
+      const category = document.getElementById('categorySelect').value;
+      const kwhInput = document.getElementById('kwhInput').value;
+      const totalCostElement = document.getElementById('totalCost');
+      const errorElement = document.getElementById('error');
+
+      errorElement.textContent = '';
+      totalCostElement.textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
+
+      if (!kwhInput || isNaN(kwhInput) || kwhInput < 0) {
+        errorElement.textContent = 'تکایە ژمارەی kWh دروست بنووسە';
+        return;
+      }
+
+      const kwh = parseFloat(kwhInput);
+      const cost = kwh * rates[category];
+      totalCostElement.textContent = `کۆی گشتی پسووڵە: ${cost.toLocaleString()} دینار`;
+    }
+
+    // Handle manual image upload and preview
+    document.getElementById('imageUpload').addEventListener('change', function(event) {
+      const files = event.target.files;
+      const previewList = document.getElementById('previewList');
+
+      for (let file of files) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const previewItem = document.createElement('div');
+          previewItem.className = 'preview-item';
+          previewItem.innerHTML = `
+            <img src="${e.target.result}" alt="Preview">
+            <p class="timestamp">${new Date().toLocaleString('ku')}</p>
+          `;
+          previewList.appendChild(previewItem);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Handle auto image upload with cropping
+    document.getElementById('imageUploadAuto').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const cropperImage = document.getElementById('cropperImage');
+          cropperImage.src = e.target.result;
+          cropperImage.style.display = 'block';
+          document.getElementById('cropperButtons').style.display = 'block';
+
+          // Initialize Cropper.js
+          if (cropper) cropper.destroy();
+          cropper = new Cropper(cropperImage, {
+            aspectRatio: NaN,
+            viewMode: 1,
+            autoCropArea: 0.8
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Crop image and process with OCR
+    function cropImage() {
+      if (!cropper) return;
+
+      const canvas = cropper.getCroppedCanvas();
+      const autoPreview = document.getElementById('autoPreview');
+      const ocrStatus = document.getElementById('ocrStatus');
+      const ocrError = document.getElementById('ocrError');
+      const kwhInputAuto = document.getElementById('kwhInputAuto');
+
+      ocrStatus.textContent = 'چاوەڕوانبە...';
+      ocrError.textContent = '';
+
+      // Add cropped image to preview
+      const previewItem = document.createElement('div');
+      previewItem.className = 'preview-item';
+      previewItem.innerHTML = `
+        <img src="${canvas.toDataURL()}" alt="Cropped Preview">
+        <p class="timestamp">${new Date().toLocaleString('ku')}</p>
+      `;
+      autoPreview.appendChild(previewItem);
+
+      // Perform OCR with Tesseract.js
+      Tesseract.recognize(
+        canvas,
+        'eng',
+        { logger: (m) => console.log(m) }
+      ).then(({ data: { text } }) => {
+        ocrStatus.textContent = '';
+        const number = text.match(/\d+/);
+        if (number) {
+          kwhInputAuto.value = number[0];
+          calculateCost(); // Auto-calculate cost with OCR result
+        } else {
+          ocrError.textContent = 'نەتوانرا ژمارەی kWh بخوێنرێتەوە';
+        }
+      }).catch((err) => {
+        ocrStatus.textContent = '';
+        ocrError.textContent = 'هەڵەیەک لە خوێندنەوەی وێنە ڕوویدا';
+        console.error(err);
+      });
+
+      // Reset cropper
+      cropper.destroy();
+      document.getElementById('cropperImage').style.display = 'none';
+      document.getElementById('cropperButtons').style.display = 'none';
+    }
+
+    // Cancel cropping
+    function cancelCrop() {
+      if (cropper) cropper.destroy();
+      document.getElementById('cropperImage').style.display = 'none';
+      document.getElementById('cropperButtons').style.display = 'none';
+      document.getElementById('imageUploadAuto').value = '';
+    }
   </script>
 </body>
 </html>

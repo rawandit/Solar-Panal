@@ -175,43 +175,39 @@
   </div>
 
   <script>
-    function calculateCost() {
-      const kwh = parseFloat(document.getElementById('kwhInput').value);
+   function calculateCost() {
+      const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
+      const kwh = parseFloat(kwhInput);
       const category = document.getElementById('categorySelect').value;
-      const errorElem = document.getElementById('error');
-      const totalElem = document.getElementById('totalCost');
 
-      if (isNaN(kwh) || kwh < 0) {
-        errorElem.textContent = 'تکایە ژمارەی دروست بنوسە';
-        totalElem.textContent = '';
+      if (isNaN(kwh) || kwhInput === '') {
+        showError('تکایە ژمارەیەکی دروست بنووسە!');
         return;
       }
 
-      errorElem.textContent = '';
-      let costPerUnit;
+      let cost = 0;
+      if (category === 'residential') {
+        if (kwh > 0) cost += Math.min(kwh, 400) * 72;
+        if (kwh > 400) cost += Math.min(kwh - 400, 400) * 108;
+        if (kwh > 800) cost += Math.min(kwh - 800, 400) * 175;
+        if (kwh > 1200) cost += Math.min(kwh - 1200, 400) * 265;
+        if (kwh > 1600) cost += (kwh - 1600) * 350;
+      } else if (category === 'commercial') cost = kwh * 185;
+      else if (category === 'small_industry') cost = kwh * 160;
+      else if (category === 'large_commercial') cost = kwh * 125;
+      else if (category === 'agriculture') cost = kwh * 60;
 
-      switch (category) {
-        case 'residential':
-          costPerUnit = 5;
-          break;
-        case 'commercial':
-          costPerUnit = 10;
-          break;
-        case 'small_industry':
-          costPerUnit = 7;
-          break;
-        case 'large_commercial':
-          costPerUnit = 15;
-          break;
-        case 'agriculture':
-          costPerUnit = 3;
-          break;
-        default:
-          costPerUnit = 0;
-      }
+      document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
+      document.getElementById('error').textContent = '';
+    }
 
-      const total = kwh * costPerUnit;
-      totalElem.textContent = `کۆی گشتی پسووڵە: ${total.toLocaleString()} دینار`;
+    function formatNumber(number) {
+      return Math.round(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function showError(message) {
+      document.getElementById('error').textContent = message;
+      document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
     }
 
     const readings = [];

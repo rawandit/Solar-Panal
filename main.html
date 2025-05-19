@@ -110,7 +110,6 @@
       margin-left: 8px;
     }
 
-    /* گۆڕانکاریەکان بۆ وێنە و تێکست بۆکس */
     .meter-reading-section {
       display: flex;
       align-items: center;
@@ -134,7 +133,6 @@
   <div class="container">
     <h1>بژمێری پسووڵە</h1>
 
-    <!-- جۆری پسووڵە -->
     <label for="categorySelect">جۆری پسووڵە:</label>
     <select id="categorySelect">
       <option value="residential">ماڵان</option>
@@ -144,14 +142,12 @@
       <option value="agriculture">کشتوکاڵ</option>
     </select>
 
-    <!-- kWh -->
     <label for="kwhInput">داخلکردنی کیلۆوات:</label>
     <input type="text" id="kwhInput" placeholder="ژمارەی بژمێر">
     <button onclick="calculateCost()">خەملاندن</button>
     <p id="totalCost" class="total">کۆی گشتی پسووڵە: ٠ دینار</p>
     <p id="error" class="error"></p>
 
-    <!-- بۆ زیادکردنی بە ژمارە -->
     <label for="readingInput">
       <img src="https://cdn-icons-png.flaticon.com/512/545/545682.png" alt="وێنە" class="inline-image">
       داخلکردنی ژمارەى بژمێر:
@@ -160,8 +156,8 @@
       <div class="meter-input-container">
         <input type="text" id="readingInput" placeholder="ژمارەی بژمێر بۆ هەڵگرتن">
       </div>
-      <a href="https://drive.google.com/uc?export=view&id=1ODxuAXSVV-zWfhwCKcWwgftt1d4jI09e" target="_blank">
-        <img src="https://drive.google.com/uc?export=view&id=1ODxuAXSVV-zWfhwCKcWwgftt1d4jI09e" alt="نموونەی بژمێر" class="meter-example-image">
+      <a href="https://i.imgur.com/dSj4lpW.jpg" target="_blank">
+        <img src="https://i.imgur.com/dSj4lpW.jpg" alt="نموونەی بژمێر" class="meter-example-image">
       </a>
     </div>
     <button onclick="addMeterReading()">هەڵگرتن</button>
@@ -175,7 +171,7 @@
   </div>
 
   <script>
-   function calculateCost() {
+    function calculateCost() {
       const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
       const kwh = parseFloat(kwhInput);
       const category = document.getElementById('categorySelect').value;

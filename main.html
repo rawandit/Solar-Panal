@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -472,9 +471,9 @@
       <p data-lang="ku">کۆی گشتی ژمارە تۆمارکراوەکان: <span id="totalReadings">0</span></p>
       <p data-lang="ar" style="display: none;">إجمالي القراءات المسجلة: <span id="totalReadings">0</span></p>
       <p data-lang="en" style="display: none;">Total Recorded Readings: <span id="totalReadings">0</span></p>
-      <p data-lang="ku">کۆی گشتی کیلۆواتەکان: <span id="totalKwh">0</span></p>
-      <p data-lang="ar" style="display: none;">إجمالي الكيلوواط: <span id="totalKwh">0</span></p>
-      <p data-lang="en" style="display: none;">Total kWh: <span id="totalKwh">0</span></p>
+      <p data-lang="ku">کۆی گشتی بەکارهاتووی کیلۆوات: <span id="totalKwh">0</span></p>
+      <p data-lang="ar" style="display: none;">إجمالي الكيلوواط المستخدم: <span id="totalKwh">0</span></p>
+      <p data-lang="en" style="display: none;">Total kWh Used: <span id="totalKwh">0</span></p>
     </div>
 
     <!-- گرافی ئامارەکان -->
@@ -486,7 +485,6 @@
     <p id="differenceResult" class="total" data-lang="ku"></p>
     <p id="differenceResult" class="total" data-lang="ar" style="display: none;"></p>
     <p id="differenceResult" class="total" data-lang="en" style="display: none;"></p>
-    <button onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> <span data-lang="ku">دابەزاندنی PDF</span><span data-lang="ar" style="display: none;">تحميل PDF</span><span data-lang="en" style="display: none;">Download PDF</span></button>
 
     <!-- بەشی پێشنیاری بەکارهێنان -->
     <div class="tips">
@@ -729,8 +727,11 @@
 
     function updateStats() {
       document.getElementById('totalReadings').textContent = readings.length;
-      const totalKwh = readings.reduce((sum, reading) => sum + reading.value, 0);
-      document.getElementById('totalKwh').textContent = totalKwh;
+      let totalKwh = 0;
+      if (readings.length === 2) {
+        totalKwh = readings[1].value - readings[0].value;
+      }
+      document.getElementById('totalKwh').textContent = totalKwh >= 0 ? totalKwh : 0;
     }
 
     function editReading(index) {
@@ -796,8 +797,8 @@
           datasets: [{
             label: getTranslation('kwh_usage'),
             data: data,
-            backgroundColor: '#1a3c34',
-            borderColor: '#0f2a24',
+            backgroundColor: '#000000', // Black color for bars
+            borderColor: '#333333',
             borderWidth: 1
           }]
         },
@@ -813,24 +814,6 @@
           }
         }
       });
-    }
-
-    function downloadPDF() {
-      const element = document.querySelector('.container');
-      const opt = {
-        margin: 0.5,
-        filename: 'Electricity_Bill.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-
-      try {
-        html2pdf().from(element).set(opt).save();
-      } catch (e) {
-        console.error('Error generating PDF:', e);
-        showError(getTranslation('error_pdf'));
-      }
     }
 
     let currentLanguage = 'ku';
@@ -852,9 +835,8 @@
           error_invalid_reading: 'تکایە ژمارەی دروست بنوسە یان ژمارەیەکی نەرێنی نەبێت.',
           error_max_readings: 'تکایە تەنها دوو ژمارە دابنێ لە یەک مانگدا.',
           error_storage: 'هەڵەیەک لە هەڵگرتنی داتا!',
-          error_pdf: 'هەڵەیەک لە دروستکردنی PDF!',
           total_bill: num => `کۆی گشتی پسووڵە: ${num} دینار`,
-          total_kwh: num => `کۆی گشتی کیلۆوات: ${num}`,
+          total_kwh: num => `کۆی گشتی بەکارهاتووی کیلۆوات: ${num}`,
           high_bill_warning: cost => `ئاگاداری: کۆی گشتی پسووڵەکەت زیاترە لە ١٠٠,٠٠٠ دینار (${formatNumber(cost)} دینار)!`,
           reading: 'ژمارە',
           date: 'بەروار',
@@ -870,9 +852,8 @@
           error_invalid_reading: 'يرجى إدخال قراءة صحيحة أو عدم إدخال رقم سالب.',
           error_max_readings: 'يرجى إدخال قراءتين فقط في الشهر.',
           error_storage: 'خطأ في تخزين البيانات!',
-          error_pdf: 'خطأ في إنشاء ملف PDF!',
           total_bill: num => `إجمالي الفاتورة: ${num} دينار`,
-          total_kwh: num => `إجمالي الكيلوواط: ${num}`,
+          total_kwh: num => `إجمالي الكيلوواط المستخدم: ${num}`,
           high_bill_warning: cost => `تحذير: إجمالي الفاتورة يتجاوز ١٠٠,٠٠٠ دينار (${formatNumber(cost)} دينار)!`,
           reading: 'القراءة',
           date: 'التاريخ',
@@ -888,9 +869,8 @@
           error_invalid_reading: 'Please enter a valid reading or avoid negative numbers.',
           error_max_readings: 'Please enter only two readings per month.',
           error_storage: 'Error saving data to storage!',
-          error_pdf: 'Error generating PDF!',
           total_bill: num => `Total Bill: ${num} IQD`,
-          total_kwh: num => `Total kWh: ${num}`,
+          total_kwh: num => `Total kWh Used: ${num}`,
           high_bill_warning: cost => `Warning: Your total bill exceeds 100,000 IQD (${formatNumber(cost)} IQD)!`,
           reading: 'Reading',
           date: 'Date',

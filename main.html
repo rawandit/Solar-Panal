@@ -378,9 +378,9 @@
   </select>
 
   <div class="container">
-    <h1 data-lang="ku">بژمێری پسووڵەی کارەبا</h1>
-    <h1 data-lang="ar" style="display: none;">حاسبة فاتورة الكهرباء</h1>
-    <h1 data-lang="en" style="display: none;">Electricity Bill Calculator</h1>
+    <h1 data-lang="ku">بژمێری پسووڵەی کارەبا، <span id="username">میوان</span>!</h1>
+    <h1 data-lang="ar" style="display: none;">حاسبة فاتورة الكهرباء، <span id="username">میوان</span>!</h1>
+    <h1 data-lang="en" style="display: none;">Electricity Bill Calculator, <span id="username">Guest</span>!</h1>
 
     <!-- بەشی ڕێنمایی -->
     <div class="instructions">
@@ -499,7 +499,7 @@
         <li data-lang="en" style="display: none;">Use non-essential appliances less to reduce electricity consumption.</li>
         <li data-lang="ku">لە شەودا لایتەکان خامۆش بکە کاتێک پێویستت نین.</li>
         <li data-lang="ar" style="display: none;">أطفئ الأضواء ليلاً عندما لا تكون هناك حاجة لها.</li>
-        <li data-lang="en" style="鱷none;">Turn off lights at night when not needed.</li>
+        <li data-lang="en" style="display: none;">Turn off lights at night when not needed.</li>
         <li data-lang="ku">ئامێرە کەم-ئەنێرژییەکان بەکاربهێنە بۆ پاراستنی وزە.</li>
         <li data-lang="ar" style="display: none;">استخدم أجهزة موفرة للطاقة لحفظ الكهرباء.</li>
         <li data-lang="en" style="display: none;">Use energy-efficient appliances to save electricity.</li>
@@ -565,6 +565,12 @@
   </div>
 
   <script>
+    // Load username from localStorage
+    const username = localStorage.getItem('guest') || 'میوان';
+    document.querySelectorAll('#username').forEach(elem => {
+      elem.textContent = username;
+    });
+
     // Initialize readings with error handling
     let readings = [];
     try {

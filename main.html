@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>بژمێری پسووڵە و وێنەکان</title>
+  <title>بژمێری پسووڵەی کارەبا</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -21,6 +24,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      transition: background 0.3s ease;
+    }
+
+    body.dark-mode {
+      background: linear-gradient(135deg, #2c3e50, #4b79a1);
+      color: #e0e0e0;
     }
 
     .container {
@@ -31,6 +40,11 @@
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
       animation: fadeIn 0.5s ease-in;
+    }
+
+    .dark-mode .container {
+      background: #2c3e50;
+      color: #e0e0e0;
     }
 
     @keyframes fadeIn {
@@ -46,12 +60,20 @@
       font-weight: 700;
     }
 
+    .dark-mode h1, .dark-mode h2, .dark-mode h3 {
+      color: #74ebd5;
+    }
+
     label {
       display: block;
       margin-bottom: 10px;
       color: #1a3c34;
       font-weight: 500;
       font-size: 18px;
+    }
+
+    .dark-mode label {
+      color: #e0e0e0;
     }
 
     select, input[type="text"] {
@@ -65,10 +87,20 @@
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
+    .dark-mode select, .dark-mode input[type="text"] {
+      background: #34495e;
+      border-color: #4b79a1;
+      color: #e0e0e0;
+    }
+
     select:focus, input[type="text"]:focus {
       border-color: #1a3c34;
       box-shadow: 0 0 8px rgba(26, 60, 52, 0.2);
       outline: none;
+    }
+
+    .dark-mode select:focus, .dark-mode input[type="text"]:focus {
+      border-color: #74ebd5;
     }
 
     button {
@@ -83,9 +115,18 @@
       margin: 10px 5px 10px 0;
     }
 
+    .dark-mode button {
+      background: #74ebd5;
+      color: #1a3c34;
+    }
+
     button:hover {
       background: #0f2a24;
       transform: translateY(-2px);
+    }
+
+    .dark-mode button:hover {
+      background: #4b79a1;
     }
 
     button:active {
@@ -100,6 +141,10 @@
       text-align: center;
     }
 
+    .dark-mode .total {
+      color: #74ebd5;
+    }
+
     .error {
       color: #d32f2f;
       font-weight: 500;
@@ -108,6 +153,11 @@
       background: #ffebee;
       padding: 10px;
       border-radius: 8px;
+    }
+
+    .dark-mode .error {
+      background: #4b1c1c;
+      color: #ff6b6b;
     }
 
     .record-list {
@@ -128,6 +178,10 @@
       animation: slideIn 0.3s ease;
     }
 
+    .dark-mode .record-item {
+      background: #34495e;
+    }
+
     .record-item:hover {
       transform: translateY(-3px);
     }
@@ -143,6 +197,10 @@
       font-size: 14px;
       color: #555;
       font-weight: 500;
+    }
+
+    .dark-mode .footer {
+      color: #e0e0e0;
     }
 
     .inline-image {
@@ -175,7 +233,7 @@
       transform: scale(1.05);
     }
 
-    .instructions, .faq, .stats {
+    .instructions, .faq, .stats, .tips, .info {
       background: #f1f8e9;
       padding: 25px;
       border-radius: 15px;
@@ -184,25 +242,37 @@
       transition: transform 0.3s ease;
     }
 
-    .instructions:hover, .faq:hover, .stats:hover {
+    .dark-mode .instructions, .dark-mode .faq, .dark-mode .stats, .dark-mode .tips, .dark-mode .info {
+      background: #34495e;
+    }
+
+    .instructions:hover, .faq:hover, .stats:hover, .tips:hover, .info:hover {
       transform: translateY(-5px);
     }
 
-    .instructions h2, .faq h2, .stats h3 {
+    .instructions h2, .faq h2, .stats h3, .tips h2, .info h2 {
       color: #1a3c34;
       margin-bottom: 15px;
       font-weight: 700;
     }
 
-    .instructions ul {
+    .dark-mode .instructions h2, .dark-mode .faq h2, .dark-mode .stats h3, .dark-mode .tips h2, .dark-mode .info h2 {
+      color: #74ebd5;
+    }
+
+    .instructions ul, .tips ul {
       list-style: disc;
       padding-right: 20px;
     }
 
-    .instructions li, .stats p {
+    .instructions li, .stats p, .tips li, .info p {
       margin-bottom: 12px;
       font-size: 16px;
       color: #333;
+    }
+
+    .dark-mode .instructions li, .dark-mode .stats p, .dark-mode .tips li, .dark-mode .info p {
+      color: #e0e0e0;
     }
 
     .faq details {
@@ -218,8 +288,16 @@
       transition: background 0.3s ease;
     }
 
+    .dark-mode .faq summary {
+      color: #74ebd5;
+    }
+
     .faq summary:hover {
       background: #e0f2f1;
+    }
+
+    .dark-mode .faq summary:hover {
+      background: #4b79a1;
     }
 
     .faq p {
@@ -227,6 +305,42 @@
       color: #333;
       background: #fff;
       border-radius: 8px;
+    }
+
+    .dark-mode .faq p {
+      background: #2c3e50;
+      color: #e0e0e0;
+    }
+
+    .chart-container {
+      margin-top: 20px;
+      padding: 20px;
+      background: #f1f8e9;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark-mode .chart-container {
+      background: #34495e;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #1a3c34;
+    }
+
+    .dark-mode .theme-toggle {
+      color: #74ebd5;
+    }
+
+    .language-select {
+      position: absolute;
+      top: 20px;
+      right: 20px;
     }
 
     @media (max-width: 600px) {
@@ -248,97 +362,219 @@
         width: 100%;
         padding: 12px;
       }
+      .theme-toggle, .language-select {
+        position: static;
+        margin: 10px 0;
+      }
     }
   </style>
 </head>
 <body>
+  <i class="fas fa-moon theme-toggle" id="themeToggle" onclick="toggleTheme()"></i>
+  <select class="language-select" id="languageSelect" onchange="changeLanguage()">
+    <option value="ku">کوردی</option>
+    <option value="ar">العربية</option>
+    <option value="en">English</option>
+  </select>
+
   <div class="container">
-    <h1>بژمێری پسووڵەی کارەبا</h1>
+    <h1 data-lang="ku">بژمێری پسووڵەی کارەبا</h1>
+    <h1 data-lang="ar" style="display: none;">حاسبة فاتورة الكهرباء</h1>
+    <h1 data-lang="en" style="display: none;">Electricity Bill Calculator</h1>
 
     <!-- بەشی ڕێنمایی -->
     <div class="instructions">
-      <h2>ڕێنمایی بەکارهێنان</h2>
+      <h2 data-lang="ku">ڕێنمایی بەکارهێنان</h2>
+      <h2 data-lang="ar" style="display: none;">تعليمات الاستخدام</h2>
+      <h2 data-lang="en" style="display: none;">Usage Instructions</h2>
       <ul>
-        <li><strong>جۆری پسووڵە:</strong> جۆری پسووڵە هەڵبژێرە (ماڵان، بازرگانی، هتد) بۆ خەمڵاندنی کۆی گشتی.</li>
-        <li><strong>داخلکردنی کیلۆوات:</strong> ژمارەی کیلۆواتەکان بنووسە، پاشان کلیکی "خەملاندن" بکە.</li>
-        <li><strong>داخلکردنی ژمارەی بژمێر:</strong> ژمارەی پێشوو و ئێستای بژمێر بنووسە، پاشان کلیکی "هەڵگرتن" بکە.</li>
-        <li><strong>وێنەی نموونە:</strong> وێنەکە ببینە بۆ زانینی شێوازی خوێندنەوەی بژمێر.</li>
+        <li data-lang="ku"><strong>جۆری پسووڵە:</strong> جۆری پسووڵە هەڵبژێرە (ماڵان، بازرگانی، هتد) بۆ خەمڵاندنی کۆی گشتی.</li>
+        <li data-lang="ar" style="display: none;"><strong>نوع الفاتورة:</strong> اختر نوع الفاتورة (سكني، تجاري، إلخ) لحساب التكلفة الإجمالية.</li>
+        <li data-lang="en" style="display: none;"><strong>Bill Type:</strong> Select the bill type (residential, commercial, etc.) to calculate the total cost.</li>
+        <li data-lang="ku"><strong>داخلکردنی کیلۆوات:</strong> ژمارەی کیلۆواتەکان بنووسە، پاشان کلیکی "خەملاندن" بکە.</li>
+        <li data-lang="ar" style="display: none;"><strong>إدخال الكيلوواط:</strong> اكتب عدد الكيلوواط، ثم انقر على "حساب".</li>
+        <li data-lang="en" style="display: none;"><strong>Enter kWh:</strong> Enter the number of kilowatts, then click "Calculate".</li>
+        <li data-lang="ku"><strong>داخلکردنی ژمارەی بژمێر:</strong> ژمارەی پێشوو و ئێستای بژمێر بنووسە، پاشان کلیکی "هەڵگرتن" بکە.</li>
+        <li data-lang="ar" style="display: none;"><strong>إدخال قراءة العداد:</strong> اكتب قراءة العداد السابقة والحالية، ثم انقر على "تسجيل".</li>
+        <li data-lang="en" style="display: none;"><strong>Enter Meter Reading:</strong> Enter the previous and current meter readings, then click "Record".</li>
+        <li data-lang="ku"><strong>وێنەی نموونە:</strong> وێنەکە ببینە بۆ زانینی شێوازی خوێندنەوەی بژمێر.</li>
+        <li data-lang="ar" style="display: none;"><strong>صورة نموذجية:</strong> انظر إلى الصورة لمعرفة طريقة قراءة العداد.</li>
+        <li data-lang="en" style="display: none;"><strong>Sample Image:</strong> View the image to learn how to read the meter.</li>
       </ul>
     </div>
 
     <!-- بەشەکانی سەرەکی -->
-    <label for="categorySelect">جۆری پسووڵە:</label>
+    <label for="categorySelect" data-lang="ku">جۆری پسووڵە:</label>
+    <label for="categorySelect" data-lang="ar" style="display: none;">نوع الفاتورة:</label>
+    <label for="categorySelect" data-lang="en" style="display: none;">Bill Type:</label>
     <select id="categorySelect" title="جۆری پسووڵە هەڵبژێرە">
-      <option value="residential">ماڵان</option>
-      <option value="commercial">بازرگانی</option>
-      <option value="small_industry">پیشەسازی بچووک</option>
-      <option value="large_commercial">بازرگانی گەورە</option>
-      <option value="agriculture">کشتوکاڵ</option>
+      <option value="residential" data-lang="ku">ماڵان</option>
+      <option value="residential" data-lang="ar" style="display: none;">سكني</option>
+      <option value="residential" data-lang="en" style="display: none;">Residential</option>
+      <option value="commercial" data-lang="ku">بازرگانی</option>
+      <option value="commercial" data-lang="ar" style="display: none;">تجاري</option>
+      <option value="commercial" data-lang="en" style="display: none;">Commercial</option>
+      <option value="small_industry" data-lang="ku">پیشەسازی بچووک</option>
+      <option value="small_industry" data-lang="ar" style="display: none;">صناعي صغير</option>
+      <option value="small_industry" data-lang="en" style="display: none;">Small Industry</option>
+      <option value="large_commercial" data-lang="ku">بازرگانی گەورە</option>
+      <option value="large_commercial" data-lang="ar" style="display: none;">تجاري كبير</option>
+      <option<MemberExpression object= value="large_commercial" data-lang="en" style="display: none;">Large Commercial</option>
+      <option value="agriculture" data-lang="ku">کشتوکاڵ</option>
+      <option value="agriculture" data-lang="ar" style="display: none;">زراعي</option>
+      <option value="agriculture" data-lang="en" style="display: none;">Agriculture</option>
     </select>
 
-    <label for="kwhInput">داخلکردنی کیلۆوات:</label>
-    <input type="text" id="kwhInput" placeholder="ژمارەی بژمێر">
-    <button onclick="calculateCost()">خەملاندن</button>
-    <p id="totalCost" class="total">کۆی گشتی پسووڵە: ٠ دینار</p>
+    <label for="kwhInput" data-lang="ku">داخلکردنی کیلۆوات:</label>
+    <label for="kwhInput" data-lang="ar" style="display: none;">إدخال الكيلوواط:</label>
+    <label for="kwhInput" data-lang="en" style="display: none;">Enter kWh:</label>
+    <input type="text" id="kwhInput" placeholder="ژمارەی بژمێر" data-lang="ku">
+    <input type="text" id="kwhInput" placeholder="أدخل عدد الكيلوواط" data-lang="ar" style="display: none;">
+    <input type="text" id="kwhInput" placeholder="Enter meter reading" data-lang="en" style="display: none;">
+    <button onclick="calculateCost()"><i class="fas fa-calculator"></i> <span data-lang="ku">خەملاندن</span><span data-lang="ar" style="display: none;">حساب</span><span data-lang="en" style="display: none;">Calculate</span></button>
+    <p id="totalCost" class="total" data-lang="ku">کۆی گشتی پسووڵە: ٠ دینار</p>
+    <p id="totalCost" class="total" data-lang="ar" style="display: none;">إجمالي الفاتورة: ٠ دينار</p>
+    <p id="totalCost" class="total" data-lang="en" style="display: none;">Total Bill: 0 IQD</p>
     <p id="error" class="error"></p>
 
-    <label for="readingInput">
+    <label for="readingInput" data-lang="ku">
       <img src="https://cdn-icons-png.flaticon.com/512/545/545682.png" alt="وێنە" class="inline-image">
       داخلکردنی ژمارەى بژمێر:
     </label>
+    <label for="readingInput" data-lang="ar" style="display: none;">
+      <img src="https://cdn-icons-png.flaticon.com/512/545/545682.png" alt="صورة" class="inline-image">
+      إدخال قراءة العداد:
+    </label>
+    <label for="readingInput" data-lang="en" style="display: none;">
+      <img src="https://cdn-icons-png.flaticon.com/512/545/545682.png" alt="Image" class="inline-image">
+      Enter Meter Reading:
+    </label>
     <div class="meter-reading-section">
       <div class="meter-input-container">
-        <input type="text" id="readingInput" placeholder="ژمارەی بژمێر بۆ هەڵگرتن">
+        <input type="text" id="readingInput" placeholder="ژمارەی بژمێر بۆ هەڵگرتن" data-lang="ku">
+        <input type="text" id="readingInput" placeholder="أدخل قراءة العداد للتسجيل" data-lang="ar" style="display: none;">
+        <input type="text" id="readingInput" placeholder="Enter meter reading to record" data-lang="en" style="display: none;">
       </div>
       <a href="https://i.imgur.com/dSj4lpW.jpg" target="_blank">
         <img src="https://imgur.com/BK7AUiw.jpg" alt="نموونەی بژمێر" class="meter-example-image">
       </a>
     </div>
-    <p>ئەم وێنەیە شێوازی خوێندنەوەی ژمارەی بژمێر نیشان دەدات.</p>
-    <button onclick="addMeterReading()">هەڵگرتن</button>
+    <p data-lang="ku">ئەم وێنەیە شێوازی خوێندنەوەی ژمارەی بژمێر نیشان دەدات.</p>
+    <p data-lang="ar" style="display: none;">تُظهر هذه الصورة طريقة قراءة العداد.</p>
+    <p data-lang="en" style="display: none;">This image shows how to read the meter.</p>
+    <button onclick="addMeterReading()"><i class="fas fa-save"></i> <span data-lang="ku">هەڵگرتن</span><span data-lang="ar" style="display: none;">تسجيل</span><span data-lang="en" style="display: none;">Record</span></button>
 
     <!-- بەشی ئامارەکان -->
     <div class="stats">
-      <h3>ئامارەکان</h3>
-      <p>کۆی گشتی ژمارە تۆمارکراوەکان: <span id="totalReadings">0</span></p>
-      <p>کۆی گشتی کیلۆواتەکان: <span id="totalKwh">0</span></p>
+      <h3 data-lang="ku">ئامارەکان</h3>
+      <h3 data-lang="ar" style="display: none;">الإحصائيات</h3>
+      <h3 data-lang="en" style="display: none;">Statistics</h3>
+      <p data-lang="ku">کۆی گشتی ژمارە تۆمارکراوەکان: <span id="totalReadings">0</span></p>
+      <p data-lang="ar" style="display: none;">إجمالي القراءات المسجلة: <span id="totalReadings">0</span></p>
+      <p data-lang="en" style="display: none;">Total Recorded Readings: <span id="totalReadings">0</span></p>
+      <p data-lang="ku">کۆی گشتی کیلۆواتەکان: <span id="totalKwh">0</span></p>
+      <p data-lang="ar" style="display: none;">إجمالي الكيلوواط: <span id="totalKwh">0</span></p>
+      <p data-lang="en" style="display: none;">Total kWh: <span id="totalKwh">0</span></p>
+    </div>
+
+    <!-- گرافی ئامارەکان -->
+    <div class="chart-container">
+      <canvas id="kwhChart"></canvas>
     </div>
 
     <div id="recordList" class="record-list"></div>
-    <p id="differenceResult" class="total"></p>
+    <p id="differenceResult" class="total" data-lang="ku"></p>
+    <p id="differenceResult" class="total" data-lang="ar" style="display: none;"></p>
+    <p id="differenceResult" class="total" data-lang="en" style="display: none;"></p>
+    <button onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> <span data-lang="ku">دابەزاندنی PDF</span><span data-lang="ar" style="display: none;">تحميل PDF</span><span data-lang="en" style="display: none;">Download PDF</span></button>
+
+    <!-- بەشی پێشنیاری بەکارهێنان -->
+    <div class="tips">
+      <h2 data-lang="ku">پێشنیارەکانی بەکارهێنان</h2>
+      <h2 data-lang="ar" style="display: none;">توصيات الاستخدام</h2>
+      <h2 data-lang="en" style="display: none;">Usage Tips</h2>
+      <ul>
+        <li data-lang="ku">ئامێرە کەرگە نەبووەکان کەمتر بەکاربهێنە بۆ کەمکردنەوەی بەکارهێنانی کارەبا.</li>
+        <li data-lang="ar" style="display: none;">استخدم الأجهزة غير الضرورية بشكل أقل لتقليل استهلاك الكهرباء.</li>
+        <li data-lang="en" style="display: none;">Use non-essential appliances less to reduce electricity consumption.</li>
+        <li data-lang="ku">لە شەودا لایتەکان خامۆش بکە کاتێک پێویستت نین.</li>
+        <li data-lang="ar" style="display: none;">أطفئ الأضواء ليلاً عندما لا تكون هناك حاجة لها.</li>
+        <li data-lang="en" style="display: none;">Turn off lights at night when not needed.</li>
+        <li data-lang="ku">ئامێرە کەم-ئەنێرژییەکان بەکاربهێنە بۆ پاراستنی وزە.</li>
+        <li data-lang="ar" style="display: none;">استخدم أجهزة موفرة للطاقة لحفظ الكهرباء.</li>
+        <li data-lang="en" style="display: none;">Use energy-efficient appliances to save electricity.</li>
+      </ul>
+    </div>
 
     <!-- بەشی FAQ -->
     <div class="faq">
-      <h2>پرسیارە باوەکان</h2>
+      <h2 data-lang="ku">پرسیارە باوەکان</h2>
+      <h2 data-lang="ar" style="display: none;">الأسئلة الشائعة</h2>
+      <h2 data-lang="en" style="display: none;">Frequently Asked Questions</h2>
       <details>
-        <summary>چۆن ژمارەی بژمێر بخوێنم؟</summary>
-        <p>لە بژمێرەکەتدا، ژمارەکان لە سەر شاشەیەک یان ژمارەیەکی میکانیکی دەبینرێت. تەنها ژمارەکان بنووسە بەبێ یەکەکان (kWh).</p>
+        <summary data-lang="ku">چۆن ژمارەی بژمێر بخوێنم؟</summary>
+        <summary data-lang="ar" style="display: none;">كيف أقرأ العداد؟</summary>
+        <summary data-lang="en" style="display: none;">How do I read the meter?</summary>
+        <p data-lang="ku">لە بژمێرەکەتدا، ژمارەکان لە سەر شاشەیەک یان ژمارەیەکی میکانیکی دەبینرێت. تەنها ژمارەکان بنووسە بەبێ یەکەکان (kWh).</p>
+        <p data-lang="ar" style="display: none;">في العداد، تظهر الأرقام على شاشة أو أرقام ميكانيكية. اكتب الأرقام فقط بدون الوحدات (kWh).</p>
+        <p data-lang="en" style="display: none;">On your meter, the numbers appear on a digital or mechanical display. Write down the numbers only without the units (kWh).</p>
       </details>
       <details>
-        <summary>نرخی جۆرەکانی پسووڵە چین؟</summary>
-        <p>
+        <summary data-lang="ku">نرخی جۆرەکانی پسووڵە چین؟</summary>
+        <summary data-lang="ar" style="display: none;">ما هي أسعار أنواع الفواتير؟</summary>
+        <summary data-lang="en" style="display: none;">What are the rates for different bill types?</summary>
+        <p data-lang="ku">
           - ماڵان: ٧٢ دینار بۆ یەکەم ٤٠٠ kWh، ١٠٨ دینار بۆ ٤٠١-٨٠٠، هتد.<br>
           - بازرگانی: ١٨٥ دینار بۆ هەر kWh.<br>
           - پیشەسازی بچووک: ١٦٠ دینار بۆ هەر kWh.<br>
           - بازرگانی گەورە: ١٢٥ دینار بۆ هەر kWh.<br>
           - کشتوکاڵ: ٦٠ دینار بۆ هەر kWh.
         </p>
+        <p data-lang="ar" style="display: none;">
+          - سكني: ٧٢ دينار لأول ٤٠٠ كيلوواط، ١٠٨ دينار لـ ٤٠١-٨٠٠، إلخ.<br>
+          - تجاري: ١٨٥ دينار لكل كيلوواط.<br>
+          - صناعي صغير: ١٦٠ دينار لكل كيلوواط.<br>
+          - تجاري كبير: ١٢٥ دينار لكل كيلوواط.<br>
+          - زراعي: ٦٠ دينار لكل كيلوواط.
+        </p>
+        <p data-lang="en" style="display: none;">
+          - Residential: 72 IQD for the first 400 kWh, 108 IQD for 401-800, etc.<br>
+          - Commercial: 185 IQD per kWh.<br>
+          - Small Industry: 160 IQD per kWh.<br>
+          - Large Commercial: 125 IQD per kWh.<br>
+          - Agriculture: 60 IQD per kWh.
+        </p>
       </details>
+    </div>
+
+    <!-- بەشی سەرچاوەی زانیاری -->
+    <div class="info">
+      <h2 data-lang="ku">سەرچاوەی زانیاری</h2>
+      <h2 data-lang="ar" style="display: none;">مصادر المعلومات</h2>
+      <h2 data-lang="en" style="display: none;">Information Resources</h2>
+      <p data-lang="ku">ئەم بەرنامەیە بەپێی نرخی کارەبای ستانداردەکان دروستکراوە. بۆ زانیاری زیاتر لەسەر چۆنیەتی خوێندنەوەی بژمێر، سەردانی ماڵپەڕی وەزارەتی کارەبا بکە.</p>
+      <p data-lang="ar" style="display: none;">تم تصميم هذا البرنامج بناءً على أسعار الكهرباء القياسية. لمزيد من المعلومات حول كيفية قراءة العداد، قم بزيارة موقع وزارة الكهرباء.</p>
+      <p data-lang="en" style="display: none;">This program is designed based on standard electricity rates. For more information on how to read the meter, visit the Ministry of Electricity's website.</p>
     </div>
   </div>
 
   <div class="footer">
-    ئەم بەرنامەیە دروستکراوە لەلایەن <strong>ڕەوەند عمر عەوێنەیی</strong>
+    <span data-lang="ku">ئەم بەرنامەیە دروستکراوە لەلایەن <strong>ڕەوەند عمر عەوێنەیی</strong></span>
+    <span data-lang="ar" style="display: none;">تم تصميم هذا البرنامج بواسطة <strong>روند عمر عويني</strong></span>
+    <span data-lang="en" style="display: none;">This program was designed by <strong>Rawand Omar Awainai</strong></span>
   </div>
 
   <script>
+    // Load readings from localStorage
+    let readings = JSON.parse(localStorage.getItem('meterReadings')) || [];
+
     function calculateCost() {
       const kwhInput = document.getElementById('kwhInput').value.trim().replace(',', '.');
       const kwh = parseFloat(kwhInput);
       const category = document.getElementById('categorySelect').value;
 
       if (isNaN(kwh) || kwhInput === '') {
-        showError('تکایە ژمارەیەکی دروست بنووسە!');
+        showError(getTranslation('error_invalid_number'));
         return;
       }
 
@@ -354,7 +590,17 @@
       else if (category === 'large_commercial') cost = kwh * 125;
       else if (category === 'agriculture') cost = kwh * 60;
 
-      document.getElementById('totalCost').textContent = `کۆی گشتی پسووڵە: ${formatNumber(cost)} دینار`;
+      // Notification for high bill
+      if (cost > 100000) {
+        showNotification(getTranslation('high_bill_warning', cost));
+      }
+
+      const totalCostElements = document.querySelectorAll('#totalCost');
+      totalCostElements.forEach(elem => {
+        if (elem.getAttribute('data-lang') === currentLanguage) {
+          elem.textContent = getTranslation('total_bill', formatNumber(cost));
+        }
+      });
       document.getElementById('error').textContent = '';
     }
 
@@ -366,13 +612,34 @@
       const errorElem = document.getElementById('error');
       errorElem.innerHTML = `
         <div style="background: #ffebee; padding: 10px; border-radius: 8px;">
-          <strong>هەڵە:</strong> ${message}
+          <strong>${getTranslation('error')}:</strong> ${message}
         </div>
       `;
-      document.getElementById('totalCost').textContent = 'کۆی گشتی پسووڵە: ٠ دینار';
+      const totalCostElements = document.querySelectorAll('#totalCost');
+      totalCostElements.forEach(elem => {
+        if (elem.getAttribute('data-lang') === currentLanguage) {
+          elem.textContent = getTranslation('total_bill', 0);
+        }
+      });
     }
 
-    const readings = [];
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.style.position = 'fixed';
+      notification.style.top = '20px';
+      notification.style.right = '20px';
+      notification.style.background = '#1a3c34';
+      notification.style.color = 'white';
+      notification.style.padding = '15px';
+      notification.style.borderRadius = '8px';
+      notification.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+      notification.style.zIndex = '1000';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.remove();
+      }, 5000);
+    }
 
     function addMeterReading() {
       const input = document.getElementById('readingInput');
@@ -380,7 +647,7 @@
       const errorElem = document.getElementById('error');
 
       if (isNaN(value) || value < 0) {
-        errorElem.innerHTML = '<div style="background: #ffebee; padding: 10px; border-radius: 8px;"><strong>هەڵە:</strong> تکایە ژمارەی دروست بنوسە یان ژمارەیەکی نەرێنی نەبێت.</div>';
+        errorElem.innerHTML = `<div style="background: #ffebee; padding: 10px; border-radius: 8px;"><strong>${getTranslation('error')}:</strong> ${getTranslation('error_invalid_reading')}</div>`;
         return;
       }
 
@@ -388,7 +655,7 @@
       const now = new Date();
 
       if (readings.length >= 2) {
-        errorElem.innerHTML = '<div style="background: #ffebee; padding: 10px; border-radius: 8px;"><strong>هەڵە:</strong> تکایە تەنها دوو ژمارە دابنێ لە یەک مانگدا.</div>';
+        errorElem.innerHTML = `<div style="background: #ffebee; padding: 10px; border-radius: 8px;"><strong>${getTranslation('error')}:</strong> ${getTranslation('error_max_readings')}</div>`;
         return;
       }
 
@@ -398,14 +665,21 @@
         time: now.toLocaleTimeString()
       });
 
+      localStorage.setItem('meterReadings', JSON.stringify(readings));
       input.value = '';
       renderReadings();
+      updateChart();
 
       if (readings.length === 2) {
         const diff = readings[1].value - readings[0].value;
-        document.getElementById('differenceResult').textContent = `کۆی گشتی کیلۆوات: ${diff}`;
+        const differenceResultElements = document.querySelectorAll('#differenceResult');
+        differenceResultElements.forEach(elem => {
+          if (elem.getAttribute('data-lang') === currentLanguage) {
+            elem.textContent = getTranslation('total_kwh', diff);
+          }
+        });
       } else {
-        document.getElementById('differenceResult').textContent = '';
+        document.querySelectorAll('#differenceResult').forEach(elem => elem.textContent = '');
       }
     }
 
@@ -418,12 +692,12 @@
         item.className = 'record-item';
         item.innerHTML = `
           <div>
-            <div>ژمارە: ${reading.value}</div>
-            <div>بەروار: ${reading.date} - ${reading.time}</div>
+            <div>${getTranslation('reading')}: ${reading.value}</div>
+            <div>${getTranslation('date')}: ${reading.date} - ${reading.time}</div>
           </div>
           <div>
-            <button onclick="editReading(${index})">دەستکارى</button>
-            <button onclick="deleteReading(${index})">سرینەوە</button>
+            <button onclick="editReading(${index})"><i class="fas fa-edit"></i> ${getTranslation('edit')}</button>
+            <button onclick="deleteReading(${index})"><i class="fas fa-trash"></i> ${getTranslation('delete')}</button>
           </div>
         `;
         list.appendChild(item);
@@ -439,29 +713,162 @@
     }
 
     function editReading(index) {
-      const newValue = prompt('ژمارەی نوێ داخڵ بکە:', readings[index].value);
+      const newValue = prompt(getTranslation('prompt_new_reading'), readings[index].value);
       if (newValue !== null) {
         const num = parseFloat(newValue);
         if (!isNaN(num) && num >= 0) {
           readings[index].value = num;
+          localStorage.setItem('meterReadings', JSON.stringify(readings));
           renderReadings();
+          updateChart();
           if (readings.length === 2) {
             const diff = readings[1].value - readings[0].value;
-            document.getElementById('differenceResult').textContent = `کۆی گشتی کیلۆوات: ${diff}`;
+            document.querySelectorAll('#differenceResult').forEach(elem => {
+              if (elem.getAttribute('data-lang') === currentLanguage) {
+                elem.textContent = getTranslation('total_kwh', diff);
+              }
+            });
           } else {
-            document.getElementById('differenceResult').textContent = '';
+            document.querySelectorAll('#differenceResult').forEach(elem => elem.textContent = '');
           }
         } else {
-          showError('تکایە ژمارەیەکی دروست بنووسە!');
+          showError(getTranslation('error_invalid_reading'));
         }
       }
     }
 
     function deleteReading(index) {
       readings.splice(index, 1);
+      localStorage.setItem('meterReadings', JSON.stringify(readings));
       renderReadings();
-      document.getElementById('differenceResult').textContent = '';
+      updateChart();
+      document.querySelectorAll('#differenceResult').forEach(elem => elem.textContent = '');
     }
+
+    let chartInstance = null;
+
+    function updateChart() {
+      const ctx = document.getElementById('kwhChart').getContext('2d');
+      const labels = readings.map((r, i) => `${getTranslation('reading')} ${i + 1} (${r.date})`);
+      const data = readings.map(r => r.value);
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: getTranslation('kwh_usage'),
+            data: data,
+            backgroundColor: '#1a3c34',
+            borderColor: '#0f2a24',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: getTranslation('kwh')
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function downloadPDF() {
+      const element = document.querySelector('.container');
+      const opt = {
+        margin: 1,
+        filename: 'Electricity_Bill.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().from(element).set(opt).save();
+    }
+
+    let currentLanguage = 'ku';
+
+    function changeLanguage() {
+      currentLanguage = document.getElementById('languageSelect').value;
+      document.querySelectorAll('[data-lang]').forEach(elem => {
+        elem.style.display = elem.getAttribute('data-lang') === currentLanguage ? 'block' : 'none';
+      });
+      renderReadings();
+      updateChart();
+    }
+
+    function getTranslation(key, param) {
+      const translations = {
+        ku: {
+          error: 'هەڵە',
+          error_invalid_number: 'تکایە ژمارەیەکی دروست بنووسە!',
+          error_invalid_reading: 'تکایە ژمارەی دروست بنوسە یان ژمارەیەکی نەرێنی نەبێت.',
+          error_max_readings: 'تکایە تەنها دوو ژمارە دابنێ لە یەک مانگدا.',
+          total_bill: num => `کۆی گشتی پسووڵە: ${num} دینار`,
+          total_kwh: num => `کۆی گشتی کیلۆوات: ${num}`,
+          high_bill_warning: cost => `ئاگاداری: کۆی گشتی پسووڵەکەت زیاترە لە ١٠٠,٠٠٠ دینار (${formatNumber(cost)} دینار)!`,
+          reading: 'ژمارە',
+          date: 'بەروار',
+          edit: 'دەستکارى',
+          delete: 'سرینەوە',
+          prompt_new_reading: 'ژمارەی نوێ داخڵ بکە:',
+          kwh_usage: 'بەکارهێنانی کیلۆوات',
+          kwh: 'کیلووات'
+        },
+        ar: {
+          error: 'خطأ',
+          error_invalid_number: 'يرجى إدخال رقم صحيح!',
+          error_invalid_reading: 'يرجى إدخال قراءة صحيحة أو عدم إدخال رقم سالب.',
+          error_max_readings: 'يرجى إدخال قراءتين فقط في الشهر.',
+          total_bill: num => `إجمالي الفاتورة: ${num} دينار`,
+          total_kwh: num => `إجمالي الكيلوواط: ${num}`,
+          high_bill_warning: cost => `تحذير: إجمالي الفاتورة يتجاوز ١٠٠,٠٠٠ دينار (${formatNumber(cost)} دينار)!`,
+          reading: 'القراءة',
+          date: 'التاريخ',
+          edit: 'تعديل',
+          delete: 'حذف',
+          prompt_new_reading: 'أدخل القراءة الجديدة:',
+          kwh_usage: 'استهلاك الكيلوواط',
+          kwh: 'كيلوواط'
+        },
+        en: {
+          error: 'Error',
+          error_invalid_number: 'Please enter a valid number!',
+          error_invalid_reading: 'Please enter a valid reading or avoid negative numbers.',
+          error_max_readings: 'Please enter only two readings per month.',
+          total_bill: num => `Total Bill: ${num} IQD`,
+          total_kwh: num => `Total kWh: ${num}`,
+          high_bill_warning: cost => `Warning: Your total bill exceeds 100,000 IQD (${formatNumber(cost)} IQD)!`,
+          reading: 'Reading',
+          date: 'Date',
+          edit: 'Edit',
+          delete: 'Delete',
+          prompt_new_reading: 'Enter new reading:',
+          kwh_usage: 'kWh Usage',
+          kwh: 'kWh'
+        }
+      };
+      return translations[currentLanguage][key](param);
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const themeToggle = document.getElementById('themeToggle');
+      themeToggle.classList.toggle('fa-moon');
+      themeToggle.classList.toggle('fa-sun');
+    }
+
+    // Initialize
+    renderReadings();
+    updateChart();
   </script>
 </body>
 </html>

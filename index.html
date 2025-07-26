@@ -26,7 +26,6 @@
       overflow-x: hidden;
     }
 
-    /* Animated background elements */
     body::before {
       content: '';
       position: fixed;
@@ -157,7 +156,7 @@
       font-size: 18px;
     }
 
-    .form-control {
+    .form-control, .form-select {
       border: 2px solid #e2e8f0;
       border-radius: 12px;
       padding: 12px 16px;
@@ -166,7 +165,7 @@
       background: rgba(255, 255, 255, 0.8);
     }
 
-    .form-control:focus {
+    .form-control:focus, .form-select:focus {
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       background: white;
@@ -313,7 +312,6 @@
       50% { transform: translateY(-20px) rotate(180deg); }
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         padding: 25px;
@@ -347,15 +345,24 @@
       <p class="subtitle">حیساباتی ئاسان و پیشەیی بۆ دیزاینکردنی سیستەمی تاقە شمسی</p>
     </div>
 
-    <!-- فۆرمی حیسابکردن بە پانێڵ (تاقە فەیز) -->
+    <!-- فۆرمی حیسابکردن بە ژمارەی پانێڵ -->
     <div class="form-section">
       <h3 class="section-title">
         <div class="section-icon">
           <i class="fas fa-solar-panel"></i>
         </div>
-        حیسابکردن بە ژمارەی پانێڵ (تاقە فەیز)
+        حیسابکردن بە ژمارەی پانێڵ
       </h3>
       <form id="panelForm">
+        <div class="mb-4">
+          <label for="phaseTypePanel" class="form-label">
+            <i class="fas fa-plug me-2"></i>جۆری فەیز:
+          </label>
+          <select class="form-select" id="phaseTypePanel" required>
+            <option value="singlePhase">تاقە فەیز (230V)</option>
+            <option value="threePhase">سێ فەیز (400V)</option>
+          </select>
+        </div>
         <div class="mb-4">
           <label for="panelCount" class="form-label">
             <i class="fas fa-hashtag me-2"></i>ژمارەی پانێڵەکان:
@@ -374,15 +381,24 @@
       </form>
     </div>
 
-    <!-- فۆرمی حیسابکردن بە ئەمپێر (تاقە فەیز) -->
+    <!-- فۆرمی حیسابکردن بە ئەمپێر -->
     <div class="form-section">
       <h3 class="section-title">
         <div class="section-icon">
           <i class="fas fa-plug"></i>
         </div>
-        حیسابکردن بە ئەمپێر (تاقە فەیز)
+        حیسابکردن بە ئەمپێر
       </h3>
       <form id="ampForm">
+        <div class="mb-4">
+          <label for="phaseTypeAmp" class="form-label">
+            <i class="fas fa-plug me-2"></i>جۆری فەیز:
+          </label>
+          <select class="form-select" id="phaseTypeAmp" required>
+            <option value="singlePhase">تاقە فەیز (230V)</option>
+            <option value="threePhase">سێ فەیز (400V)</option>
+          </select>
+        </div>
         <div class="mb-4">
           <label for="amps" class="form-label">
             <i class="fas fa-tachometer-alt me-2"></i>ئەمپێر (A):
@@ -396,33 +412,6 @@
           <input type="number" class="form-control" id="panelWattAmp" placeholder="هێزی پانێڵ بە وات داخل بکە" required>
         </div>
         <button type="button" class="btn btn-calculate w-100" onclick="calculateByAmps()">
-          <i class="fas fa-calculator me-2"></i>حیسابکردن
-        </button>
-      </form>
-    </div>
-
-    <!-- فۆرمی حیسابکردن بە ئەمپێر (سێ فەیز) -->
-    <div class="form-section">
-      <h3 class="section-title">
-        <div class="section-icon">
-          <i class="fas fa-plug"></i>
-        </div>
-        حیسابکردن بە ئەمپێر (سێ فەیز)
-      </h3>
-      <form id="threePhaseAmpForm">
-        <div class="mb-4">
-          <label for="threePhaseAmps" class="form-label">
-            <i class="fas fa-tachometer-alt me-2"></i>ئەمپێر (A):
-          </label>
-          <input type="number" class="form-control" id="threePhaseAmps" placeholder="ئەمپێر داخل بکە" required>
-        </div>
-        <div class="mb-4">
-          <label for="threePhasePanelWatt" class="form-label">
-            <i class="fas fa-bolt me-2"></i>هێزی پانێڵ (وات):
-          </label>
-          <input type="number" class="form-control" id="threePhasePanelWatt" placeholder="هێزی پانێڵ بە وات داخل بکە" required>
-        </div>
-        <button type="button" class="btn btn-calculate w-100" onclick="calculateByThreePhaseAmps()">
           <i class="fas fa-calculator me-2"></i>حیسابکردن
         </button>
       </form>
@@ -456,7 +445,7 @@
       for (let size of inverterSizes) {
         for (let count = 1; count <= 2; count++) {
           let total = count * size;
-          if (Math.abs(total - totalKW) <= 1 && total >= totalKW) {
+          if (Math.abs(total - totalKW) <= 1 && total >= TtotalKW) {
             suggestions.push(`${count} ئینڤێرتەری ${size} kW`);
           }
         }
@@ -477,6 +466,7 @@
     }
 
     function calculateByPanels() {
+      let phaseType = document.getElementById("phaseTypePanel").value;
       let panelCount = parseFloat(document.getElementById("panelCount").value);
       let panelWatt = parseFloat(document.getElementById("panelWatt").value);
 
@@ -494,16 +484,25 @@
       // حیسابکردنی هێزی کۆی پانێڵەکان بە کیلووات
       let totalWatt = panelCount * panelWatt;
       let totalKW = totalWatt / 1000;
-      // حیسابکردنی ئەمپێر
-      let amps = (totalWatt / 230) * 0.8;
+      let amps, phaseLabel;
 
-      // پێشنیاری ئینڤێرتەر بۆ تاقە فەیز
-      let inverterSuggestion = suggestInverters(totalKW, 'singlePhase');
+      if (phaseType === 'singlePhase') {
+        // تاقە فەیز: 230V
+        amps = (totalWatt / 230) * 0.8;
+        phaseLabel = 'تاقە فەیز';
+      } else {
+        // سێ فەیز: 400V
+        amps = (totalWatt / (Math.sqrt(3) * 400 * 0.8));
+        phaseLabel = 'سێ فەیز';
+      }
+
+      // پێشنیاری ئینڤێرتەر
+      let inverterSuggestion = suggestInverters(totalKW, phaseType);
 
       document.getElementById("result").innerHTML = `
         <div class="result-title">
           <i class="fas fa-check-circle"></i>
-          ئەنجامەکانی تاقە فەیز
+          ئەنجامەکانی ${phaseLabel}
         </div>
         <div class="result-item">
           <i class="fas fa-microchip me-2"></i>
@@ -519,6 +518,7 @@
     }
 
     function calculateByAmps() {
+      let phaseType = document.getElementById("phaseTypeAmp").value;
       let amps = parseFloat(document.getElementById("amps").value);
       let panelWatt = parseFloat(document.getElementById("panelWattAmp").value);
 
@@ -533,63 +533,28 @@
         return;
       }
 
-      // پێچەوانەکردنی یاسای ئەمپێر بۆ دەستکەوتنی هێزی کۆی پانێڵەکان
-      let totalWatt = (amps / 0.8) * 230;
-      let totalKW = totalWatt / 1000;
-      // حیسابکردنی ژمارەی پانێڵەکان
-      let panelCount = Math.ceil(totalWatt / panelWatt);
+      let totalWatt, totalKW, panelCount, phaseLabel;
 
-      // پێشنیاری ئینڤێرتەر بۆ تاقە فەیز
-      let inverterSuggestion = suggestInverters(totalKW, 'singlePhase');
-
-      document.getElementById("result").innerHTML = `
-        <div class="result-title">
-          <i class="fas fa-check-circle"></i>
-          ئەنجامەکانی تاقە فەیز
-        </div>
-        <div class="result-item">
-          <i class="fas fa-solar-panel me-2"></i>
-          ژمارەی پانێڵەکان: <span class="result-value">${panelCount}</span>
-        </div>
-        <div class="result-item">
-          <i class="fas fa-microchip me-2"></i>
-          هێزی ئینڤێرتەر: <span class="result-value">${totalKW.toFixed(2)} kW</span>
-        </div>
-        ${inverterSuggestion}
-      `;
-      document.getElementById("result").classList.remove("d-none");
-    }
-
-    function calculateByThreePhaseAmps() {
-      let amps = parseFloat(document.getElementById("threePhaseAmps").value);
-      let panelWatt = parseFloat(document.getElementById("threePhasePanelWatt").value);
-
-      if (isNaN(amps) || isNaN(panelWatt)) {
-        document.getElementById("result").innerHTML = `
-          <div class="error-message">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            تکایە زانیاریەکان بە دروستی داخل بکە!
-          </div>
-        `;
-        document.getElementById("result").classList.remove("d-none");
-        return;
+      if (phaseType === 'singlePhase') {
+        // تاقە فەیز: 230V
+        totalWatt = (amps / 0.8) * 230;
+        phaseLabel = 'تاقە فەیز';
+      } else {
+        // سێ فەیز: 400V
+        totalWatt = Math.sqrt(3) * 400 * amps * 0.8;
+        phaseLabel = 'سێ فەیز';
       }
 
-      // حیسابکردنی هێزی کۆی پانێڵەکان بە وات بۆ سیستەمی سێ فەیز
-      let voltage = 400; // فۆڵتاژ بۆ سیستەمی سێ فەیز
-      let powerFactor = 0.8; // فاکتەری هێز
-      let totalWatt = Math.sqrt(3) * voltage * amps * powerFactor;
-      let totalKW = totalWatt / 1000;
-      // حیسابکردنی ژمارەی پانێڵەکان
-      let panelCount = Math.ceil(totalWatt / panelWatt);
+      totalKW = totalWatt / 1000;
+      panelCount = Math.ceil(totalWatt / panelWatt);
 
-      // پێشنیاری ئینڤێرتەر بۆ سێ فەیز
-      let inverterSuggestion = suggestInverters(totalKW, 'threePhase');
+      // پێشنیاری ئینڤێرتەر
+      let inverterSuggestion = suggestInverters(totalKW, phaseType);
 
       document.getElementById("result").innerHTML = `
         <div class="result-title">
           <i class="fas fa-check-circle"></i>
-          ئەنجامەکانی سیستەمی سێ فەیز
+          ئەنجامەکانی ${phaseLabel}
         </div>
         <div class="result-item">
           <i class="fas fa-solar-panel me-2"></i>
@@ -615,7 +580,6 @@
     // Override the original functions to include smooth scrolling
     const originalCalculateByPanels = calculateByPanels;
     const originalCalculateByAmps = calculateByAmps;
-    const originalCalculateByThreePhaseAmps = calculateByThreePhaseAmps;
 
     calculateByPanels = function() {
       originalCalculateByPanels();
@@ -627,11 +591,6 @@
       setTimeout(showResult, 300);
     }
 
-    calculateByThreePhaseAmps = function() {
-      originalCalculateByThreePhaseAmps();
-      setTimeout(showResult, 300);
-    }
-
     // Add enter key support
     document.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
@@ -639,8 +598,6 @@
           calculateByPanels();
         } else if (document.activeElement.closest('#ampForm')) {
           calculateByAmps();
-        } else if (document.activeElement.closest('#threePhaseAmpForm')) {
-          calculateByThreePhaseAmps();
         }
       }
     });

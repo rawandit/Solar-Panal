@@ -578,7 +578,7 @@
       let totalWatt = panelCount * panelWatt;
       let totalKW = totalWatt / 1000;
       // حیسابکردنی ئەمپێر
-      let amps = (totalWatt / 230) * 0.8;
+      let amps = (totalWatt / 220) * 0.8;
 
       // پێشنیاری ئینڤێرتەر
       let inverterSuggestion = suggestInverters(totalKW, lang);
@@ -614,7 +614,7 @@
       }
 
       // پێچەوانەکردنی یاسای ئەمپێر بۆ دەستکەوتنی هێزی کۆی پانێڵەکان
-      let totalWatt = (amps / 0.8) * 230;
+      let totalWatt = (amps / 0.8) * 220;
       let totalKW = totalWatt / 1000;
       // حیسابکردنی ژمارەی پانێڵەکان
       let panelCount = Math.ceil(totalWatt / panelWatt);

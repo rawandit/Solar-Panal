@@ -347,13 +347,13 @@
       <p class="subtitle">حیساباتی ئاسان و پیشەیی بۆ دیزاینکردنی سیستەمی تاقە شمسی</p>
     </div>
 
-    <!-- فۆرمی حیسابکردن بە پانێڵ -->
+    <!-- فۆرمی حیسابکردن بە پانێڵ (سینگل فەیز) -->
     <div class="form-section">
       <h3 class="section-title">
         <div class="section-icon">
           <i class="fas fa-solar-panel"></i>
         </div>
-        حیسابکردن بە ژمارەی پانێڵ
+        حیسابکردن بە ژمارەی پانێڵ (سینگل فەیز)
       </h3>
       <form id="panelForm">
         <div class="mb-4">
@@ -374,13 +374,13 @@
       </form>
     </div>
 
-    <!-- فۆرمی حیسابکردن بە ئەمپێر -->
+    <!-- فۆرمی حیسابکردن بە ئەمپێر (سینگل فەیز) -->
     <div class="form-section">
       <h3 class="section-title">
         <div class="section-icon">
           <i class="fas fa-plug"></i>
         </div>
-        حیسابکردن بە ئەمپێر
+        حیسابکردن بە ئەمپێر (سینگل فەیز)
       </h3>
       <form id="ampForm">
         <div class="mb-4">
@@ -396,6 +396,39 @@
           <input type="number" class="form-control" id="panelWattAmp" placeholder="هێزی پانێڵ بە وات داخل بکە" required>
         </div>
         <button type="button" class="btn btn-calculate w-100" onclick="calculateByAmps()">
+          <i class="fas fa-calculator me-2"></i>حیسابکردن
+        </button>
+      </form>
+    </div>
+
+    <!-- فۆرمی حیسابکردن بە سێ فەیز -->
+    <div class="form-section">
+      <h3 class="section-title">
+        <div class="section-icon">
+          <i class="fas fa-plug-circle-bolt"></i>
+        </div>
+        حیسابکردن بە سێ فەیز
+      </h3>
+      <form id="threePhaseForm">
+        <div class="mb-4">
+          <label for="threePhasePanelCount" class="form-label">
+            <i class="fas fa-hashtag me-2"></i>ژمارەی پانێڵەکان:
+          </label>
+          <input type="number" class="form-control" id="threePhasePanelCount" placeholder="ژمارەی پانێڵەکان داخل بکە" required>
+        </div>
+        <div class="mb-4">
+          <label for="threePhasePanelWatt" class="form-label">
+            <i class="fas fa-bolt me-2"></i>هێزی پانێڵ (وات):
+          </label>
+          <input type="number" class="form-control" id="threePhasePanelWatt" placeholder="هێزی پانێڵ بە وات داخل بکە" required>
+        </div>
+        <div class="mb-4">
+          <label for="threePhaseAmps" class="form-label">
+            <i class="fas fa-tachometer-alt me-2"></i>ئەمپێر (A):
+          </label>
+          <input type="number" class="form-control" id="threePhaseAmps" placeholder="ئەمپێر داخل بکە" required>
+        </div>
+        <button type="button" class="btn btn-calculate w-100" onclick="calculateByThreePhase()">
           <i class="fas fa-calculator me-2"></i>حیسابکردن
         </button>
       </form>
@@ -473,7 +506,7 @@
       document.getElementById("result").innerHTML = `
         <div class="result-title">
           <i class="fas fa-check-circle"></i>
-          ئەنجامەکان
+          ئەنجامەکانی سینگل فەیز
         </div>
         <div class="result-item">
           <i class="fas fa-microchip me-2"></i>
@@ -515,7 +548,7 @@
       document.getElementById("result").innerHTML = `
         <div class="result-title">
           <i class="fas fa-check-circle"></i>
-          ئەنجامەکان
+          ئەنجامەکانی سینگل فەیز
         </div>
         <div class="result-item">
           <i class="fas fa-solar-panel me-2"></i>
@@ -524,6 +557,54 @@
         <div class="result-item">
           <i class="fas fa-microchip me-2"></i>
           هێزی ئینڤێرتەر: <span class="result-value">${totalKW.toFixed(2)} kW</span>
+        </div>
+        ${inverterSuggestion}
+      `;
+      document.getElementById("result").classList.remove("d-none");
+    }
+
+    function calculateByThreePhase() {
+      let panelCount = parseFloat(document.getElementById("threePhasePanelCount").value);
+      let panelWatt = parseFloat(document.getElementById("threePhasePanelWatt").value);
+      let amps = parseFloat(document.getElementById("threePhaseAmps").value);
+
+      if (isNaN(panelCount) || isNaN(panelWatt) || isNaN(amps)) {
+        document.getElementById("result").innerHTML = `
+          <div class="error-message">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            تکایە زانیاریەکان بە دروستی داخل بکە!
+          </div>
+        `;
+        document.getElementById("result").classList.remove("d-none");
+        return;
+      }
+
+      // حیسابکردنی هێزی ئینڤێرتەر بە کیلووات
+      let inv = (panelCount * panelWatt) / 1000; // inv = panel * kw
+      // حیسابکردنی هێزی پێویست بە فۆرمولای pr = inv * 0.7
+      let pr1 = inv * 0.7;
+      // حیسابکردنی هێزی پێویست بە فۆرمولای pr = 380 * amper * 1.732 * 0.8
+      let pr2 = (380 * amps * 1.732 * 0.8) / 1000; // بە کیلووات
+
+      // پێشنیاری ئینڤێرتەر بەپێی هێزی ئینڤێرتەر (inv)
+      let inverterSuggestion = suggestInverters(inv);
+
+      document.getElementById("result").innerHTML = `
+        <div class="result-title">
+          <i class="fas fa-check-circle"></i>
+          ئەنجامەکانی سێ فەیز
+        </div>
+        <div class="result-item">
+          <i class="fas fa-microchip me-2"></i>
+          هێزی ئینڤێرتەر: span class="result-value">${inv.toFixed(2)} kW</span>
+        </div>
+        <div class="result-item">
+          <i class="fas fa-plug-circle-bolt me-2"></i>
+          هێزی پێویست (فۆرمولای یەکەم): <span class="result-value">${pr1.toFixed(2)} kW</span>
+        </div>
+        <div class="result-item">
+          <i class="fas fa-plug-circle-bolt me-2"></i>
+          هێزی پێویست (فۆرمولای دووەم): <span class="result-value">${pr2.toFixed(2)} kW</span>
         </div>
         ${inverterSuggestion}
       `;
@@ -541,6 +622,7 @@
     // Override the original functions to include smooth scrolling
     const originalCalculateByPanels = calculateByPanels;
     const originalCalculateByAmps = calculateByAmps;
+    const originalCalculateByThreePhase = calculateByThreePhase;
 
     calculateByPanels = function() {
       originalCalculateByPanels();
@@ -552,6 +634,11 @@
       setTimeout(showResult, 300);
     }
 
+    calculateByThreePhase = function() {
+      originalCalculateByThreePhase();
+      setTimeout(showResult, 300);
+    }
+
     // Add enter key support
     document.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
@@ -559,6 +646,8 @@
           calculateByPanels();
         } else if (document.activeElement.closest('#ampForm')) {
           calculateByAmps();
+        } else if (document.activeElement.closest('#threePhaseForm')) {
+          calculateByThreePhase();
         }
       }
     });

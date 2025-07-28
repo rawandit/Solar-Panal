@@ -445,7 +445,7 @@
       for (let size of inverterSizes) {
         for (let count = 1; count <= 2; count++) {
           let total = count * size;
-          if (Math.abs(total - totalKW) <= 1 && total >= totalKW) {
+          if (Math.abs(total - totalKW) <= 1 && total >= TtotalKW) {
             suggestions.push(`${count} ئینڤێرتەری ${size} kW`);
           }
         }
@@ -465,74 +465,58 @@
            </div>`;
     }
 
-   function calculateByPanels() {
-  let phaseType = document.getElementById("phaseTypePanel").value;
-  let panelCount = parseFloat(document.getElementById("panelCount").value);
-  let panelWatt = parseFloat(document.getElementById("panelWatt").value);
+    function calculateByPanels() {
+      let phaseType = document.getElementById("phaseTypePanel").value;
+      let panelCount = parseFloat(document.getElementById("panelCount").value);
+      let panelWatt = parseFloat(document.getElementById("panelWatt").value);
 
-  if (isNaN(panelCount) || isNaN(panelWatt)) {
-    document.getElementById("result").innerHTML = `
-      <div class="error-message">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        تکایە زانیاریەکان بە دروستی داخل بکە!
-      </div>
-    `;
-    document.getElementById("result").classList.remove("d-none");
-    return;
-  }
+      if (isNaN(panelCount) || isNaN(panelWatt)) {
+        document.getElementById("result").innerHTML = `
+          <div class="error-message">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            تکایە زانیاریەکان بە دروستی داخل بکە!
+          </div>
+        `;
+        document.getElementById("result").classList.remove("d-none");
+        return;
+      }
 
-  // یاساکان:
-  // pr = panelCount * panelWatt
-  let pr = panelCount * panelWatt;
-  
-  // هێزی ئینڤێرتەر (pr1)
-  let pr1 = phaseType === 'singlePhase' ? pr : pr * 0.7; // بۆ تاقە فەیز 0.7 لابراوە
-  let totalKW = pr1 / 1000;
+      // حیسابکردنی هێزی کۆی پانێڵەکان بە کیلووات
+      let totalWatt = panelCount * panelWatt;
+      let totalKW = totalWatt / 1000;
+      let amps, phaseLabel;
 
-  let amps, phaseLabel;
+      if (phaseType === 'singlePhase') {
+        // تاقە فەیز: 230V
+        amps = (totalWatt / 230) * 0.8;
+        phaseLabel = 'تاقە فەیز';
+      } else {
+        // سێ فەیز: 400V
+        amps = (totalWatt / (Math.sqrt(3) * 400 * 0.8));
+        phaseLabel = 'سێ فەیز';
+      }
 
-  if (phaseType === 'singlePhase') {
-    // تاقە فەیز: pr = volt * amper * 0.8
-    // amps = pr / (volt * 0.8)
-    amps = pr / (230 * 0.8);
-    phaseLabel = 'تاقە فەیز';
-  } else {
-    // سێ فەیز: pr = volt * amper * 1.732 * 0.8
-    // totalAmps = pr / (volt * 1.732 * 0.8)
-    let totalAmps = pr / (400 * 1.732 * 0.8);
-    amps = totalAmps * 0.7; // ئەمپێری هەر فەیزێک
-    phaseLabel = 'سێ فەیز';
-  }
+      // پێشنیاری ئینڤێرتەر
+      let inverterSuggestion = suggestInverters(totalKW, phaseType);
 
-  // پێشنیاری ئینڤێرتەر
-  let inverterSuggestion = suggestInverters(totalKW, phaseType);
+      document.getElementById("result").innerHTML = `
+        <div class="result-title">
+          <i class="fas fa-check-circle"></i>
+          ئەنجامەکانی ${phaseLabel}
+        </div>
+        <div class="result-item">
+          <i class="fas fa-microchip me-2"></i>
+          هێزی ئینڤێرتەر: <span class="result-value">${totalKW.toFixed(2)} kW</span>
+        </div>
+        <div class="result-item">
+          <i class="fas fa-tachometer-alt me-2"></i>
+          ئەمپێر: <span class="result-value">${amps.toFixed(2)} A</span>
+        </div>
+        ${inverterSuggestion}
+      `;
+      document.getElementById("result").classList.remove("d-none");
+    }
 
-  document.getElementById("result").innerHTML = `
-    <div class="result-title">
-      <i class="fas fa-check-circle"></i>
-      ئەنجامەکانی ${phaseLabel}
-    </div>
-    <div class="result-item">
-      <i class="fas fa-bolt me-2"></i>
-      کۆی هێزی پەنەڵەکان: <span class="result-value">${(pr/1000).toFixed(2)} kW</span>
-    </div>
-    <div class="result-item">
-      <i class="fas fa-microchip me-2"></i>
-      هێزی ئینڤێرتەر: <span class="result-value">${totalKW.toFixed(2)} kW</span>
-    </div>
-    <div class="result-item">
-      <i class="fas fa-tachometer-alt me-2"></i>
-      ${phaseType === 'singlePhase' ? 'ئەمپێری هەر فەیزێک' : 'ئەمپێری هەر فەیزێک'}: <span class="result-value">${amps.toFixed(2)} A</span>
-    </div>
-    ${phaseType === 'threePhase' ? `
-      <div class="result-item">
-        <i class="fas fa-tachometer-alt me-2"></i>
-        کۆی گشتی ئەمپێر: <span class="result-value">${(amps * 3).toFixed(2)} A</span>
-      </div>` : ''}
-    ${inverterSuggestion}
-  `;
-  document.getElementById("result").classList.remove("d-none");
-}
     function calculateByAmps() {
       let phaseType = document.getElementById("phaseTypeAmp").value;
       let amps = parseFloat(document.getElementById("amps").value);
@@ -549,26 +533,20 @@
         return;
       }
 
-      let pr, totalKW, panelCount, phaseLabel;
+      let totalWatt, totalKW, panelCount, phaseLabel;
 
       if (phaseType === 'singlePhase') {
-        // تاقە فەیز: pr = volt * amper * 0.8
-        pr = 230 * amps * 0.8;
+        // تاقە فەیز: 230V
+        totalWatt = (amps / 0.8) * 230;
         phaseLabel = 'تاقە فەیز';
       } else {
-        // سێ فەیز: ئەمپێری داخڵکراو بۆ هەر فەیزێکە
-        // کۆی گشتی ئەمپێر = amps * 3
-        // pr = volt * (total_amps/0.7) * 1.732 * 0.8
-        let totalAmps = amps * 3 / 0.7; // کۆی گشتی ئەمپێر پێش لێدان بە 0.7
-        pr = 400 * totalAmps * 1.732 * 0.8;
+        // سێ فەیز: 400V
+        totalWatt = Math.sqrt(3) * 400 * amps * 0.8;
         phaseLabel = 'سێ فەیز';
       }
 
-      // بۆ دۆزینەوەی ژمارەی پەنەڵەکان، دەبێت pr بە 0.7 دابەش بکەین
-      // چونکە pr1 = pr * 0.7 و پەنەڵەکان pr ـی تەواویان دەوێت
-      let totalPanelPower = pr / 0.7;
-      panelCount = Math.ceil(totalPanelPower / panelWatt);
-      totalKW = (pr * 0.7) / 1000; // هێزی ئینڤێرتەر
+      totalKW = totalWatt / 1000;
+      panelCount = Math.ceil(totalWatt / panelWatt);
 
       // پێشنیاری ئینڤێرتەر
       let inverterSuggestion = suggestInverters(totalKW, phaseType);
@@ -583,12 +561,8 @@
           ژمارەی پانێڵەکان: <span class="result-value">${panelCount}</span>
         </div>
         <div class="result-item">
-          <i class="fas fa-bolt me-2"></i>
-          کۆی هێزی پەنەڵەکان: <span class="result-value">${(totalPanelPower/1000).toFixed(2)} kW</span>
-        </div>
-        <div class="result-item">
           <i class="fas fa-microchip me-2"></i>
-          هێزی ئینڤێرتەر (70%): <span class="result-value">${totalKW.toFixed(2)} kW</span>
+          هێزی ئینڤێرتەر: <span class="result-value">${totalKW.toFixed(2)} kW</span>
         </div>
         ${inverterSuggestion}
       `;

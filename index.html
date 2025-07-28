@@ -465,83 +465,74 @@
            </div>`;
     }
 
-    function calculateByPanels() {
-      let phaseType = document.getElementById("phaseTypePanel").value;
-      let panelCount = parseFloat(document.getElementById("panelCount").value);
-      let panelWatt = parseFloat(document.getElementById("panelWatt").value);
+   function calculateByPanels() {
+  let phaseType = document.getElementById("phaseTypePanel").value;
+  let panelCount = parseFloat(document.getElementById("panelCount").value);
+  let panelWatt = parseFloat(document.getElementById("panelWatt").value);
 
-      if (isNaN(panelCount) || isNaN(panelWatt)) {
-        document.getElementById("result").innerHTML = `
-          <div class="error-message">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            تکایە زانیاریەکان بە دروستی داخل بکە!
-          </div>
-        `;
-        document.getElementById("result").classList.remove("d-none");
-        return;
-      }
+  if (isNaN(panelCount) || isNaN(panelWatt)) {
+    document.getElementById("result").innerHTML = `
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        تکایە زانیاریەکان بە دروستی داخل بکە!
+      </div>
+    `;
+    document.getElementById("result").classList.remove("d-none");
+    return;
+  }
 
-      // یاساکانی نووسراو:
-      // pr = panel * watt
-      let pr = panelCount * panelWatt;
-      
-      // pr1 = pr * 0.7 (ئەمە بۆ هێزی ئینڤێرتەر بەکاردەهێنرێت)
-      let pr1 = pr * 0.7;
-      let totalKW = pr1 / 1000;
+  // یاساکان:
+  // pr = panelCount * panelWatt
+  let pr = panelCount * panelWatt;
+  
+  // هێزی ئینڤێرتەر (pr1)
+  let pr1 = phaseType === 'singlePhase' ? pr : pr * 0.7; // بۆ تاقە فەیز 0.7 لابراوە
+  let totalKW = pr1 / 1000;
 
-      let amps, phaseLabel;
+  let amps, phaseLabel;
 
-      if (phaseType === 'singlePhase') {
-        // تاقە فەیز: pr = volt * amper * 0.8
-        // amps = pr / (volt * 0.8)
-        amps = pr / (230 * 0.8);
-        phaseLabel = 'تاقە فەیز';
-      } else {
-        // سێ فەیز: pr = volt * amper * 1.732 * 0.8
-        // amps = pr / (volt * 1.732 * 0.8)
-        let totalAmps = pr / (400 * 1.732 * 0.8);
-        // ئەمپێری فەیزە یەکەکان (بە 0.7 لێدان)
-        amps = totalAmps * 0.7;
-        phaseLabel = 'سێ فەیز';
-      }
+  if (phaseType === 'singlePhase') {
+    // تاقە فەیز: pr = volt * amper * 0.8
+    // amps = pr / (volt * 0.8)
+    amps = pr / (230 * 0.8);
+    phaseLabel = 'تاقە فەیز';
+  } else {
+    // سێ فەیز: pr = volt * amper * 1.732 * 0.8
+    // totalAmps = pr / (volt * 1.732 * 0.8)
+    let totalAmps = pr / (400 * 1.732 * 0.8);
+    amps = totalAmps * 0.7; // ئەمپێری هەر فەیزێک
+    phaseLabel = 'سێ فەیز';
+  }
 
-      // پێشنیاری ئینڤێرتەر
-      let inverterSuggestion = suggestInverters(totalKW, phaseType);
+  // پێشنیاری ئینڤێرتەر
+  let inverterSuggestion = suggestInverters(totalKW, phaseType);
 
-      document.getElementById("result").innerHTML = `
-        <div class="result-title">
-          <i class="fas fa-check-circle"></i>
-          ئەنجامەکانی ${phaseLabel}
-        </div>
-        <div class="result-item">
-          <i class="fas fa-bolt me-2"></i>
-          کۆی هێزی پەنەڵەکان: <span class="result-value">${(pr/1000).toFixed(2)} kW</span>
-        </div>
-        <div class="result-item">
-          <i class="fas fa-microchip me-2"></i>
-          هێزی ئینڤێرتەر (70%): <span class="result-value">${totalKW.toFixed(2)} kW</span>
-        </div>
-        <div class="result-item">
-          <i class="fas fa-tachometer-alt me-2"></i>
-          ئەمپێری هەر فەیزێک: <span class="result-value">${amps} A</span>
-        </div>
-        <div class="result-item">
-          <i class="fas fa-tachometer-alt me-2"></i>
-          کۆی گشتی ئەمپێر: <span class="result-value">${(amps * 3)} A</span>
-        </div>
-        <div class="result-item">
-          <i class="fas fa-tachometer-alt me-2"></i>
-          ئەمپێری هەر فەیزێک: <span class="result-value">${amps.toFixed(2)} A</span>
-        </div>
-        <div class="result-item">
-          <i class="fas fa-tachometer-alt me-2"></i>
-          کۆی گشتی ئەمپێر: <span class="result-value">${(amps * 3).toFixed(2)} A</span>
-        </div>
-        ${inverterSuggestion}
-      `;
-      document.getElementById("result").classList.remove("d-none");
-    }
-
+  document.getElementById("result").innerHTML = `
+    <div class="result-title">
+      <i class="fas fa-check-circle"></i>
+      ئەنجامەکانی ${phaseLabel}
+    </div>
+    <div class="result-item">
+      <i class="fas fa-bolt me-2"></i>
+      کۆی هێزی پەنەڵەکان: <span class="result-value">${(pr/1000).toFixed(2)} kW</span>
+    </div>
+    <div class="result-item">
+      <i class="fas fa-microchip me-2"></i>
+      هێزی ئینڤێرتەر: <span class="result-value">${totalKW.toFixed(2)} kW</span>
+    </div>
+    <div class="result-item">
+      <i class="fas fa-tachometer-alt me-2"></i>
+      ${phaseType === 'singlePhase' ? 'ئەمپێری هەر فەیزێک' : 'ئەمپێری هەر فەیزێک'}: <span class="result-value">${amps.toFixed(2)} A</span>
+    </div>
+    ${phaseType === 'threePhase' ? `
+      <div class="result-item">
+        <i class="fas fa-tachometer-alt me-2"></i>
+        کۆی گشتی ئەمپێر: <span class="result-value">${(amps * 3).toFixed(2)} A</span>
+      </div>` : ''}
+    ${inverterSuggestion}
+  `;
+  document.getElementById("result").classList.remove("d-none");
+}
     function calculateByAmps() {
       let phaseType = document.getElementById("phaseTypeAmp").value;
       let amps = parseFloat(document.getElementById("amps").value);

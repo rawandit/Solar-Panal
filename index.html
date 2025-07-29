@@ -222,6 +222,7 @@
       border-radius: 16px;
       margin-top: 30px;
       font-size: 1.1rem;
+      border: 1 Depp Search mode
       border: 1px solid rgba(56, 189, 248, 0.2);
       position: relative;
       overflow: hidden;
@@ -294,7 +295,7 @@
 
     .floating-circle:nth-child(2) {
       width: 40px;
-      height: 40px;
+("%s") % height: 40px;
       top: 60%;
       right: 20%;
       animation-delay: 2s;
@@ -510,27 +511,21 @@
     const inverterSizes = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
 
     function suggestInverters(totalKW) {
-      if (Math.abs(totalKW - Math.round(totalKW)) > 0.01) {
-        totalKW = Math.ceil(totalKW);
-      }
-
       let suggestions = [];
       for (let size of inverterSizes) {
         let count = Math.round(totalKW / size);
-        if (count > 0 && count <= 2 && Math.abs(count * size - totalKW) < 0.01) {
+        if (count > 0 && count <= 3 && Math.abs(count * size - totalKW) <= 1) {
           suggestions.push(`${count} ئینڤێرتەری ${size} kW`);
         }
       }
-
       for (let size of inverterSizes) {
-        for (let count = 1; count <= 2; count++) {
+        for (let count = 1; count <= 3; count++) {
           let total = count * size;
           if (Math.abs(total - totalKW) <= 1 && total >= totalKW) {
             suggestions.push(`${count} ئینڤێرتەری ${size} kW`);
           }
         }
       }
-
       suggestions = [...new Set(suggestions)];
 
       return suggestions.length > 0
@@ -549,11 +544,11 @@
       let panelCount = parseFloat(document.getElementById("panelCount").value);
       let panelWatt = parseFloat(document.getElementById("panelWatt").value);
 
-      if (isNaN(panelCount) || isNaN(panelWatt)) {
+      if (isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
         document.getElementById("result").innerHTML = `
           <div class="error-message">
             <i class="fas fa-exclamation-triangle me-2"></i>
-            تکایە زانیاریەکان بە دروستی داخل بکە!
+            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
         `;
         document.getElementById("result").classList.remove("d-none");
@@ -591,11 +586,11 @@
       let amps = parseFloat(document.getElementById("amps").value);
       let panelWatt = parseFloat(document.getElementById("panelWattAmp").value);
 
-      if (isNaN(amps) || isNaN(panelWatt)) {
+      if (isNaN(amps) || isNaN(panelWatt) || amps <= 0 || panelWatt <= 0) {
         document.getElementById("result").innerHTML = `
           <div class="error-message">
             <i class="fas fa-exclamation-triangle me-2"></i>
-            تکایە زانیاریەکان بە دروستی داخل بکە!
+            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
         `;
         document.getElementById("result").classList.remove("d-none");
@@ -633,11 +628,11 @@
       let panelCount = parseFloat(document.getElementById("threePhasePanelCount").value);
       let panelWatt = parseFloat(document.getElementById("threePhasePanelWatt").value);
 
-      if (isNaN(panelCount) || isNaN(panelWatt)) {
+      if (isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
         document.getElementById("result").innerHTML = `
           <div class="error-message">
             <i class="fas fa-exclamation-triangle me-2"></i>
-            تکایە زانیاریەکان بە دروستی داخل بکە!
+            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
         `;
         document.getElementById("result").classList.remove("d-none");
@@ -645,11 +640,11 @@
       }
 
       // حیسابکردنی هێزی کۆی پانێڵەکان بە کیلووات
-      let inv = (panelCount * panelWatt) / 1000; // inv = panel * kw
+      let inv = (panelCount * panelWatt) / 1000; // inv = panel * watt / 1000
       // حیسابکردنی هێزی پێویست بە فۆرمولای pr = inv * 0.7
-      let pr1 = inv * 0.7;
+      let pr = inv * 0.7;
       // حیسابکردنی ئەمپێر بە فۆرمولای pr = 400 * amper * 1.732 * 0.8
-      let amps = pr1 / (400 * 1.732 * 0.8); // amper = pr / (400 * 1.732 * 0.8)
+      let amps = pr / (400 * 1.732 * 0.8); // amper = pr / (400 * 1.732 * 0.8)
 
       // پێشنیاری ئینڤێرتەر
       let inverterSuggestion = suggestInverters(inv);
@@ -669,7 +664,7 @@
         </div>
         <div class="result-item">
           <i class="fas fa-plug-circle-bolt me-2"></i>
-          هێزی پێویست: <span class="result-value">${pr1.toFixed(2)} kW</span>
+          هێزی پێویست: <span class="result-value">${pr.toFixed(2)} kW</span>
         </div>
         ${inverterSuggestion}
       `;
@@ -680,11 +675,11 @@
       let amps = parseFloat(document.getElementById("threePhaseAmps").value);
       let panelWatt = parseFloat(document.getElementById("threePhasePanelWattAmp").value);
 
-      if (isNaN(amps) || isNaN(panelWatt)) {
+      if (isNaN(amps) || isNaN(panelWatt) || amps <= 0 || panelWatt <= 0) {
         document.getElementById("result").innerHTML = `
           <div class="error-message">
             <i class="fas fa-exclamation-triangle me-2"></i>
-            تکایە زانیاریەکان بە دروستی داخل بکە!
+            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
         `;
         document.getElementById("result").classList.remove("d-none");
@@ -692,7 +687,7 @@
       }
 
       // حیسابکردنی هێزی پێویست بە فۆرمولای pr = 400 * amper * 1.732 * 0.8
-      let pr = (400 * amps * 1.732 * 0.8) ; // بە کیلووات
+      let pr = (400 * amps * 1.732 * 0.8) / 1000; // بە کیلووات
       // حیسابکردنی هێزی ئینڤێرتەر بە فۆرمولای inv = pr / 0.7
       let inv = pr / 0.7;
       // حیسابکردنی ژمارەی پانێڵەکان

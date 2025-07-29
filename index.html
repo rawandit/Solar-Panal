@@ -624,53 +624,52 @@
       document.getElementById("result").classList.remove("d-none");
     }
 
-    function calculateThreePhaseByPanels() {
-      let panelCount = parseFloat(document.getElementById("threePhasePanelCount").value);
-      let panelWatt = parseFloat(document.getElementById("threePhasePanelWatt").value);
+   function calculateThreePhaseByPanels() {
+  let panelCount = parseFloat(document.getElementById("threePhasePanelCount").value);
+  let panelWatt = parseFloat(document.getElementById("threePhasePanelWatt").value);
 
-      if (isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
-        document.getElementById("result").innerHTML = `
-          <div class="error-message">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
-          </div>
-        `;
-        document.getElementById("result").classList.remove("d-none");
-        return;
-      }
+  if (isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
+    document.getElementById("result").innerHTML = `
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
+      </div>
+    `;
+    document.getElementById("result").classList.remove("d-none");
+    return;
+  }
 
-      // حیسابکردنی هێزی کۆی پانێڵەکان بە کیلووات
-      let inv = (panelCount * panelWatt) / 1000; // inv = panel * watt / 1000
-      // حیسابکردنی هێزی پێویست بە فۆرمولای pr = inv * 0.7
-      let pr = inv * 0.7;
-      // حیسابکردنی ئەمپێر بە فۆرمولای pr = 400 * amper * 1.732 * 0.8
-      let amps = pr / (400 * 1.732 * 0.8); // amper = pr / (400 * 1.732 * 0.8)
+  // حیسابکردنی هێزی کۆی پانێڵەکان بە کیلووات
+  let inv = (panelCount * panelWatt) / 1000; // inv = panel * watt / 1000
+  // حیسابکردنی هێزی پێویست بە فۆرمولای pr = inv * 0.7
+  let pr = inv * 0.7;
+  // حیسابکردنی ئەمپێر بە فۆرمولای pr = 400 * amper * 1.732 * 0.8
+  let amps = (pr * 1000) / (400 * 1.732 * 0.8); // دروستکردنەوەی فۆرمولا بە وردی
 
-      // پێشنیاری ئینڤێرتەر
-      let inverterSuggestion = suggestInverters(inv);
+  // پێشنیاری ئینڤێرتەر
+  let inverterSuggestion = suggestInverters(inv);
 
-      document.getElementById("result").innerHTML = `
-        <div class="result-title">
-          <i class="fas fa-check-circle"></i>
-          ئەنجامەکانی سێ فەیز
-        </div>
-        <div class="result-item">
-          <i class="fas fa-microchip me-2"></i>
-          هێزی ئینڤێرتەر: <span class="result-value">${inv.toFixed(2)} kW</span>
-        </div>
-        <div class="result-item">
-          <i class="fas fa-tachometer-alt me-2"></i>
-          ئەمپێر: <span class="result-value">${amps.toFixed(2)} A</span>
-        </div>
-        <div class="result-item">
-          <i class="fas fa-plug-circle-bolt me-2"></i>
-          هێزی پێویست: <span class="result-value">${pr.toFixed(2)} kW</span>
-        </div>
-        ${inverterSuggestion}
-      `;
-      document.getElementById("result").classList.remove("d-none");
-    }
-
+  document.getElementById("result").innerHTML = `
+    <div class="result-title">
+      <i class="fas fa-check-circle"></i>
+      ئەنجامەکانی سێ فەیز
+    </div>
+    <div class="result-item">
+      <i class="fas fa-microchip me-2"></i>
+      هێزی ئینڤێرتەر: <span class="result-value">${inv.toFixed(2)} kW</span>
+    </div>
+    <div class="result-item">
+      <i class="fas fa-tachometer-alt me-2"></i>
+      ئەمپێر: <span class="result-value">${amps.toFixed(2)} A</span>
+    </div>
+    <div class="result-item">
+      <i class="fas fa-plug-circle-bolt me-2"></i>
+      هێزی پێویست: <span class="result-value">${pr.toFixed(2)} kW</span>
+    </div>
+    ${inverterSuggestion}
+  `;
+  document.getElementById("result").classList.remove("d-none");
+}
     function calculateThreePhaseByAmps() {
       let amps = parseFloat(document.getElementById("threePhaseAmps").value);
       let panelWatt = parseFloat(document.getElementById("threePhasePanelWattAmp").value);

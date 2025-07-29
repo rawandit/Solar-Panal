@@ -19,226 +19,553 @@
 
     body {
       font-family: 'Inter', 'Arial', sans-serif;
-      background: linear-gradient(180deg, #e6f0fa 0%, #f7fafc 100%);
+      background: linear-gradient(135deg, 
+        #0f172a 0%, 
+        #1e293b 20%, 
+        #0369a1 40%, 
+        #0284c7 60%, 
+        #f97316 85%, 
+        #ea580c 100%);
       min-height: 100vh;
       padding: 20px;
-      color: #1a202c;
+      color: #ffffff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(249, 115, 22, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(168, 85, 247, 0.2) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
     }
 
     .container {
-      max-width: 800px;
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      padding: 30px;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      padding: 40px;
       margin: 20px auto;
       position: relative;
       overflow: hidden;
-      animation: fadeIn 0.5s ease-in;
+      animation: slideUp 0.8s ease-out;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes slideUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(50px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.05), 
+        transparent);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
 
     .header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
+      position: relative;
     }
 
     .logo-container {
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 15px;
-      background: #38b2ac;
-      border-radius: 12px;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #3b82f6, #f97316);
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(56, 178, 172, 0.3);
-      transition: transform 0.3s ease;
+      box-shadow: 
+        0 10px 30px rgba(59, 130, 246, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-container::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: linear-gradient(135deg, #1e40af, #ea580c);
+      border-radius: 18px;
+      z-index: -1;
     }
 
     .logo-container:hover {
-      transform: scale(1.1);
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 
+        0 20px 40px rgba(59, 130, 246, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
     }
 
     .logo-container i {
-      font-size: 24px;
+      font-size: 32px;
       color: #ffffff;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     }
 
     h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: 700;
-      color: #2d3748;
-      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ffffff, #e2e8f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
 
     .developer-credit {
-      color: #718096;
-      font-size: 0.9rem;
+      color: #cbd5e1;
+      font-size: 1rem;
       font-weight: 500;
+      opacity: 0.9;
     }
 
     .subtitle {
-      color: #a0aec0;
-      font-size: 1rem;
+      color: #94a3b8;
+      font-size: 1.1rem;
       font-weight: 400;
+      margin-top: 8px;
     }
 
     .form-section {
-      background: #f7fafc;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 28px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(59, 130, 246, 0.5), 
+        rgba(249, 115, 22, 0.5), 
+        transparent);
     }
 
     .form-section:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      transform: translateY(-6px);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
     }
 
     .section-title {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 600;
-      color: #2d3748;
-      margin-bottom: 15px;
+      color: #ffffff;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .section-icon {
-      width: 32px;
-      height: 32px;
-      background: #4299e1;
-      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #3b82f6, #f97316);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #ffffff;
-      font-size: 16px;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
     .form-control {
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 0.95rem;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      background: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      backdrop-filter: blur(10px);
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .form-control:focus {
-      border-color: #4299e1;
-      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+      border-color: #3b82f6;
+      box-shadow: 
+        0 0 0 3px rgba(59, 130, 246, 0.2),
+        0 4px 12px rgba(59, 130, 246, 0.1);
       outline: none;
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
     }
 
     .form-label {
-      color: #4a5568;
+      color: #e2e8f0;
       font-weight: 500;
-      font-size: 0.9rem;
-      margin-bottom: 6px;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .btn-calculate {
-      background: #38b2ac;
+      background: linear-gradient(135deg, #3b82f6, #f97316);
       border: none;
       color: #ffffff;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 1rem;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 1.1rem;
       font-weight: 600;
-      transition: background 0.3s ease, transform 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-calculate::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
+        transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-calculate:hover::before {
+      left: 100%;
     }
 
     .btn-calculate:hover {
-      background: #319795;
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(59, 130, 246, 0.4);
     }
 
     .btn-calculate:active {
-      transform: translateY(0);
+      transform: translateY(-1px);
     }
 
     #result {
-      background: #edf2f7;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 28px;
+      border-radius: 20px;
+      margin-top: 24px;
       font-size: 1rem;
-      border: 1px solid rgba(66, 153, 225, 0.2);
-      animation: fadeIn 0.5s ease-in;
+      animation: resultSlide 0.6s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes resultSlide {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px) scale(0.95); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+      }
+    }
+
+    #result::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3b82f6, #f97316);
     }
 
     .result-title {
-      color: #2d3748;
+      color: #ffffff;
       font-weight: 600;
-      font-size: 1.2rem;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .result-item {
+      color: #e2e8f0;
+      margin-bottom: 12px;
+      font-weight: 500;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .result-item:hover {
+      color: #ffffff;
+      padding-right: 8px;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    .result-value {
+      background: linear-gradient(135deg, #3b82f6, #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .error-message {
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.1);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+    }
+
+    .phase-selection {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 28px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phase-selection::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(59, 130, 246, 0.5), 
+        rgba(249, 115, 22, 0.5), 
+        transparent);
+    }
+
+    .phase-selection:hover {
+      transform: translateY(-6px);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .phase-options {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .phase-option {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .phase-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .phase-option label {
+      font-weight: 500;
+      color: #cbd5e1;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 12px 24px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: block;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .phase-option input[type="radio"]:checked + label {
+      background: linear-gradient(135deg, #3b82f6, #f97316);
+      border-color: transparent;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+    }
+
+    .phase-option:hover label {
+      border-color: rgba(59, 130, 246, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .suggestion-box {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 16px;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .suggestion-title {
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1.1rem;
       margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .result-item {
-      color: #1a202c;
-      margin-bottom: 6px;
-      font-weight: 500;
+    .suggestion-item {
+      color: #e2e8f0;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      transition: all 0.3s ease;
     }
 
-    .result-value {
-      color: #38b2ac;
-      font-weight: 700;
+    .suggestion-item:hover {
+      color: #ffffff;
+      padding-right: 8px;
     }
 
-    .error-message {
-      color: #e53e3e;
-      background: #fefcbf;
-      padding: 12px;
-      border-radius: 8px;
-      border-left: 4px solid #e53e3e;
-      font-weight: 500;
-    }
-
-    .phase-selection {
-      background: #f7fafc;
+    .warning-box {
+      margin-top: 20px;
       padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 16px;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      backdrop-filter: blur(10px);
     }
 
-    .phase-selection:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .phase-selection label {
-      font-weight: 500;
-      color: #4a5568;
-      margin-left: 8px;
-      margin-right: 4px;
-    }
-
-    .phase-selection input[type="radio"] {
-      transform: scale(1.1);
+    .warning-title {
+      color: #fca5a5;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     @media (max-width: 768px) {
       .container {
-        padding: 20px;
+        padding: 24px;
         margin: 10px;
+        border-radius: 20px;
       }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .form-section {
+        padding: 20px;
+      }
+      
+      .phase-options {
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+      }
+      
+      .phase-option label {
+        width: 200px;
+      }
+      
+      .logo-container {
+        width: 70px;
+        height: 70px;
+      }
+      
+      .logo-container i {
+        font-size: 28px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 20px;
+        margin: 5px;
+      }
+      
       h1 {
         font-size: 1.8rem;
       }
+      
       .form-section {
-        padding: 15px;
+        padding: 16px;
       }
     }
   </style>
@@ -262,12 +589,12 @@
         </div>
         هەڵبژاردنی جۆری سیستەم
       </h3>
-      <div class="d-flex justify-content-center gap-4">
-        <div>
+      <div class="phase-options">
+        <div class="phase-option">
           <input type="radio" id="singlePhase" name="phaseType" value="single" checked>
           <label for="singlePhase">سینگل فەیز</label>
         </div>
-        <div>
+        <div class="phase-option">
           <input type="radio" id="threePhase" name="phaseType" value="three">
           <label for="threePhase">سێ فەیز</label>
         </div>
@@ -285,13 +612,13 @@
       <form id="panelForm">
         <div class="mb-3">
           <label for="panelCount" class="form-label">
-            <i class="fas fa-hashtag me-2"></i>ژمارەی پانێڵەکان:
+            <i class="fas fa-hashtag"></i>ژمارەی پانێڵەکان:
           </label>
           <input type="number" class="form-control" id="panelCount" placeholder="ژمارەی پانێڵەکان داخل بکە" required>
         </div>
         <div class="mb-3">
           <label for="panelWatt" class="form-label">
-            <i class="fas fa-bolt me-2"></i>هێزی پانێڵ (وات):
+            <i class="fas fa-bolt"></i>هێزی پانێڵ (وات):
           </label>
           <input type="number" class="form-control" id="panelWatt" placeholder="هێزی پانێڵ بە وات داخل بکە" required>
         </div>
@@ -312,13 +639,13 @@
       <form id="ampForm">
         <div class="mb-3">
           <label for="amps" class="form-label">
-            <i class="fas fa-tachometer-alt me-2"></i>ئەمپێر (A):
+            <i class="fas fa-tachometer-alt"></i>ئەمپێر (A):
           </label>
           <input type="number" class="form-control" id="amps" placeholder="ئەمپێر داخل بکە" required>
         </div>
         <div class="mb-3">
           <label for="panelWattAmp" class="form-label">
-            <i class="fas fa-bolt me-2"></i>هێزی پانێڵ (وات):
+            <i class="fas fa-bolt"></i>هێزی پانێڵ (وات):
           </label>
           <input type="number" class="form-control" id="panelWattAmp" placeholder="هێزی پانێڵ بە وات داخل بکە" required>
         </div>
@@ -339,13 +666,13 @@
       <form id="threePhasePanelForm">
         <div class="mb-3">
           <label for="threePhasePanelCount" class="form-label">
-            <i class="fas fa-hashtag me-2"></i>ژمارەی پانێڵەکان:
+            <i class="fas fa-hashtag"></i>ژمارەی پانێڵەکان:
           </label>
           <input type="number" class="form-control" id="threePhasePanelCount" placeholder="ژمارەی پانێڵەکان داخل بکە" required>
         </div>
         <div class="mb-3">
           <label for="threePhasePanelWatt" class="form-label">
-            <i class="fas fa-bolt me-2"></i>هێزی پانێڵ (وات):
+            <i class="fas fa-bolt"></i>هێزی پانێڵ (وات):
           </label>
           <input type="number" class="form-control" id="threePhasePanelWatt" placeholder="هێزی پانێڵ بە وات داخل بکە" required>
         </div>
@@ -366,13 +693,13 @@
       <form id="threePhaseAmpForm">
         <div class="mb-3">
           <label for="threePhaseAmps" class="form-label">
-            <i class="fas fa-tachometer-alt me-2"></i>ئەمپێر (A):
+            <i class="fas fa-tachometer-alt"></i>ئەمپێر (A):
           </label>
           <input type="number" class="form-control" id="threePhaseAmps" placeholder="ئەمپێر داخل بکە" required>
         </div>
         <div class="mb-3">
           <label for="threePhasePanelWattAmp" class="form-label">
-            <i class="fas fa-bolt me-2"></i>هێزی پانێڵ (وات):
+            <i class="fas fa-bolt"></i>هێزی پانێڵ (وات):
           </label>
           <input type="number" class="form-control" id="threePhasePanelWattAmp" placeholder="هێزی پانێڵ بە وات داخل بکە" required>
         </div>
@@ -410,14 +737,23 @@
       suggestions = [...new Set(suggestions)];
 
       return suggestions.length > 0
-        ? `<div style="margin-top: 15px; padding: 12px; background: rgba(56, 178, 172, 0.1); border-radius: 8px; border-left: 4px solid #38b2ac;">
-             <strong style="color: #2d3748;"><i class="fas fa-lightbulb me-2"></i>پێشنیارەکان بۆ ${totalKW.toFixed(2)} kW:</strong><br>
-             <div style="margin-top: 8px; color: #2d3748;">
-               ${suggestions.map(s => `<i class="fas fa-check-circle me-2" style="color: #38b2ac;"></i>${s}`).join('<br>')}
+        ? `<div class="suggestion-box">
+             <div class="suggestion-title">
+               <i class="fas fa-lightbulb"></i>
+               پێشنیارەکان بۆ ${totalKW.toFixed(2)} kW:
              </div>
+             ${suggestions.map(s => `
+               <div class="suggestion-item">
+                 <i class="fas fa-check-circle" style="color: #3b82f6;"></i>
+                 ${s}
+               </div>
+             `).join('')}
            </div>`
-        : `<div style="margin-top: 15px; padding: 12px; background: rgba(229, 62, 62, 0.1); border-radius: 8px; border-left: 4px solid #e53e3e;">
-             <strong style="color: #742a2a;"><i class="fas fa-exclamation-triangle me-2"></i>هیچ ئینڤێرتەرێک لە لیستی قەبارەکاندا گونجاو نییە بۆ ${totalKW.toFixed(2)} kW.</strong>
+        : `<div class="warning-box">
+             <div class="warning-title">
+               <i class="fas fa-exclamation-triangle"></i>
+               هیچ ئینڤێرتەرێک لە لیستی قەبارەکاندا گونجاو نییە بۆ ${totalKW.toFixed(2)} kW.
+             </div>
            </div>`;
     }
 

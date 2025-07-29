@@ -643,8 +643,10 @@
   let inv = (panelCount * panelWatt) / 1000; // inv = panel * watt / 1000
   // حیسابکردنی هێزی پێویست بە فۆرمولای pr = inv * 0.7
   let pr = inv * 0.7;
-  // حیسابکردنی ئەمپێر بە فۆرمولای pr = 400 * amper * 1.732 * 0.8
-  let amps = (pr * 1000) / (400 * 1.732 * 0.8); // دروستکردنەوەی فۆرمولا بە وردی
+  // حیسابکردنی ئەمپێر بۆ یەک فەیز
+  let ampsSinglePhase = (pr * 1000) / (400 * 1.732 * 0.8); // amper = pr / (400 * 1.732 * 0.8)
+  // ئەمپێر بۆ هەر سێ فەیز
+  let ampsTotal = ampsSinglePhase * 3;
 
   // پێشنیاری ئینڤێرتەر
   let inverterSuggestion = suggestInverters(inv);
@@ -660,7 +662,11 @@
     </div>
     <div class="result-item">
       <i class="fas fa-tachometer-alt me-2"></i>
-      ئەمپێر: <span class="result-value">${amps.toFixed(2)} A</span>
+      ئەمپێر بۆ یەک فەیز: <span class="result-value">${ampsSinglePhase.toFixed(2)} A</span>
+    </div>
+    <div class="result-item">
+      <i class="fas fa-tachometer-alt me-2"></i>
+      ئەمپێر بۆ هەر سێ فەیز: <span class="result-value">${ampsTotal.toFixed(2)} A</span>
     </div>
     <div class="result-item">
       <i class="fas fa-plug-circle-bolt me-2"></i>
@@ -671,51 +677,61 @@
   document.getElementById("result").classList.remove("d-none");
 }
     function calculateThreePhaseByAmps() {
-      let amps = parseFloat(document.getElementById("threePhaseAmps").value);
-      let panelWatt = parseFloat(document.getElementById("threePhasePanelWattAmp").value);
+  let ampsTotal = parseFloat(document.getElementById("threePhaseAmps").value);
+  let panelWatt = parseFloat(document.getElementById("threePhasePanelWattAmp").value);
 
-      if (isNaN(amps) || isNaN(panelWatt) || amps <= 0 || panelWatt <= 0) {
-        document.getElementById("result").innerHTML = `
-          <div class="error-message">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
-          </div>
-        `;
-        document.getElementById("result").classList.remove("d-none");
-        return;
-      }
+  if (isNaN(ampsTotal) || isNaN(panelWatt) || ampsTotal <= 0 || panelWatt <= 0) {
+    document.getElementById("result").innerHTML = `
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
+      </div>
+    `;
+    document.getElementById("result").classList.remove("d-none");
+    return;
+  }
 
-      // حیسابکردنی هێزی پێویست بە فۆرمولای pr = 400 * amper * 1.732 * 0.8
-      let pr = (400 * amps * 1.732 * 0.8) / 1000; // بە کیلووات
-      // حیسابکردنی هێزی ئینڤێرتەر بە فۆرمولای inv = pr / 0.7
-      let inv = pr / 0.7;
-      // حیسابکردنی ژمارەی پانێڵەکان
-      let panelCount = Math.ceil((inv * 1000) / panelWatt);
+  // ئەمپێر بۆ یەک فەیز (چونکە ئەمپێری داخڵکراو کۆی سێ فەیزە)
+  let ampsSinglePhase = ampsTotal / 3;
+  // حیسابکردنی هێزی پێویست بە فۆرمولای pr = 400 * amper * 1.732 * 0.8
+  let pr = (400 * ampsSinglePhase * 1.732 * 0.8) / 1000; // بە کیلووات
+  // حیسابکردنی هێزی ئینڤێرتەر بە فۆرمولای inv = pr / 0.7
+  let inv = pr / 0.7;
+  // حیسابکردنی ژمارەی پانێڵەکان
+  let panelCount = Math.ceil((inv * 1000) / panelWatt);
 
-      // پێشنیاری ئینڤێرتەر
-      let inverterSuggestion = suggestInverters(inv);
+  // پێشنیاری ئینڤێرتەر
+  let inverterSuggestion = suggestInverters(inv);
 
-      document.getElementById("result").innerHTML = `
-        <div class="result-title">
-          <i class="fas fa-check-circle"></i>
-          ئەنجامەکانی سێ فەیز
-        </div>
-        <div class="result-item">
-          <i class="fas fa-solar-panel me-2"></i>
-          ژمارەی پانێڵەکان: <span class="result-value">${panelCount}</span>
-        </div>
-        <div class="result-item">
-          <i class="fas fa-microchip me-2"></i>
-          هێزی ئینڤێرتەر: <span class="result-value">${inv.toFixed(2)} kW</span>
-        </div>
-        <div class="result-item">
-          <i class="fas fa-plug-circle-bolt me-2"></i>
-          هێزی پێویست: <span class="result-value">${pr.toFixed(2)} kW</span>
-        </div>
-        ${inverterSuggestion}
-      `;
-      document.getElementById("result").classList.remove("d-none");
-    }
+  document.getElementById("result").innerHTML = `
+    <div class="result-title">
+      <i class="fas fa-check-circle"></i>
+      ئەنجامەکانی سێ فەیز
+    </div>
+    <div class="result-item">
+      <i class="fas fa-solar-panel me-2"></i>
+      ژمارەی پانێڵەکان: <span class="result-value">${panelCount}</span>
+    </div>
+    <div class="result-item">
+      <i class="fas fa-microchip me-2"></i>
+      هێزی ئینڤێرتەر: <span class="result-value">${inv.toFixed(2)} kW</span>
+    </div>
+    <div class="result-item">
+      <i class="fas fa-tachometer-alt me-2"></i>
+      ئەمپێر بۆ یەک فەیز: <span class="result-value">${ampsSinglePhase.toFixed(2)} A</span>
+    </div>
+    <div class="result-item">
+      <i class="fas fa-tachometer-alt me-2"></i>
+      ئەمپێر بۆ هەر سێ فەیز: <span class="result-value">${ampsTotal.toFixed(2)} A</span>
+    </div>
+    <div class="result-item">
+      <i class="fas fa-plug-circle-bolt me-2"></i>
+      هێزی پێویست: <span class="result-value">${pr.toFixed(2)} kW</span>
+    </div>
+    ${inverterSuggestion}
+  `;
+  document.getElementById("result").classList.remove("d-none");
+}
 
     // Add smooth scrolling to result when it appears
     function showResult() {

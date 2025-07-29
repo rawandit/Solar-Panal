@@ -20,12 +20,11 @@
 body {
   font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
   background: linear-gradient(135deg, 
-    #B33B22 0%, /* پرتوکالی-سوور */
-    #D43B3E 50%, /* سووری زەق */
-    #6383B4 100% /* کرێمی */);
+    #1a2238 0%, /* شینی تاریک */
+    #4b5e83 100% /* شینی خەمڵاوی */);
   min-height: 100vh;
   padding: 20px;
-  color: #6383B4; /* کرێمی بۆ نوسین */
+  color: #f8f1e9; /* کرێمی سووک بۆ نوسین */
   position: relative;
   overflow-x: hidden;
 }
@@ -38,22 +37,22 @@ body::before {
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 20% 80%, rgba(227, 59, 34, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(212, 59, 62, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(229, 222, 214, 0.2) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(255, 111, 97, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 159, 28, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(107, 114, 128, 0.2) 0%, transparent 50%);
   pointer-events: none;
   z-index: -1;
 }
 
 .container {
   max-width: 900px;
-  background: rgba(229, 244, 251, 0.2); /* شینی سووک بە opacity کەم */
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(140, 119, 100, 0.3); /* قاوەیی خەمڵاوی */
+  background: rgba(248, 241, 233, 0.3); /* کرێمی سووک بە opacity */
+  backdrop-filter: blur(12px); /* ئەفەکتی شیشەیی */
+  border: 1px solid rgba(107, 114, 128, 0.3); /* خۆڵەمێشی خەمڵاوی */
   border-radius: 24px;
   box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(229, 244, 251, 0.1);
+    0 25px 50px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(248, 241, 233, 0.1);
   padding: 40px;
   margin: 20px auto;
   position: relative;
@@ -81,7 +80,7 @@ body::before {
   height: 100%;
   background: linear-gradient(90deg, 
     transparent, 
-    rgba(229, 244, 251, 0.05), /* شینی سووک */
+    rgba(248, 241, 233, 0.05), /* کرێمی سووک */
     transparent);
   animation: shimmer 3s infinite;
 }
@@ -101,14 +100,14 @@ body::before {
   width: 80px;
   height: 80px;
   margin: 0 auto 20px;
-  background: linear-gradient(135deg, #D43B3E, #B33B22); /* سوور و پرتوکالی-سوور */
+  background: linear-gradient(135deg, #ff6f61, #ff9f1c); /* کۆرالی و پرتوکالی */
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 
-    0 10px 30px rgba(212, 59, 62, 0.4),
-    0 0 0 1px rgba(229, 244, 251, 0.1);
+    0 10px 30px rgba(255, 111, 97, 0.4),
+    0 0 0 1px rgba(248, 241, 233, 0.1);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -118,7 +117,7 @@ body::before {
   content: '';
   position: absolute;
   inset: 2px;
-  background: linear-gradient(135deg, #B33B22, #D43B3E);
+  background: linear-gradient(135deg, #ff9f1c, #ff6f61);
   border-radius: 18px;
   z-index: -1;
 }
@@ -126,45 +125,45 @@ body::before {
 .logo-container:hover {
   transform: scale(1.1) rotate(5deg);
   box-shadow: 
-    0 20px 40px rgba(212, 59, 62, 0.6),
-    0 0 0 1px rgba(229, 244, 251, 0.2);
+    0 20px 40px rgba(255, 111, 97, 0.6),
+    0 0 0 1px rgba(248, 241, 233, 0.2);
 }
 
 .logo-container i {
   font-size: 32px;
-  color: #6383B4; /* کرێمی */
-  filter: drop-shadow(0 2px 4px rgba(140, 119, 100, 0.3)); /* قاوەیی خەمڵاوی */
+  color: #f8f1e9; /* کرێمی سووک */
+  filter: drop-shadow(0 2px 4px rgba(107, 114, 128, 0.3));
 }
 
 h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #6383B4; /* کرێمی */
-  text-shadow: 0 2px 5px rgba(140, 119, 100, 0.6); /* سێبەری قاوەیی */
+  color: #f8f1e9; /* کرێمی سووک */
+  text-shadow: 0 2px 5px rgba(107, 114, 128, 0.6); /* سێبەری خۆڵەمێشی */
   background: none;
-  -webkit-text-fill-color: #6383B4;
+  -webkit-text-fill-color: #f8f1e9;
   margin-bottom: 12px;
 }
 
 .developer-credit {
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   font-size: 1rem;
   font-weight: 600;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
 }
 
 .subtitle {
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   font-size: 1.1rem;
   font-weight: 500;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
   margin-top: 8px;
 }
 
 .form-section {
-  background: rgba(229, 244, 251, 0.2); /* شینی سووک */
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(140, 119, 100, 0.3); /* قاوەیی خەمڵاوی */
+  background: rgba(248, 241, 233, 0.3); /* کرێمی سووک */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(107, 114, 128, 0.3);
   padding: 28px;
   border-radius: 20px;
   margin-bottom: 24px;
@@ -182,24 +181,24 @@ h1 {
   height: 1px;
   background: linear-gradient(90deg, 
     transparent, 
-    rgba(212, 59, 62, 0.5), /* سووری زەق */
-    rgba(179, 59, 34, 0.5), /* پرتوکالی-سوور */
+    rgba(255, 111, 97, 0.5), /* کۆرالی */
+    rgba(255, 159, 28, 0.5), /* پرتوکالی */
     transparent);
 }
 
 .form-section:hover {
   transform: translateY(-6px);
-  background: rgba(229, 244, 251, 0.25);
+  background: rgba(248, 241, 233, 0.35);
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.2),
-    0 0 0 1px rgba(229, 244, 251, 0.1);
+    0 0 0 1px rgba(248, 241, 233, 0.1);
 }
 
 .section-title {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #6383B4; /* کرێمی */
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  color: #f8f1e9; /* کرێمی سووک */
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
   margin-bottom: 20px;
   display: flex;
   align-items: center;
@@ -209,46 +208,46 @@ h1 {
 .section-icon {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #D43B3E, #B33B22); /* سوور و پرتوکالی-سوور */
+  background: linear-gradient(135deg, #ff6f61, #ff9f1c); /* کۆرالی و پرتوکالی */
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   font-size: 18px;
-  box-shadow: 0 4px 12px rgba(212, 59, 62, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 111, 97, 0.3);
 }
 
 .form-control {
-  border: 1px solid rgba(140, 119, 100, 0.3); /* قاوەیی خەمڵاوی */
+  border: 1px solid rgba(107, 114, 128, 0.3); /* خۆڵەمێشی خەمڵاوی */
   border-radius: 12px;
   padding: 14px 16px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: rgba(229, 244, 251, 0.1); /* شینی سووک */
-  color: #6383B4; /* کرێمی */
+  background: rgba(248, 241, 233, 0.1);
+  color: #f8f1e9; /* کرێمی سووک */
   backdrop-filter: blur(8px);
 }
 
 .form-control::placeholder {
-  color: rgba(229, 222, 214, 0.7); /* کرێمی کەمێک خەمڵاویتر */
+  color: rgba(248, 241, 233, 0.7);
 }
 
 .form-control:focus {
-  border-color: #D43B3E; /* سووری زەق */
+  border-color: #ff6f61; /* کۆرالی */
   box-shadow: 
-    0 0 0 3px rgba(212, 59, 62, 0.2),
-    0 4px 12px rgba(212, 59, 62, 0.1);
+    0 0 0 3px rgba(255, 111, 97, 0.2),
+    0 4px 12px rgba(255, 111, 97, 0.1);
   outline: none;
-  background: rgba(229, 244, 251, 0.15);
+  background: rgba(248, 241, 233, 0.15);
   transform: translateY(-1px);
 }
 
 .form-label {
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   font-weight: 600;
   font-size: 0.95rem;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -256,9 +255,9 @@ h1 {
 }
 
 .btn-calculate {
-  background: linear-gradient(135deg, #D43B3E, #B33B22); /* سوور و پرتوکالی-سوور */
+  background: linear-gradient(135deg, #ff6f61, #ff9f1c); /* کۆرالی و پرتوکالی */
   border: none;
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   padding: 16px 32px;
   border-radius: 12px;
   font-size: 1.1rem;
@@ -266,7 +265,7 @@ h1 {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(212, 59, 62, 0.3);
+  box-shadow: 0 8px 24px rgba(255, 111, 97, 0.4);
 }
 
 .btn-calculate::before {
@@ -278,7 +277,7 @@ h1 {
   height: 100%;
   background: linear-gradient(90deg, 
     transparent, 
-    rgba(229, 244, 251, 0.2), /* شینی سووک */
+    rgba(248, 241, 233, 0.2), 
     transparent);
   transition: left 0.5s;
 }
@@ -288,8 +287,9 @@ h1 {
 }
 
 .btn-calculate:hover {
+  background: linear-gradient(135deg, #ff9f1c, #ff6f61); /* گۆڕینی تێکەڵە */
   transform: translateY(-3px);
-  box-shadow: 0 12px 36px rgba(212, 59, 62, 0.4);
+  box-shadow: 0 12px 36px rgba(255, 111, 97, 0.5);
 }
 
 .btn-calculate:active {
@@ -297,9 +297,9 @@ h1 {
 }
 
 #result {
-  background: rgba(229, 244, 251, 0.2); /* شینی سووک */
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(140, 119, 100, 0.3); /* قاوەیی خەمڵاوی */
+  background: rgba(248, 241, 233, 0.3); /* کرێمی سووک */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(107, 114, 128, 0.3);
   padding: 28px;
   border-radius: 20px;
   margin-top: 24px;
@@ -327,14 +327,14 @@ h1 {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #D43B3E, #B33B22); /* سوور و پرتوکالی-سوور */
+  background: linear-gradient(90deg, #ff6f61, #ff9f1c);
 }
 
 .result-title {
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   font-weight: 600;
   font-size: 1.4rem;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
   margin-bottom: 20px;
   display: flex;
   align-items: center;
@@ -342,12 +342,12 @@ h1 {
 }
 
 .result-item {
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   margin-bottom: 12px;
   font-weight: 600;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
   padding: 12px 0;
-  border-bottom: 1px solid rgba(140, 119, 100, 0.2); /* قاوەیی خەمڵاوی */
+  border-bottom: 1px solid rgba(107, 114, 128, 0.2);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -355,7 +355,7 @@ h1 {
 }
 
 .result-item:hover {
-  color: #E5F4FB; /* شینی سووک بۆ hover */
+  color: #ffffff; /* سپی پاک بۆ hover */
   padding-right: 8px;
 }
 
@@ -364,26 +364,26 @@ h1 {
 }
 
 .result-value {
-  color: #E5F4FB; /* شینی سووک بۆ دیاری زیاتر */
-  font-weight:enki700;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  color: #ffffff; /* سپی پاک بۆ دیاری زیاتر */
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
 }
 
 .error-message {
-  color: #6383B4; /* کرێمی */
-  background: rgba(212, 59, 62, 0.2); /* سووری زەق */
+  color: #f8f1e9; /* کرێمی سووک */
+  background: rgba(255, 111, 97, 0.2); /* کۆرالی */
   padding: 16px;
   border-radius: 12px;
-  border: 1px solid rgba(212, 59, 62, 0.3);
+  border: 1px solid rgba(255, 111, 97, 0.3);
   font-weight: 600;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
   backdrop-filter: blur(8px);
 }
 
 .phase-selection {
-  background: rgba(229, 244, 251, 0.2); /* شینی سووک */
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(140, 119, 100, 0.3); /* قاوەیی خەمڵاوی */
+  background: rgba(248, 241, 233, 0.3); /* کرێمی سووک */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(107, 114, 128, 0.3);
   padding: 28px;
   border-radius: 20px;
   margin-bottom: 24px;
@@ -401,17 +401,17 @@ h1 {
   height: 1px;
   background: linear-gradient(90deg, 
     transparent, 
-    rgba(212, 59, 62, 0.5), 
-    rgba(179, 59, 34, 0.5), 
+    rgba(255, 111, 97, 0.5), 
+    rgba(255, 159, 28, 0.5), 
     transparent);
 }
 
 .phase-selection:hover {
   transform: translateY(-6px);
-  background: rgba(229, 244, 251, 0.25);
+  background: rgba(248, 241, 233, 0.35);
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.2),
-    0 0 0 1px rgba(229, 244, 251, 0.1);
+    0 0 0 1px rgba(248, 241, 233, 0.1);
 }
 
 .phase-options {
@@ -435,14 +435,14 @@ h1 {
 
 .phase-option label {
   font-weight: 600;
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   font-size: 1.1rem;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
   cursor: pointer;
   padding: 12px 24px;
   border-radius: 12px;
-  border: 2px solid rgba(140, 119, 100, 0.2);
-  background: rgba(229, 244, 251, 0.1);
+  border: 2px solid rgba(107, 114, 128, 0.2);
+  background: rgba(248, 241, 233, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: block;
   text-align: center;
@@ -450,33 +450,33 @@ h1 {
 }
 
 .phase-option input[type="radio"]:checked + label {
-  background: linear-gradient(135deg, #D43B3E, #B33B22);
+  background: linear-gradient(135deg, #ff6f61, #ff9f1c);
   border-color: transparent;
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(212, 59, 62, 0.3);
+  box-shadow: 0 8px 24px rgba(255, 111, 97, 0.3);
 }
 
 .phase-option:hover label {
-  border-color: rgba(212, 59, 62, 0.3);
-  background: rgba(229, 244, 251, 0.15);
+  border-color: rgba(255, 111, 97, 0.3);
+  background: rgba(248, 241, 233, 0.15);
   transform: translateY(-1px);
 }
 
 .suggestion-box {
   margin-top: 20px;
   padding: 20px;
-  background: rgba(212, 59, 62, 0.2); /* سووری زەق */
+  background: rgba(255, 111, 97, 0.2); /* کۆرالی */
   border-radius: 16px;
-  border: 1px solid rgba(212, 59, 62, 0.3);
+  border: 1px solid rgba(255, 111, 97, 0.3);
   backdrop-filter: blur(8px);
 }
 
 .suggestion-title {
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   font-weight: 600;
   font-size: 1.1rem;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -484,35 +484,35 @@ h1 {
 }
 
 .suggestion-item {
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 8px 0;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
   transition: all 0.3s ease;
 }
 
 .suggestion-item:hover {
-  color: #E5F4FB; /* شینی سووک */
+  color: #ffffff; /* سپی پاک */
   padding-right: 8px;
 }
 
 .warning-box {
   margin-top: 20px;
   padding: 20px;
-  background: rgba(212, 59, 62, 0.2); /* سووری زەق */
+  background: rgba(255, 111, 97, 0.2); /* کۆرالی */
   border-radius: 16px;
-  border: 1px solid rgba(212, 59, 62, 0.3);
+  border: 1px solid rgba(255, 111, 97, 0.3);
   backdrop-filter: blur(8px);
 }
 
 .warning-title {
-  color: #6383B4; /* کرێمی */
+  color: #f8f1e9; /* کرێمی سووک */
   font-weight: 600;
   font-size: 1.1rem;
-  text-shadow: 0 1px 4px rgba(140, 119, 100, 0.5);
+  text-shadow: 0 1px 4px rgba(107, 114, 128, 0.5);
   display: flex;
   align-items: center;
   gap: 8px;

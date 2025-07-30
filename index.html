@@ -587,6 +587,7 @@ body::before {
   }
 }
   </style>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <div class="main-container">
@@ -1058,6 +1059,182 @@ body::before {
         }
       }
     });
+function generatePDF(resultsData, phaseType) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  // سەردێڕ
+  doc.setFillColor(245, 158, 11);
+  doc.rect(0, 0, 210, 20, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.text('حیسابکەری تاقە شمسی', 105, 12, { align: 'center' });
+
+  // ئەنجامەکان
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(12);
+  doc.text(`ئەنجامەکانی ${phaseType === 'single' ? 'سینگل فەیز' : 'سێ فەیز'}`, 190, 30, { align: 'right' });
+
+  let yPos = 40;
+  for (const [label, value] of Object.entries(resultsData)) {
+    if (label !== 'suggestions') {
+      doc.text(`${label}: ${value}`, 190, yPos, { align: 'right' });
+      yPos += 10;
+    }
+  }
+
+  // پێشنیارەکان
+  if (resultsData.suggestions && resultsData.suggestions.length > 0) {
+    yPos += 5;
+    doc.setTextColor(245, 158, 11);
+    doc.text('پێشنیارەکان:', 190, yPos, { align: 'right' });
+    yPos += 10;
+    doc.setTextColor(0, 0, 0);
+    resultsData.suggestions.forEach(suggestion => {
+      doc.text(`- ${suggestion}`, 190, yPos, { align: 'right' });
+      yPos += 8;
+    });
+  }
+
+  // خەزنکردنی فایل
+  doc.save(`SolarCalculatorReport_${new Date().toISOString().split('T')[0]}.pdf`);
+}
+
+// تازەکردنەوەی فەنکشنەکانی حیسابکردن
+function calculateByPanels() {
+  let panelCount = parseFloat(document.getElementById("panelCount").value);
+  let panelWatt = parseFloat(document.getElementById("panelWatt").value);
+
+  if (isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
+    showResults(`
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
+      </div>
+    `);
+    return;
+  }
+
+  let totalWatt = panelCount * panelWatt;
+  let totalKW = totalWatt / 1000;
+  let amps = (totalWatt / 230) * 0.8;
+  let inverterSuggestion = suggestInverters(totalKW);
+
+  const resultsData = {
+    'هێزی ئینڤێرتەر': `${totalKW.toFixed(2)} kW`,
+    'ئەمپێر': `${amps.toFixed(2)} A`,
+    suggestions: inverterSuggestion.includes('warning-box') ? [] : inverterSuggestion.match(/<div class="suggestion-item">.*?</div>/g)?.map(s => s.replace(/<[^>]+>/g, '').trim()) || []
+  };
+
+  showResults(`
+    <div class="results-section">
+      <div class="results-header">
+        <div class="results-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h3 class="results-title">ئەنجامەکانی سینگل فەیز</h3>
+      </div>
+      <div class="result-item">
+        <div class="result-label">
+          <i class="fas fa-microchip"></i>
+          هێزی ئینڤێرتەر
+        </div>
+        <div class="result-value">${totalKW.toFixed(2)} kW</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">
+          <i class="fas fa-tachometer-alt"></i>
+          ئەمپێر
+        </div>
+        <div class="result-value">${amps.toFixed(2)} A</div>
+      </div>
+      ${inverterSuggestion}
+      <button class="calc-button mt-3" onclick='generatePDF(${JSON.stringify(resultsData)}, "single")'>
+        <i class="fas fa-file-pdf me-2"></i>
+        دەرهێنانی PDF
+      </button>
+    </div>
+  `);
+}
+
+// هەمان شێواز بۆ فەنکشنەکانی دیکە (calculateByAmps, calculateThreePhaseByPanels, calculateThreePhaseByAmps)
+// بۆ نموونە، بۆ calculateThreePhaseByPanels:
+function calculateThreePhaseByPanels() {
+  let panelCount = parseFloat(document.getElementById("threePhasePanelCount").value);
+  let panelWatt = parseFloat(document.getElementById("threePhasePanelWatt").value);
+
+  if (isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
+    showResults(`
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
+      </div>
+    `);
+    return;
+  }
+
+  let inv = (panelCount * panelWatt) / 1000;
+  let pr = inv * 0.7;
+  let ampsSinglePhase = (pr * 1000) / (400 * 1.732 * 0.8);
+  let ampsTotal = ampsSinglePhase * 3;
+  let inverterSuggestion = suggestInverters(inv);
+
+  const resultsData = {
+    'هێزی ئینڤێرتەر': `${inv.toFixed(2)} kW`,
+    'ئەمپێر بۆ یەک فەیز': `${ampsSinglePhase.toFixed(2)} A`,
+    'ئەمپێر بۆ هەر سێ فەیز': `${ampsTotal.toFixed(2)} A`,
+    'هێزی پێویست': `${pr.toFixed(2)} kW`,
+    suggestions: inverterSuggestion.includes('warning-box') ? [] : inverterSuggestion.match(/<div class="suggestion-item">.*?</div>/g)?.map(s => s.replace(/<[^>]+>/g, '').trim()) || []
+  };
+
+  showResults(`
+    <div class="results-section">
+      <div class="results-header">
+        <div class="results-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h3 class="results-title">ئەنجامەکانی سێ فەیز</h3>
+      </div>
+      <div class="result-item">
+        <div class="result-label">
+          <i class="fas fa-microchip"></i>
+          هێزی ئینڤێرتەر
+        </div>
+        <div class="result-value">${inv.toFixed(2)} kW</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">
+          <i class="fas fa-tachometer-alt"></i>
+          ئەمپێر بۆ یەک فەیز
+        </div>
+        <div class="result-value">${ampsSinglePhase.toFixed(2)} A</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">
+          <i class="fas fa-tachometer-alt"></i>
+          ئەمپێر بۆ هەر سێ فەیز
+        </div>
+        <div class="result-value">${ampsTotal.toFixed(2)} A</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">
+          <i class="fas fa-plug-circle-bolt"></i>
+          هێزی پێویست
+        </div>
+        <div class="result-value">${pr.toFixed(2)} kW</div>
+      </div>
+      ${inverterSuggestion}
+      <button class="calc-button mt-3" onclick='generatePDF(${JSON.stringify(resultsData)}, "three")'>
+        <i class="fas fa-file-pdf me-2"></i>
+        دەرهێنانی PDF
+      </button>
+    </div>
+  `);
+}
   </script>
 </body>
 </html>

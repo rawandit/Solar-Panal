@@ -10,8 +10,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
   <!-- jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Amiri Font for Arabic/Kurdish -->
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Noto Sans Arabic Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap');
 
@@ -37,7 +37,7 @@
     }
 
     body {
-      font-family: 'Noto Sans Arabic', 'Amiri', 'Arial', sans-serif;
+      font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
       background: var(--surface-dark);
       background-image: 
         radial-gradient(circle at 25% 25%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
@@ -812,8 +812,8 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
-      // Set font to Amiri for Kurdish/Arabic support
-      doc.setFont("Amiri", "normal");
+      // Set font to Noto Sans Arabic for Kurdish/Arabic support
+      doc.setFont("NotoSansArabic", "normal");
 
       // Add title
       doc.setFontSize(20);
@@ -853,12 +853,10 @@
     function showResults(html, resultsData) {
       document.getElementById("result").innerHTML = `
         ${html}
-        ${resultsData.length > 0 ? `
-          <button class="calc-button mt-4" onclick='generatePDF(${JSON.stringify(resultsData)})'>
-            <i class="fas fa-file-pdf me-2"></i>
-            داونلۆدکردنی راپۆرت وەک PDF
-          </button>
-        ` : ''}
+        <button class="calc-button mt-4" onclick='generatePDF(${JSON.stringify(resultsData)})'>
+          <i class="fas fa-file-pdf me-2"></i>
+          داونلۆدکردنی راپۆرت وەک PDF
+        </button>
       `;
       document.getElementById("result").classList.remove("d-none");
       setTimeout(() => {
@@ -870,18 +868,16 @@
     }
 
     function calculateByPanels() {
-      let panelCount = document.getElementById("panelCount").value;
-      let panelWatt = document.getElementById("panelWatt").value;
+      let panelCountInput = document.getElementById("panelCount").value;
+      let panelWattInput = document.getElementById("panelWatt").value;
+      let panelCount = parseFloat(panelCountInput);
+      let panelWatt = parseFloat(panelWattInput);
 
-      // Convert to numbers and validate
-      panelCount = parseFloat(panelCount);
-      panelWatt = parseFloat(panelWatt);
-
-      if (!panelCount || !panelWatt || panelCount <= 0 || panelWatt <= 0 || isNaN(panelCount) || isNaN(panelWatt)) {
+      if (!panelCountInput || !panelWattInput || isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
-            تکایە ژمارەیەکی دروست و نەرێنی داخل بکە بۆ ژمارەی پانێڵەکان و هێزی پانێڵ!
+            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
         `, []);
         return;
@@ -929,18 +925,16 @@
     }
 
     function calculateByAmps() {
-      let amps = document.getElementById("amps").value;
-      let panelWatt = document.getElementById("panelWattAmp").value;
+      let ampsInput = document.getElementById("amps").value;
+      let panelWattInput = document.getElementById("panelWattAmp").value;
+      let amps = parseFloat(ampsInput);
+      let panelWatt = parseFloat(panelWattInput);
 
-      // Convert to numbers and validate
-      amps = parseFloat(amps);
-      panelWatt = parseFloat(panelWatt);
-
-      if (!amps || !panelWatt || amps <= 0 || panelWatt <= 0 || isNaN(amps) || isNaN(panelWatt)) {
+      if (!ampsInput || !panelWattInput || isNaN(amps) || isNaN(panelWatt) || amps <= 0 || panelWatt <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
-            تکایە ژمارەیەکی دروست و نەرێنی داخل بکە بۆ ئەمپێر و هێزی پانێڵ!
+            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
         `, []);
         return;
@@ -988,18 +982,16 @@
     }
 
     function calculateThreePhaseByPanels() {
-      let panelCount = document.getElementById("threePhasePanelCount").value;
-      let panelWatt = document.getElementById("threePhasePanelWatt").value;
+      let panelCountInput = document.getElementById("threePhasePanelCount").value;
+      let panelWattInput = document.getElementById("threePhasePanelWatt").value;
+      let panelCount = parseFloat(panelCountInput);
+      let panelWatt = parseFloat(panelWattInput);
 
-      // Convert to numbers and validate
-      panelCount = parseFloat(panelCount);
-      panelWatt = parseFloat(panelWatt);
-
-      if (!panelCount || !panelWatt || panelCount <= 0 || panelWatt <= 0 || isNaN(panelCount) || isNaN(panelWatt)) {
+      if (!panelCountInput || !panelWattInput || isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
-            تکایە ژمارەیەکی دروست و نەرێنی داخل بکە بۆ ژمارەی پانێڵەکان و هێزی پانێڵ!
+            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
         `, []);
         return;
@@ -1064,18 +1056,16 @@
     }
 
     function calculateThreePhaseByAmps() {
-      let ampsTotal = document.getElementById("threePhaseAmps").value;
-      let panelWatt = document.getElementById("threePhasePanelWattAmp").value;
+      let ampsTotalInput = document.getElementById("threePhaseAmps").value;
+      let panelWattInput = document.getElementById("threePhasePanelWattAmp").value;
+      let ampsTotal = parseFloat(ampsTotalInput);
+      let panelWatt = parseFloat(panelWattInput);
 
-      // Convert to numbers and validate
-      ampsTotal = parseFloat(ampsTotal);
-      panelWatt = parseFloat(panelWatt);
-
-      if (!ampsTotal || !panelWatt || ampsTotal <= 0 || panelWatt <= 0 || isNaN(ampsTotal) || isNaN(panelWatt)) {
+      if (!ampsTotalInput || !panelWattInput || isNaN(ampsTotal) || isNaN(panelWatt) || ampsTotal <= 0 || panelWatt <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
-            تکایە ژمارەیەکی دروست و نەرێنی داخل بکە بۆ ئەمپێر و هێزی پانێڵ!
+            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
         `, []);
         return;

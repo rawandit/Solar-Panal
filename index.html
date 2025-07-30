@@ -11,6 +11,7 @@
   <!-- jsPDF for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
+    /* سەرجەم ستایلی پێشووت بە تەواوی وەک خۆی دەمێنێتەوە */
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap');
 
     * {
@@ -772,14 +773,14 @@
       for (let size of inverterSizes) {
         let count = Math.round(totalKW / size);
         if (count > 0 && count <= 3 && Math.abs(count * size - totalKW) <= 1) {
-          suggestions.push(`${count} ئینڤێرتەری ${size} kW`);
+          suggestions.push(`${count} Inverter ${size} kW`);
         }
       }
       for (let size of inverterSizes) {
         for (let count = 1; count <= 3; count++) {
           let total = count * size;
           if (Math.abs(total - totalKW) <= 1 && total >= totalKW) {
-            suggestions.push(`${count} ئینڤێرتەری ${size} kW`);
+            suggestions.push(`${count} Inverter ${size} kW`);
           }
         }
       }
@@ -818,55 +819,68 @@
     }
 
     function generatePDF(resultsData, phaseType) {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      // Header
-      doc.setFillColor(245, 158, 11);
-      doc.rect(0, 0, 210, 20, 'F');
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(16);
-      doc.text('حیسابکەری تاقە شمسی', 105, 12, { align: 'center' });
-
-      // Results
-      doc.setTextColor(0, 0, 0);
-      doc.setFontSize(12);
-      doc.text(`ئەنجامەکانی ${phaseType === 'single' ? 'سینگل فەیز' : 'سێ فەیز'}`, 190, 30, { align: 'right' });
-
-      let yPos = 40;
-      for (const [label, value] of Object.entries(resultsData)) {
-        if (label !== 'suggestions') {
-          doc.text(`${label}: ${value}`, 190, yPos, { align: 'right' });
-          yPos += 10;
-        }
-      }
-
-      // Suggestions
-      if (resultsData.suggestions && resultsData.suggestions.length > 0) {
-        yPos += 5;
-        doc.setTextColor(245, 158, 11);
-        doc.text('پێشنیارەکان:', 190, yPos, { align: 'right' });
-        yPos += 10;
-        doc.setTextColor(0, 0, 0);
-        resultsData.suggestions.forEach(suggestion => {
-          doc.text(`- ${suggestion}`, 190, yPos, { align: 'right' });
-          yPos += 8;
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
         });
+
+        // Set font to a default one that supports basic text (for simplicity)
+        doc.setFont("helvetica", "normal");
+
+        // Header
+        doc.setFillColor(245, 158, 11); // Gold color
+        doc.rect(0, 0, 210, 20, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.text("Solar Calculator Report", 105, 12, { align: 'center' });
+
+        // Results
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(12);
+        doc.text(`Results for ${phaseType === 'single' ? 'Single Phase' : 'Three Phase'}`, 190, 30, { align: 'right' });
+
+        let yPos = 40;
+        for (const [label, value] of Object.entries(resultsData)) {
+          if (label !== 'suggestions') {
+            doc.text(`${label}: ${value}`, 190, yPos, { align: 'right' });
+            yPos += 10;
+          }
+        }
+
+        // Suggestions
+        if (resultsData.suggestions && resultsData.suggestions.length > 0) {
+          yPos += 5;
+          doc.setTextColor(245, 158, 11);
+          doc.text("Suggestions:", 190, yPos, { align: 'right' });
+          yPos += 10;
+          doc.setTextColor(0, 0, 0);
+          resultsData.suggestions.forEach(suggestion => {
+            doc.text(`- ${suggestion}`, 190, yPos, { align: 'right' });
+            yPos += 8;
+          });
+        }
+
+        // Footer
+        doc.setFillColor(30, 41, 59); // Dark color
+        doc.rect(0, 280, 210, 17, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(10);
+        doc.text("Solar Calculator - © 2025", 105, 290, { align: 'center' });
+
+        // Save the file
+        doc.save(`SolarCalculatorReport_${new Date().toISOString().split('T')[0]}.pdf`);
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        showResults(`
+          <div class="error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            هەڵەیەک لە دروستکردنی PDFدا ڕوویدا، تکایە دووبارە هەوڵ بدە!
+          </div>
+        `);
       }
-
-      // Footer
-      doc.setFillColor(30, 41, 59);
-      doc.rect(0, 280, 210, 17, 'F');
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(10);
-      doc.text('حیسابکەری تاقە شمسی - © ٢٠٢٥', 105, 290, { align: 'center' });
-
-      // Save the file
-      doc.save(`SolarCalculatorReport_${new Date().toISOString().split('T')[0]}.pdf`);
     }
 
     function calculateByPanels() {
@@ -889,8 +903,8 @@
       let inverterSuggestion = suggestInverters(totalKW);
 
       const resultsData = {
-        'هێزی ئینڤێرتەر': `${totalKW.toFixed(2)} kW`,
-        'ئەمپێر': `${amps.toFixed(2)} A`,
+        "Inverter Power": `${totalKW.toFixed(2)} kW`,
+        "Amperage": `${amps.toFixed(2)} A`,
         suggestions: inverterSuggestion.includes('warning-box') ? [] : inverterSuggestion.match(/<div class="suggestion-item">.*?</div>/g)?.map(s => s.replace(/<[^>]+>/g, '').trim()) || []
       };
 
@@ -945,8 +959,8 @@
       let inverterSuggestion = suggestInverters(totalKW);
 
       const resultsData = {
-        'ژمارەی پانێڵەکان': `${panelCount}`,
-        'هێزی ئینڤێرتەر': `${totalKW.toFixed(2)} kW`,
+        "Panel Count": `${panelCount}`,
+        "Inverter Power": `${totalKW.toFixed(2)} kW`,
         suggestions: inverterSuggestion.includes('warning-box') ? [] : inverterSuggestion.match(/<div class="suggestion-item">.*?</div>/g)?.map(s => s.replace(/<[^>]+>/g, '').trim()) || []
       };
 
@@ -1002,10 +1016,10 @@
       let inverterSuggestion = suggestInverters(inv);
 
       const resultsData = {
-        'هێزی ئینڤێرتەر': `${inv.toFixed(2)} kW`,
-        'ئەمپێر بۆ یەک فەیز': `${ampsSinglePhase.toFixed(2)} A`,
-        'ئەمپێر بۆ هەر سێ فەیز': `${ampsTotal.toFixed(2)} A`,
-        'هێزی پێویست': `${pr.toFixed(2)} kW`,
+        "Inverter Power": `${inv.toFixed(2)} kW`,
+        "Amperage per Phase": `${ampsSinglePhase.toFixed(2)} A`,
+        "Total Amperage": `${ampsTotal.toFixed(2)} A`,
+        "Required Power": `${pr.toFixed(2)} kW`,
         suggestions: inverterSuggestion.includes('warning-box') ? [] : inverterSuggestion.match(/<div class="suggestion-item">.*?</div>/g)?.map(s => s.replace(/<[^>]+>/g, '').trim()) || []
       };
 
@@ -1075,11 +1089,11 @@
       let inverterSuggestion = suggestInverters(inv);
 
       const resultsData = {
-        'ژمارەی پانێڵەکان': `${panelCount}`,
-        'هێزی ئینڤێرتەر': `${inv.toFixed(2)} kW`,
-        'ئەمپێر بۆ یەک فەیز': `${ampsSinglePhase.toFixed(2)} A`,
-        'ئەمپێر بۆ هەر سێ فەیز': `${ampsTotal.toFixed(2)} A`,
-        'هێزی پێویست': `${pr.toFixed(2)} kW`,
+        "Panel Count": `${panelCount}`,
+        "Inverter Power": `${inv.toFixed(2)} kW`,
+        "Amperage per Phase": `${ampsSinglePhase.toFixed(2)} A`,
+        "Total Amperage": `${ampsTotal.toFixed(2)} A`,
+        "Required Power": `${pr.toFixed(2)} kW`,
         suggestions: inverterSuggestion.includes('warning-box') ? [] : inverterSuggestion.match(/<div class="suggestion-item">.*?</div>/g)?.map(s => s.replace(/<[^>]+>/g, '').trim()) || []
       };
 

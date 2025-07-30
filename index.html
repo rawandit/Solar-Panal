@@ -8,8 +8,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome for Icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
+  <!-- زیادکردنی کتێبخانەی html2pdf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap');
 
 * {
@@ -589,7 +590,6 @@ body::before {
 }
   </style>
 </head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <body>
   <div class="main-container">
     <div class="glass-card">
@@ -809,47 +809,79 @@ body::before {
            </div>`;
     }
 
-   function showResults(html) {
-  document.getElementById("result").innerHTML = `
-    <div class="results-section">
-      ${html}
-      <div class="mt-4 d-flex justify-content-center gap-3">
-        <button class="calc-button" onclick="showResultsAndSuggestions()">
-          <i class="fas fa-eye me-2"></i>
-          پیشاندانی ئەنجامەکان و پێشنیارەکان
-        </button>
-        <button class="calc-button" onclick="downloadPDF()">
-          <i class="fas fa-download me-2"></i>
-          داونلۆدکردنی راپۆرت بە PDF
-        </button>
-      </div>
-    </div>
-  `;
-  document.getElementById("result").classList.remove("d-none");
-  setTimeout(() => {
-    document.getElementById("result").scrollIntoView({ 
-      behavior: 'smooth', 
-      block: 'nearest' 
-    });
-  }, 100);
-}
+    function showResults(html) {
+      // دروستکردنی ناوەرۆکی ئەنجامەکان بە HTML
+      const resultsContent = `
+        <div class="results-section" id="results-section">
+          ${html}
+          <div class="mt-4 d-flex justify-content-center gap-3">
+            <button class="calc-button" onclick="showResultsAndSuggestions()">
+              <i class="fas fa-eye me-2"></i>
+              پیشاندانی ئەنجامەکان و پێشنیارەکان
+            </button>
+            <button class="calc-button" onclick="downloadPDF()">
+              <i class="fas fa-download me-2"></i>
+              داونلۆدکردنی راپۆرت بە PDF
+            </button>
+          </div>
+        </div>
+      `;
+      
+      // زیادکردنی ناوەرۆک بۆ شوێنی 'result'
+      document.getElementById("result").innerHTML = resultsContent;
+      document.getElementById("result").classList.remove("d-none");
 
-function showResultsAndSuggestions() {
-  const resultsSection = document.querySelector('.results-section');
-  resultsSection.style.display = 'block';
-}
+      // اسکرۆڵکردن بۆ شوێنی ئەنجامەکان
+      setTimeout(() => {
+        document.getElementById("result").scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'nearest' 
+        });
+      }, 100);
+    }
 
-function downloadPDF() {
-  const element = document.querySelector('.results-section');
-  const opt = {
-    margin: 1,
-    filename: 'Solar_System_Calculation_Report.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-  };
-  html2pdf().set(opt).from(element).save();
-}
+    function showResultsAndSuggestions() {
+      // پیشاندانی ئەنجامەکان و پێشنیارەکان
+      const resultsSection = document.getElementById("results-section");
+      resultsSection.style.display = 'block';
+    }
+
+    function downloadPDF() {
+      // وەرگرتنی شوێنی ئەنجامەکان
+      const element = document.getElementById("results-section");
+      
+      // دڵنیابوونەوە لەوەی کە ناوەرۆکەکان پیشاندراون پێش دروستکردنی PDF
+      element.style.display = 'block';
+
+      // کۆنفیگورەیشنەکانی html2pdf بۆ دروستکردنی راپۆرت
+      const opt = {
+        margin: [0.5, 0.5, 0.5, 0.5], // مارجینەکان بە ئینج
+        filename: 'Solar_System_Calculation_Report.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2, // کۆالیتی بەرزتر
+          useCORS: true, // بۆ پشتگیریکردنی وێنەکان لە CDN
+          logging: true // بۆ دیباگکردن
+        },
+        jsPDF: { 
+          unit: 'in', 
+          format: 'a4', // فۆرماتی A4 بۆ راپۆرت
+          orientation: 'portrait' 
+        },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // بۆ کۆنترۆڵکردنی پەیج بریک
+      };
+
+      // دروستکردن و داونلۆدکردنی PDF
+      html2pdf().from(element).set(opt).save()
+        .then(() => {
+          console.log("PDF بە سەرکەوتوویی دروست کرا!");
+        })
+        .catch(err => {
+          console.error("هەڵە لە دروستکردنی PDF: ", err);
+          alert("هەڵەیەک روویدا لە دروستکردنی PDF، تکایە دووبارە هەوڵ بدە!");
+        });
+    }
+
     function calculateByPanels() {
       let panelCount = parseFloat(document.getElementById("panelCount").value);
       let panelWatt = parseFloat(document.getElementById("panelWatt").value);

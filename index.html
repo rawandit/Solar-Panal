@@ -8,588 +8,584 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome for Icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-  <!-- jsPDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Noto Sans Arabic Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap');
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    :root {
-      --primary-gold: #f59e0b;
-      --primary-blue: #1e40af;
-      --accent-orange: #ea580c;
-      --surface-dark: #0f172a;
-      --surface-card: #1e293b;
-      --surface-light: #334155;
-      --text-primary: #f8fafc;
-      --text-secondary: #cbd5e1;
-      --text-accent: #fbbf24;
-      --shadow-glow: rgba(245, 158, 11, 0.3);
-      --gradient-primary: linear-gradient(135deg, var(--primary-gold), var(--accent-orange));
-      --gradient-surface: linear-gradient(145deg, var(--surface-card), var(--surface-light));
-    }
+:root {
+  --primary-gold: #f59e0b;
+  --primary-blue: #1e40af;
+  --accent-orange: #ea580c;
+  --surface-dark: #0f172a;
+  --surface-card: #1e293b;
+  --surface-light: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-accent: #fbbf24;
+  --shadow-glow: rgba(245, 158, 11, 0.3);
+  --gradient-primary: linear-gradient(135deg, var(--primary-gold), var(--accent-orange));
+  --gradient-surface: linear-gradient(145deg, var(--surface-card), var(--surface-light));
+}
 
-    body {
-      font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
-      background: var(--surface-dark);
-      background-image: 
-        radial-gradient(circle at 25% 25%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(30, 64, 175, 0.1) 0%, transparent 50%),
-        linear-gradient(180deg, var(--surface-dark) 0%, #020617 100%);
-      min-height: 100vh;
-      padding: 20px;
-      color: var(--text-primary);
-      position: relative;
-      overflow-x: hidden;
-    }
+body {
+  font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
+  background: var(--surface-dark);
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(30, 64, 175, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, var(--surface-dark) 0%, #020617 100%);
+  min-height: 100vh;
+  padding: 20px;
+  color: var(--text-primary);
+  position: relative;
+  overflow-x: hidden;
+}
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23f59e0b" fill-opacity="0.05"><circle cx="30" cy="30" r="1"/></g></svg>') repeat;
-      pointer-events: none;
-      z-index: -1;
-    }
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23f59e0b" fill-opacity="0.05"><circle cx="30" cy="30" r="1"/></g></svg>') repeat;
+  pointer-events: none;
+  z-index: -1;
+}
 
-    .main-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      position: relative;
-    }
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
 
-    .glass-card {
-      background: rgba(30, 41, 59, 0.8);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(245, 158, 11, 0.2);
-      border-radius: 24px;
-      box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.4),
-        0 0 0 1px rgba(245, 158, 11, 0.1),
-        inset 0 1px 0 rgba(248, 250, 252, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
+.glass-card {
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 24px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(245, 158, 11, 0.1),
+    inset 0 1px 0 rgba(248, 250, 252, 0.1);
+  position: relative;
+  overflow: hidden;
+}
 
-    .glass-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(245, 158, 11, 0.1), 
-        transparent);
-      animation: shine 4s infinite;
-    }
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(245, 158, 11, 0.1), 
+    transparent);
+  animation: shine 4s infinite;
+}
 
-    @keyframes shine {
-      0% { left: -100%; }
-      50% { left: 100%; }
-      100% { left: 100%; }
-    }
+@keyframes shine {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
 
-    .hero-section {
-      text-align: center;
-      padding: 60px 40px;
-      position: relative;
-    }
+.hero-section {
+  text-align: center;
+  padding: 60px 40px;
+  position: relative;
+}
 
-    .solar-icon {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 30px;
-      background: var(--gradient-primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 
-        0 20px 40px var(--shadow-glow),
-        0 0 0 1px rgba(245, 158, 11, 0.3);
-      position: relative;
-      animation: float 6s ease-in-out infinite;
-    }
+.solar-icon {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 30px;
+  background: var(--gradient-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 20px 40px var(--shadow-glow),
+    0 0 0 1px rgba(245, 158, 11, 0.3);
+  position: relative;
+  animation: float 6s ease-in-out infinite;
+}
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
 
-    .solar-icon::before {
-      content: '';
-      position: absolute;
-      width: 140px;
-      height: 140px;
-      border: 2px solid rgba(245, 158, 11, 0.3);
-      border-radius: 50%;
-      animation: pulse 3s ease-in-out infinite;
-    }
+.solar-icon::before {
+  content: '';
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border: 2px solid rgba(245, 158, 11, 0.3);
+  border-radius: 50%;
+  animation: pulse 3s ease-in-out infinite;
+}
 
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-    }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
 
-    .solar-icon i {
-      font-size: 48px;
-      color: var(--surface-dark);
-      animation: rotate 20s linear infinite;
-    }
+.solar-icon i {
+  font-size: 48px;
+  color: var(--surface-dark);
+  animation: rotate 20s linear infinite;
+}
 
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 
-    .hero-title {
-      font-size: 3.5rem;
-      font-weight: 800;
-      background: var(--gradient-primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 16px;
-      text-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
-    }
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  text-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+}
 
-    .hero-subtitle {
-      color: var(--text-secondary);
-      font-size: 1.3rem;
-      font-weight: 400;
-      margin-bottom: 12px;
-    }
+.hero-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.3rem;
+  font-weight: 400;
+  margin-bottom: 12px;
+}
 
-    .developer-badge {
-      display: inline-block;
-      background: var(--gradient-surface);
-      color: var(--text-accent);
-      padding: 12px 24px;
-      border-radius: 50px;
-      font-weight: 600;
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
+.developer-badge {
+  display: inline-block;
+  background: var(--gradient-surface);
+  color: var(--text-accent);
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
 
-    .controls-section {
-      padding: 0 40px 40px;
-    }
+.controls-section {
+  padding: 0 40px 40px;
+}
 
-    .phase-selector {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 40px;
-    }
+.phase-selector {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
 
-    .phase-btn {
-      padding: 16px 32px;
-      border: 2px solid rgba(245, 158, 11, 0.3);
-      background: rgba(30, 41, 59, 0.5);
-      color: var(--text-secondary);
-      border-radius: 16px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
+.phase-btn {
+  padding: 16px 32px;
+  border: 2px solid rgba(245, 158, 11, 0.3);
+  background: rgba(30, 41, 59, 0.5);
+  color: var(--text-secondary);
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
 
-    .phase-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: var(--gradient-primary);
-      transition: left 0.4s;
-    }
+.phase-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-primary);
+  transition: left 0.4s;
+}
 
-    .phase-btn span {
-      position: relative;
-      z-index: 1;
-    }
+.phase-btn span {
+  position: relative;
+  z-index: 1;
+}
 
-    .phase-btn.active {
-      background: var(--gradient-primary);
-      border-color: var(--primary-gold);
-      color: var(--surface-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 24px var(--shadow-glow);
-    }
+.phase-btn.active {
+  background: var(--gradient-primary);
+  border-color: var(--primary-gold);
+  color: var(--surface-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px var(--shadow-glow);
+}
 
-    .phase-btn:hover:not(.active) {
-      border-color: var(--primary-gold);
-      background: rgba(245, 158, 11, 0.1);
-      transform: translateY(-1px);
-    }
+.phase-btn:hover:not(.active) {
+  border-color: var(--primary-gold);
+  background: rgba(245, 158, 11, 0.1);
+  transform: translateY(-1px);
+}
 
-    .calculator-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 30px;
-      margin-bottom: 30px;
-    }
+.calculator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+  margin-bottom: 30px;
+}
 
-    .calc-form {
-      background: var(--gradient-surface);
-      border: 1px solid rgba(245, 158, 11, 0.2);
-      border-radius: 20px;
-      padding: 32px;
-      position: relative;
-      transition: all 0.4s ease;
-    }
+.calc-form {
+  background: var(--gradient-surface);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 20px;
+  padding: 32px;
+  position: relative;
+  transition: all 0.4s ease;
+}
 
-    .calc-form:hover {
-      transform: translateY(-8px);
-      box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(245, 158, 11, 0.3);
-    }
+.calc-form:hover {
+  transform: translateY(-8px);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(245, 158, 11, 0.3);
+}
 
-    .form-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid rgba(245, 158, 11, 0.2);
-    }
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+}
 
-    .form-icon {
-      width: 50px;
-      height: 50px;
-      background: var(--gradient-primary);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--surface-dark);
-      font-size: 20px;
-      box-shadow: 0 8px 16px var(--shadow-glow);
-    }
+.form-icon {
+  width: 50px;
+  height: 50px;
+  background: var(--gradient-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--surface-dark);
+  font-size: 20px;
+  box-shadow: 0 8px 16px var(--shadow-glow);
+}
 
-    .form-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
+.form-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
 
-    .input-group {
-      margin-bottom: 20px;
-    }
+.input-group {
+  margin-bottom: 20px;
+}
 
-    .input-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-accent);
-      font-weight: 600;
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-    }
+.input-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-accent);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
 
-    .input-field {
-      width: 100%;
-      padding: 16px 20px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 2px solid rgba(245, 158, 11, 0.2);
-      border-radius: 12px;
-      color: var(--text-primary);
-      font-size: 1rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
+.input-field {
+  width: 100%;
+  padding: 16px 20px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 2px solid rgba(245, 158, 11, 0.2);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
 
-    .input-field::placeholder {
-      color: var(--text-secondary);
-    }
+.input-field::placeholder {
+  color: var(--text-secondary);
+}
 
-    .input-field:focus {
-      outline: none;
-      border-color: var(--primary-gold);
-      background: rgba(15, 23, 42, 0.9);
-      box-shadow: 
-        0 0 0 3px rgba(245, 158, 11, 0.2),
-        0 8px 16px rgba(0, 0, 0, 0.2);
-      transform: translateY(-1px);
-    }
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary-gold);
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: 
+    0 0 0 3px rgba(245, 158, 11, 0.2),
+    0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
 
-    .calc-button {
-      width: 100%;
-      padding: 18px;
-      background: var(--gradient-primary);
-      border: none;
-      border-radius: 12px;
-      color: var(--surface-dark);
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 8px 16px var(--shadow-glow);
-    }
+.calc-button {
+  width: 100%;
+  padding: 18px;
+  background: var(--gradient-primary);
+  border: none;
+  border-radius: 12px;
+  color: var(--surface-dark);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 16px var(--shadow-glow);
+}
 
-    .calc-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.2), 
-        transparent);
-      transition: left 0.6s;
-    }
+.calc-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent);
+  transition: left 0.6s;
+}
 
-    .calc-button:hover::before {
-      left: 100%;
-    }
+.calc-button:hover::before {
+  left: 100%;
+}
 
-    .calc-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 24px var(--shadow-glow);
-    }
+.calc-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px var(--shadow-glow);
+}
 
-    .calc-button:active {
-      transform: translateY(0);
-    }
+.calc-button:active {
+  transform: translateY(0);
+}
 
-    .results-section {
-      background: var(--gradient-surface);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      border-radius: 20px;
-      padding: 32px;
-      margin-top: 30px;
-      position: relative;
-      animation: slideUp 0.6s ease-out;
-    }
+.results-section {
+  background: var(--gradient-surface);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 20px;
+  padding: 32px;
+  margin-top: 30px;
+  position: relative;
+  animation: slideUp 0.6s ease-out;
+}
 
-    @keyframes slideUp {
-      from { 
-        opacity: 0; 
-        transform: translateY(40px); 
-      }
-      to { 
-        opacity: 1; 
-        transform: translateY(0); 
-      }
-    }
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(40px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
 
-    .results-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: var(--gradient-primary);
-      border-radius: 20px 20px 0 0;
-    }
+.results-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  border-radius: 20px 20px 0 0;
+}
 
-    .results-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 28px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid rgba(245, 158, 11, 0.2);
-    }
+.results-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+}
 
-    .results-icon {
-      width: 50px;
-      height: 50px;
-      background: var(--gradient-primary);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--surface-dark);
-      font-size: 20px;
-    }
+.results-icon {
+  width: 50px;
+  height: 50px;
+  background: var(--gradient-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--surface-dark);
+  font-size: 20px;
+}
 
-    .results-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
+.results-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
 
-    .result-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 0;
-      border-bottom: 1px solid rgba(245, 158, 11, 0.1);
-      transition: all 0.3s ease;
-    }
+.result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+  transition: all 0.3s ease;
+}
 
-    .result-item:hover {
-      background: rgba(245, 158, 11, 0.05);
-      margin: 0 -16px;
-      padding: 16px;
-      border-radius: 8px;
-    }
+.result-item:hover {
+  background: rgba(245, 158, 11, 0.05);
+  margin: 0 -16px;
+  padding: 16px;
+  border-radius: 8px;
+}
 
-    .result-item:last-child {
-      border-bottom: none;
-    }
+.result-item:last-child {
+  border-bottom: none;
+}
 
-    .result-label {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
+.result-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
 
-    .result-value {
-      color: var(--text-accent);
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
+.result-value {
+  color: var(--text-accent);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
 
-    .suggestions-box {
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      border-radius: 16px;
-      padding: 24px;
-      margin-top: 24px;
-    }
+.suggestions-box {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 24px;
+}
 
-    .suggestions-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      color: var(--text-accent);
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
+.suggestions-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: var(--text-accent);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
 
-    .suggestion-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      color: var(--text-primary);
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
 
-    .suggestion-item:hover {
-      color: var(--text-accent);
-      padding-right: 8px;
-    }
+.suggestion-item:hover {
+  color: var(--text-accent);
+  padding-right: 8px;
+}
 
-    .warning-box {
-      background: rgba(234, 88, 12, 0.1);
-      border: 1px solid rgba(234, 88, 12, 0.3);
-      border-radius: 16px;
-      padding: 24px;
-      margin-top: 24px;
-    }
+.warning-box {
+  background: rgba(234, 88, 12, 0.1);
+  border: 1px solid rgba(234, 88, 12, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 24px;
+}
 
-    .warning-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--accent-orange);
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
+.warning-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--accent-orange);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
 
-    .error-message {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 12px;
-      padding: 20px;
-      color: #fca5a5;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  color: #fca5a5;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-    @media (max-width: 768px) {
-      .main-container {
-        padding: 10px;
-      }
-      
-      .hero-section {
-        padding: 40px 20px;
-      }
-      
-      .hero-title {
-        font-size: 2.5rem;
-      }
-      
-      .solar-icon {
-        width: 100px;
-        height: 100px;
-      }
-      
-      .solar-icon i {
-        font-size: 40px;
-      }
-      
-      .controls-section {
-        padding: 0 20px 40px;
-      }
-      
-      .calculator-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-      
-      .phase-selector {
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-      }
-      
-      .phase-btn {
-        width: 200px;
-      }
-      
-      .calc-form {
-        padding: 24px;
-      }
-    }
+@media (max-width: 768px) {
+  .main-container {
+    padding: 10px;
+  }
+  
+  .hero-section {
+    padding: 40px 20px;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .solar-icon {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .solar-icon i {
+    font-size: 40px;
+  }
+  
+  .controls-section {
+    padding: 0 20px 40px;
+  }
+  
+  .calculator-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .phase-selector {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .phase-btn {
+    width: 200px;
+  }
+  
+  .calc-form {
+    padding: 24px;
+  }
+}
 
-    @media (max-width: 480px) {
-      .hero-title {
-        font-size: 2rem;
-      }
-      
-      .hero-subtitle {
-        font-size: 1.1rem;
-      }
-      
-      .calc-form {
-        padding: 20px;
-      }
-      
-      .results-section {
-        padding: 24px;
-      }
-    }
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .calc-form {
+    padding: 20px;
+  }
+  
+  .results-section {
+    padding: 24px;
+  }
+}
   </style>
 </head>
 <body>
@@ -635,14 +631,14 @@
                 <i class="fas fa-hashtag"></i>
                 ژمارەی پانێڵەکان
               </label>
-              <input type="number" class="input-field" id="panelCount" placeholder="ژمارەی پانێڵەکان داخل بکە" min="0" step="1">
+              <input type="number" class="input-field" id="panelCount" placeholder="ژمارەی پانێڵەکان داخل بکە">
             </div>
             <div class="input-group">
               <label class="input-label">
                 <i class="fas fa-bolt"></i>
                 هێزی پانێڵ (وات)
               </label>
-              <input type="number" class="input-field" id="panelWatt" placeholder="هێزی پانێڵ بە وات داخل بکە" min="0" step="1">
+              <input type="number" class="input-field" id="panelWatt" placeholder="هێزی پانێڵ بە وات داخل بکە">
             </div>
             <button class="calc-button" onclick="calculateByPanels()">
               <i class="fas fa-calculator me-2"></i>
@@ -663,14 +659,14 @@
                 <i class="fas fa-tachometer-alt"></i>
                 ئەمپێر (A)
               </label>
-              <input type="number" class="input-field" id="amps" placeholder="ئەمپێر داخل بکە" min="0" step="0.1">
+              <input type="number" class="input-field" id="amps" placeholder="ئەمپێر داخل بکە">
             </div>
             <div class="input-group">
               <label class="input-label">
                 <i class="fas fa-bolt"></i>
                 هێزی پانێڵ (وات)
               </label>
-              <input type="number" class="input-field" id="panelWattAmp" placeholder="هێزی پانێڵ بە وات داخل بکە" min="0" step="1">
+              <input type="number" class="input-field" id="panelWattAmp" placeholder="هێزی پانێڵ بە وات داخل بکە">
             </div>
             <button class="calc-button" onclick="calculateByAmps()">
               <i class="fas fa-calculator me-2"></i>
@@ -694,14 +690,14 @@
                 <i class="fas fa-hashtag"></i>
                 ژمارەی پانێڵەکان
               </label>
-              <input type="number" class="input-field" id="threePhasePanelCount" placeholder="ژمارەی پانێڵەکان داخل بکە" min="0" step="1">
+              <input type="number" class="input-field" id="threePhasePanelCount" placeholder="ژمارەی پانێڵەکان داخل بکە">
             </div>
             <div class="input-group">
               <label class="input-label">
                 <i class="fas fa-bolt"></i>
                 هێزی پانێڵ (وات)
               </label>
-              <input type="number" class="input-field" id="threePhasePanelWatt" placeholder="هێزی پانێڵ بە وات داخل بکە" min="0" step="1">
+              <input type="number" class="input-field" id="threePhasePanelWatt" placeholder="هێزی پانێڵ بە وات داخل بکە">
             </div>
             <button class="calc-button" onclick="calculateThreePhaseByPanels()">
               <i class="fas fa-calculator me-2"></i>
@@ -722,14 +718,14 @@
                 <i class="fas fa-tachometer-alt"></i>
                 ئەمپێر (A)
               </label>
-              <input type="number" class="input-field" id="threePhaseAmps" placeholder="ئەمپێر داخل بکە" min="0" step="0.1">
+              <input type="number" class="input-field" id="threePhaseAmps" placeholder="ئەمپێر داخل بکە">
             </div>
             <div class="input-group">
               <label class="input-label">
                 <i class="fas fa-bolt"></i>
                 هێزی پانێڵ (وات)
               </label>
-              <input type="number" class="input-field" id="threePhasePanelWattAmp" placeholder="هێزی پانێڵ بە وات داخل بکە" min="0" step="1">
+              <input type="number" class="input-field" id="threePhasePanelWattAmp" placeholder="هێزی پانێڵ بە وات داخل بکە">
             </div>
             <button class="calc-button" onclick="calculateThreePhaseByAmps()">
               <i class="fas fa-calculator me-2"></i>
@@ -752,7 +748,9 @@
     // Phase switching functionality
     document.querySelectorAll('.phase-btn').forEach(btn => {
       btn.addEventListener('click', function() {
+        // Remove active class from all buttons
         document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active'));
+        // Add active class to clicked button
         this.classList.add('active');
         
         const phase = this.dataset.phase;
@@ -764,6 +762,7 @@
           document.querySelector('.three-phase-forms').classList.remove('d-none');
         }
         
+        // Clear results
         document.getElementById("result").innerHTML = '';
         document.getElementById("result").classList.add("d-none");
       });
@@ -808,56 +807,8 @@
            </div>`;
     }
 
-    function generatePDF(results) {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
-      // Set font to Noto Sans Arabic for Kurdish/Arabic support
-      doc.setFont("NotoSansArabic", "normal");
-
-      // Add title
-      doc.setFontSize(20);
-      doc.text("راپۆرتی حیسابکەری تاقە شمسی", 105, 20, { align: "center" });
-
-      // Add developer info
-      doc.setFontSize(12);
-      doc.text("دروستکراو لەلایەن: رەوەند عمر عەوێنەیی", 105, 30, { align: "center" });
-
-      // Add results
-      doc.setFontSize(14);
-      let y = 50;
-      results.forEach(item => {
-        doc.text(`${item.label}: ${item.value}`, 200, y, { align: "right" });
-        y += 10;
-      });
-
-      // Add suggestions or warnings if available
-      if (results.suggestions) {
-        doc.setFontSize(12);
-        doc.text("پێشنیارەکان:", 200, y, { align: "right" });
-        y += 10;
-        results.suggestions.forEach(suggestion => {
-          doc.text(`- ${suggestion}`, 190, y, { align: "right" });
-          y += 10;
-        });
-      } else if (results.warning) {
-        doc.setFontSize(12);
-        doc.setTextColor(255, 0, 0);
-        doc.text(results.warning, 200, y, { align: "right" });
-      }
-
-      // Save the PDF
-      doc.save("Solar_Calculator_Report.pdf");
-    }
-
-    function showResults(html, resultsData) {
-      document.getElementById("result").innerHTML = `
-        ${html}
-        <button class="calc-button mt-4" onclick='generatePDF(${JSON.stringify(resultsData)})'>
-          <i class="fas fa-file-pdf me-2"></i>
-          داونلۆدکردنی راپۆرت وەک PDF
-        </button>
-      `;
+    function showResults(html) {
+      document.getElementById("result").innerHTML = html;
       document.getElementById("result").classList.remove("d-none");
       setTimeout(() => {
         document.getElementById("result").scrollIntoView({ 
@@ -868,18 +819,16 @@
     }
 
     function calculateByPanels() {
-      let panelCountInput = document.getElementById("panelCount").value;
-      let panelWattInput = document.getElementById("panelWatt").value;
-      let panelCount = parseFloat(panelCountInput);
-      let panelWatt = parseFloat(panelWattInput);
+      let panelCount = parseFloat(document.getElementById("panelCount").value);
+      let panelWatt = parseFloat(document.getElementById("panelWatt").value);
 
-      if (!panelCountInput || !panelWattInput || isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
+      if (isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
             تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
-        `, []);
+        `);
         return;
       }
 
@@ -887,15 +836,6 @@
       let totalKW = totalWatt / 1000;
       let amps = (totalWatt / 230) * 0.8;
       let inverterSuggestion = suggestInverters(totalKW);
-      let suggestions = inverterSuggestion.includes("پێشنیارەکان") ? inverterSuggestion.match(/<div class="suggestion-item">.*?<\/div>/g).map(s => s.replace(/<\/?[^>]+(>|$)/g, "").replace(/.*?\s/, "")) : null;
-      let warning = inverterSuggestion.includes("warning-box") ? "هیچ ئینڤێرتەرێک لە لیستی قەبارەکاندا گونجاو نییە" : null;
-
-      let resultsData = [
-        { label: "هێزی ئینڤێرتەر", value: `${totalKW.toFixed(2)} kW` },
-        { label: "ئەمپێر", value: `${amps.toFixed(2)} A` }
-      ];
-      if (suggestions) resultsData.suggestions = suggestions;
-      if (warning) resultsData.warning = warning;
 
       showResults(`
         <div class="results-section">
@@ -921,22 +861,20 @@
           </div>
           ${inverterSuggestion}
         </div>
-      `, resultsData);
+      `);
     }
 
     function calculateByAmps() {
-      let ampsInput = document.getElementById("amps").value;
-      let panelWattInput = document.getElementById("panelWattAmp").value;
-      let amps = parseFloat(ampsInput);
-      let panelWatt = parseFloat(panelWattInput);
+      let amps = parseFloat(document.getElementById("amps").value);
+      let panelWatt = parseFloat(document.getElementById("panelWattAmp").value);
 
-      if (!ampsInput || !panelWattInput || isNaN(amps) || isNaN(panelWatt) || amps <= 0 || panelWatt <= 0) {
+      if (isNaN(amps) || isNaN(panelWatt) || amps <= 0 || panelWatt <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
             تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
-        `, []);
+        `);
         return;
       }
 
@@ -944,15 +882,6 @@
       let totalKW = totalWatt / 1000;
       let panelCount = Math.ceil(totalWatt / panelWatt);
       let inverterSuggestion = suggestInverters(totalKW);
-      let suggestions = inverterSuggestion.includes("پێشنیارەکان") ? inverterSuggestion.match(/<div class="suggestion-item">.*?<\/div>/g).map(s => s.replace(/<\/?[^>]+(>|$)/g, "").replace(/.*?\s/, "")) : null;
-      let warning = inverterSuggestion.includes("warning-box") ? "هیچ ئینڤێرتەرێک لە لیستی قەبارەکاندا گونجاو نییە" : null;
-
-      let resultsData = [
-        { label: "ژمارەی پانێڵەکان", value: `${panelCount}` },
-        { label: "هێزی ئینڤێرتەر", value: `${totalKW.toFixed(2)} kW` }
-      ];
-      if (suggestions) resultsData.suggestions = suggestions;
-      if (warning) resultsData.warning = warning;
 
       showResults(`
         <div class="results-section">
@@ -978,22 +907,20 @@
           </div>
           ${inverterSuggestion}
         </div>
-      `, resultsData);
+      `);
     }
 
     function calculateThreePhaseByPanels() {
-      let panelCountInput = document.getElementById("threePhasePanelCount").value;
-      let panelWattInput = document.getElementById("threePhasePanelWatt").value;
-      let panelCount = parseFloat(panelCountInput);
-      let panelWatt = parseFloat(panelWattInput);
+      let panelCount = parseFloat(document.getElementById("threePhasePanelCount").value);
+      let panelWatt = parseFloat(document.getElementById("threePhasePanelWatt").value);
 
-      if (!panelCountInput || !panelWattInput || isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
+      if (isNaN(panelCount) || isNaN(panelWatt) || panelCount <= 0 || panelWatt <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
             تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
-        `, []);
+        `);
         return;
       }
 
@@ -1002,17 +929,6 @@
       let ampsSinglePhase = (pr * 1000) / (400 * 1.732 * 0.8);
       let ampsTotal = ampsSinglePhase * 3;
       let inverterSuggestion = suggestInverters(inv);
-      let suggestions = inverterSuggestion.includes("پێشنیارەکان") ? inverterSuggestion.match(/<div class="suggestion-item">.*?<\/div>/g).map(s => s.replace(/<\/?[^>]+(>|$)/g, "").replace(/.*?\s/, "")) : null;
-      let warning = inverterSuggestion.includes("warning-box") ? "هیچ ئینڤێرتەرێک لە لیستی قەبارەکاندا گونجاو نییە" : null;
-
-      let resultsData = [
-        { label: "هێزی ئینڤێرتەر", value: `${inv.toFixed(2)} kW` },
-        { label: "ئەمپێر بۆ یەک فەیز", value: `${ampsSinglePhase.toFixed(2)} A` },
-        { label: "ئەمپێر بۆ هەر سێ فەیز", value: `${ampsTotal.toFixed(2)} A` },
-        { label: "هێزی پێویست", value: `${pr.toFixed(2)} kW` }
-      ];
-      if (suggestions) resultsData.suggestions = suggestions;
-      if (warning) resultsData.warning = warning;
 
       showResults(`
         <div class="results-section">
@@ -1052,22 +968,20 @@
           </div>
           ${inverterSuggestion}
         </div>
-      `, resultsData);
+      `);
     }
 
     function calculateThreePhaseByAmps() {
-      let ampsTotalInput = document.getElementById("threePhaseAmps").value;
-      let panelWattInput = document.getElementById("threePhasePanelWattAmp").value;
-      let ampsTotal = parseFloat(ampsTotalInput);
-      let panelWatt = parseFloat(panelWattInput);
+      let ampsTotal = parseFloat(document.getElementById("threePhaseAmps").value);
+      let panelWatt = parseFloat(document.getElementById("threePhasePanelWattAmp").value);
 
-      if (!ampsTotalInput || !panelWattInput || isNaN(ampsTotal) || isNaN(panelWatt) || ampsTotal <= 0 || panelWatt <= 0) {
+      if (isNaN(ampsTotal) || isNaN(panelWatt) || ampsTotal <= 0 || panelWatt <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
             تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
           </div>
-        `, []);
+        `);
         return;
       }
 
@@ -1076,18 +990,6 @@
       let inv = pr / 0.7;
       let panelCount = Math.ceil((inv * 1000) / panelWatt);
       let inverterSuggestion = suggestInverters(inv);
-      let suggestions = inverterSuggestion.includes("پێشنیارەکان") ? inverterSuggestion.match(/<div class="suggestion-item">.*?<\/div>/g).map(s => s.replace(/<\/?[^>]+(>|$)/g, "").replace(/.*?\s/, "")) : null;
-      let warning = inverterSuggestion.includes("warning-box") ? "هیچ ئینڤێرتەرێک لە لیستی قەبارەکاندا گونجاو نییە" : null;
-
-      let resultsData = [
-        { label: "ژمارەی پانێڵەکان", value: `${panelCount}` },
-        { label: "هێزی ئینڤێرتەر", value: `${inv.toFixed(2)} kW` },
-        { label: "ئەمپێر بۆ یەک فەیز", value: `${ampsSinglePhase.toFixed(2)} A` },
-        { label: "ئەمپێر بۆ هەر سێ فەیز", value: `${ampsTotal.toFixed(2)} A` },
-        { label: "هێزی پێویست", value: `${pr.toFixed(2)} kW` }
-      ];
-      if (suggestions) resultsData.suggestions = suggestions;
-      if (warning) resultsData.warning = warning;
 
       showResults(`
         <div class="results-section">
@@ -1134,7 +1036,7 @@
           </div>
           ${inverterSuggestion}
         </div>
-      `, resultsData);
+      `);
     }
 
     // Enter key functionality

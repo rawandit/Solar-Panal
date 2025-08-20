@@ -156,6 +156,18 @@
       margin-top: 20px;
       text-align: center;
     }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .checkbox-label {
+      margin-right: 10px;
+      font-size: 1.1em;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -177,7 +189,13 @@
         <label class="input-label"><i class="fas fa-dollar-sign"></i> نرخی یەک پانێڥ (دۆلار)</label>
         <input type="number" class="input-field" id="panelPrice" placeholder="نرخی یەک پانێڥ بە دۆلار داخل بکە">
       </div>
-      <div class="input-group">
+      <div class="checkbox-group">
+        <input type="checkbox" id="useBattery" checked>
+        <label class="checkbox-label" for="useBattery"><i class="fas fa-battery-half"></i> بەکارهێنانی باتری</label>
+      </div>
+      <div class="input-group" id="batteryOptions">
+        <label class="input-label"><i class="fas fa-clock"></i> کاتژمێرەکانی پشتگیری (سەعات)</label>
+        <input type="number" class="input-field" id="backupHours" placeholder="کاتژمێرەکان داخل بکە" value="8">
         <label class="input-label"><i class="fas fa-battery-half"></i> فۆڵتاژی سیستەمی باتری</label>
         <select class="input-field" id="batteryVoltage">
           <option value="12">12V</option>
@@ -203,7 +221,13 @@
         <label class="input-label"><i class="fas fa-dollar-sign"></i> نرخی یەک پانێڥ (دۆلار)</label>
         <input type="number" class="input-field" id="panelPriceAmp" placeholder="نرخی یەک پانێڥ بە دۆلار داخل بکە">
       </div>
-      <div class="input-group">
+      <div class="checkbox-group">
+        <input type="checkbox" id="useBatteryAmp" checked>
+        <label class="checkbox-label" for="useBatteryAmp"><i class="fas fa-battery-half"></i> بەکارهێنانی باتری</label>
+      </div>
+      <div class="input-group" id="batteryOptionsAmp">
+        <label class="input-label"><i class="fas fa-clock"></i> کاتژمێرەکانی پشتگیری (سەعات)</label>
+        <input type="number" class="input-field" id="backupHoursAmp" placeholder="کاتژمێرەکان داخل بکە" value="8">
         <label class="input-label"><i class="fas fa-battery-half"></i> فۆڵتاژی سیستەمی باتری</label>
         <select class="input-field" id="batteryVoltageAmp">
           <option value="12">12V</option>
@@ -225,6 +249,19 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
+    // Show/hide battery options based on checkbox
+    function toggleBatteryOptions() {
+      const useBattery = document.getElementById("useBattery").checked;
+      const useBatteryAmp = document.getElementById("useBatteryAmp").checked;
+      document.getElementById("batteryOptions").style.display = useBattery ? "block" : "none";
+      document.getElementById("batteryOptionsAmp").style.display = useBatteryAmp ? "block" : "none";
+    }
+
+    // Initialize checkbox event listeners
+    document.getElementById("useBattery").addEventListener("change", toggleBatteryOptions);
+    document.getElementById("useBatteryAmp").addEventListener("change", toggleBatteryOptions);
+    toggleBatteryOptions();
+
     // Show results and toggle PDF download button
     function showResults(html) {
       document.getElementById("results").innerHTML = html;
@@ -266,7 +303,6 @@
         totalPrice: suggestions.find(s => s.text === text).totalPrice
       }));
 
-      // Choose the cheapest suggestion
       const bestSuggestion = suggestions.length > 0
         ? suggestions.reduce((prev, curr) => (prev.totalPrice < curr.totalPrice ? prev : curr))
         : null;
@@ -296,17 +332,13 @@
     }
 
     // Suggest a single battery based on total kW
-    function suggestBatteries(totalKW) {
+    function suggestBatteries(totalKW, backupHours, batteryVoltage) {
       const batteryOptions = [
         { capacity: 5, price: 840 },
         { capacity: 10, price: 1400 },
         { capacity: 15, price: 1680 }
       ];
-      const batteryVoltage = parseFloat(document.getElementById("batteryVoltage").value || document.getElementById("batteryVoltageAmp").value);
-      const backupHours = 8;
       const requiredKWh = totalKW * backupHours;
-
-      // Choose the largest single battery available
       let bestBattery = batteryOptions[batteryOptions.length - 1]; // Default to 15 kWh
       let actualBackupHours = bestBattery.capacity / totalKW;
       let totalAh = (bestBattery.capacity * 1000) / batteryVoltage;
@@ -325,7 +357,7 @@
                    <div class="warning-box">
                      <div class="warning-header">
                        <i class="fas fa-exclamation-triangle"></i>
-                       تێبینی: یەک باتری ${bestBattery.capacity} kWh تەنها ${actualBackupHours.toFixed(2)} کاتژمێر پشتگیری دەدات بەجای 8 کاتژمێر.
+                       تێبینی: یەک باتری ${bestBattery.capacity} kWh تەنها ${actualBackupHours.toFixed(2)} کاتژمێر پشتگیری دەدات بەجای ${backupHours} کاتژمێر.
                      </div>
                    </div>` : ''}
                </div>`,
@@ -339,13 +371,24 @@
       let panelCount = parseFloat(document.getElementById("panelCount").value);
       let panelWatt = parseFloat(document.getElementById("panelWatt").value);
       let panelPrice = parseFloat(document.getElementById("panelPrice").value);
+      let useBattery = document.getElementById("useBattery").checked;
+      let backupHours = parseFloat(document.getElementById("backupHours").value);
       let batteryVoltage = parseFloat(document.getElementById("batteryVoltage").value);
 
-      if (isNaN(panelCount) || isNaN(panelWatt) || isNaN(panelPrice) || isNaN(batteryVoltage) || panelCount <= 0 || panelWatt <= 0 || panelPrice <= 0 || batteryVoltage <= 0) {
+      if (isNaN(panelCount) || isNaN(panelWatt) || isNaN(panelPrice) || panelCount <= 0 || panelWatt <= 0 || panelPrice <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
             تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
+          </div>
+        `);
+        return;
+      }
+      if (useBattery && (isNaN(backupHours) || isNaN(batteryVoltage) || backupHours <= 0 || batteryVoltage <= 0)) {
+        showResults(`
+          <div class="error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            تکایە کاتژمێرەکان و فۆڵتاژی باتری بە دروستی داخل بکە!
           </div>
         `);
         return;
@@ -358,7 +401,7 @@
       let structureCost = panelCount * 30;
       let electricalCost = panelCount * 15;
       let inverterSuggestion = suggestInverters(totalKW);
-      let batterySuggestion = suggestBatteries(totalKW);
+      let batterySuggestion = useBattery ? suggestBatteries(totalKW, backupHours, batteryVoltage) : { html: "", totalPrice: 0, totalAh: 0 };
       let totalCost = panelTotalPrice + structureCost + electricalCost + inverterSuggestion.totalPrice + batterySuggestion.totalPrice;
 
       showResults(`
@@ -394,7 +437,13 @@
             <div class="result-value">${electricalCost.toFixed(2)}$</div>
           </div>
           ${inverterSuggestion.html}
-          ${batterySuggestion.html}
+          ${useBattery ? batterySuggestion.html : `
+            <div class="warning-box">
+              <div class="warning-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                باتری بەکارنەهێنراوە.
+              </div>
+            </div>`}
           <div class="result-item">
             <div class="result-label"><i class="fas fa-dollar-sign"></i> کۆی گشتی نرخەکان</div>
             <div class="result-value">${totalCost.toFixed(2)}$</div>
@@ -413,7 +462,7 @@
           بەستنی ئاسنگەری: ${structureCost.toFixed(2)}$
           بەستنی کارەبایات: ${electricalCost.toFixed(2)}$
           ${inverterSuggestion.html.replace(/<[^>]+>/g, '')}
-          ${batterySuggestion.html.replace(/<[^>]+>/g, '')}
+          ${useBattery ? batterySuggestion.html.replace(/<[^>]+>/g, '') : 'باتری بەکارنەهێنراوە.'}
           کۆی گشتی نرخەکان: ${totalCost.toFixed(2)}$
         `
       };
@@ -424,13 +473,24 @@
       let amps = parseFloat(document.getElementById("amps").value);
       let panelWatt = parseFloat(document.getElementById("panelWattAmp").value);
       let panelPrice = parseFloat(document.getElementById("panelPriceAmp").value);
+      let useBattery = document.getElementById("useBatteryAmp").checked;
+      let backupHours = parseFloat(document.getElementById("backupHoursAmp").value);
       let batteryVoltage = parseFloat(document.getElementById("batteryVoltageAmp").value);
 
-      if (isNaN(amps) || isNaN(panelWatt) || isNaN(panelPrice) || isNaN(batteryVoltage) || amps <= 0 || panelWatt <= 0 || panelPrice <= 0 || batteryVoltage <= 0) {
+      if (isNaN(amps) || isNaN(panelWatt) || isNaN(panelPrice) || amps <= 0 || panelWatt <= 0 || panelPrice <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
             تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
+          </div>
+        `);
+        return;
+      }
+      if (useBattery && (isNaN(backupHours) || isNaN(batteryVoltage) || backupHours <= 0 || batteryVoltage <= 0)) {
+        showResults(`
+          <div class="error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            تکایە کاتژمێرەکان و فۆڵتاژی باتری بە دروستی داخل بکە!
           </div>
         `);
         return;
@@ -443,7 +503,7 @@
       let structureCost = panelCount * 30;
       let electricalCost = panelCount * 15;
       let inverterSuggestion = suggestInverters(totalKW);
-      let batterySuggestion = suggestBatteries(totalKW);
+      let batterySuggestion = useBattery ? suggestBatteries(totalKW, backupHours, batteryVoltage) : { html: "", totalPrice: 0, totalAh: 0 };
       let totalCost = panelTotalPrice + structureCost + electricalCost + inverterSuggestion.totalPrice + batterySuggestion.totalPrice;
 
       showResults(`
@@ -479,7 +539,13 @@
             <div class="result-value">${electricalCost.toFixed(2)}$</div>
           </div>
           ${inverterSuggestion.html}
-          ${batterySuggestion.html}
+          ${useBattery ? batterySuggestion.html : `
+            <div class="warning-box">
+              <div class="warning-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                باتری بەکارنەهێنراوە.
+              </div>
+            </div>`}
           <div class="result-item">
             <div class="result-label"><i class="fas fa-dollar-sign"></i> کۆی گشتی نرخەکان</div>
             <div class="result-value">${totalCost.toFixed(2)}$</div>
@@ -498,7 +564,7 @@
           بەستنی ئاسنگەری: ${structureCost.toFixed(2)}$
           بەستنی کارەبایات: ${electricalCost.toFixed(2)}$
           ${inverterSuggestion.html.replace(/<[^>]+>/g, '')}
-          ${batterySuggestion.html.replace(/<[^>]+>/g, '')}
+          ${useBattery ? batterySuggestion.html.replace(/<[^>]+>/g, '') : 'باتری بەکارنەهێنراوە.'}
           کۆی گشتی نرخەکان: ${totalCost.toFixed(2)}$
         `
       };

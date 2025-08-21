@@ -8,87 +8,109 @@
   <style>
     body {
       font-family: 'Amiri', Arial, sans-serif;
-      background-color: #f4f4f4;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
       margin: 0;
-      padding: 20px;
-      direction: rtl;
+      padding: 40px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 900px;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
     }
 
     .main-title {
       text-align: center;
-      color: #333;
-      font-size: 2em;
-      margin-bottom: 20px;
+      color: #1e3c72;
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     }
 
     .form-section {
-      margin-bottom: 30px;
+      margin-bottom: 40px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
     }
 
     .form-title {
-      font-size: 1.5em;
-      color: #444;
-      margin-bottom: 15px;
+      font-size: 1.8em;
+      color: #2a5298;
+      margin-bottom: 20px;
     }
 
     .input-group {
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .input-label {
       display: block;
-      font-size: 1.1em;
-      color: #555;
-      margin-bottom: 5px;
+      font-size: 1.2em;
+      color: #333;
+      margin-bottom: 8px;
+      font-weight: bold;
     }
 
     .input-field {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       font-size: 1em;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
       box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    .input-field:focus {
+      border-color: #2a5298;
+      outline: none;
     }
 
     .calculate-btn, .download-btn {
       display: block;
       width: 100%;
-      padding: 12px;
-      background-color: #28a745;
+      padding: 15px;
+      background: linear-gradient(90deg, #28a745, #34c759);
       color: white;
       border: none;
-      border-radius: 5px;
-      font-size: 1.1em;
+      border-radius: 8px;
+      font-size: 1.2em;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
 
     .calculate-btn:hover, .download-btn:hover {
-      background-color: #218838;
+      background: linear-gradient(90deg, #218838, #2ba64b);
+      transform: translateY(-2px);
     }
 
     .results-section {
-      margin-top: 20px;
+      margin-top: 30px;
+      background: #e9ecef;
+      padding: 20px;
+      border-radius: 10px;
     }
 
     .results-header {
       display: flex;
       align-items: center;
-      background-color: #007bff;
+      background: #2a5298;
       color: white;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 10px;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
     }
 
     .results-icon {
@@ -97,87 +119,107 @@
 
     .results-title {
       margin: 0;
-      font-size: 1.3em;
+      font-size: 1.5em;
     }
 
     .result-item {
       display: flex;
       justify-content: space-between;
-      padding: 10px;
-      border-bottom: 1px solid #eee;
+      padding: 12px;
+      border-bottom: 1px solid #dee2e6;
+      font-size: 1.1em;
     }
 
     .result-label {
       font-weight: bold;
-      color: #444;
+      color: #333;
     }
 
     .result-value {
-      color: #007bff;
+      color: #2a5298;
+      font-weight: 500;
     }
 
     .suggestions-box, .warning-box {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 5px;
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 8px;
     }
 
     .suggestions-box {
-      background-color: #e9f7ef;
+      background: #e6f4ea;
     }
 
     .suggestions-header {
       font-weight: bold;
       color: #28a745;
+      font-size: 1.2em;
     }
 
     .suggestion-item {
-      margin: 5px 0;
+      margin: 8px 0;
+      font-size: 1.1em;
     }
 
     .warning-box {
-      background-color: #fff3cd;
+      background: #fff3cd;
     }
 
     .warning-header {
       font-weight: bold;
       color: #856404;
+      font-size: 1.2em;
     }
 
     .error-message {
-      background-color: #f8d7da;
+      background: #f8d7da;
       color: #721c24;
-      padding: 10px;
-      border-radius: 5px;
+      padding: 15px;
+      border-radius: 8px;
       text-align: center;
+      font-size: 1.1em;
     }
 
     .download-section {
-      margin-top: 20px;
+      margin-top: 30px;
       text-align: center;
     }
 
     .checkbox-group {
       display: flex;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .checkbox-label {
       margin-right: 10px;
-      font-size: 1.1em;
-      color: #555;
+      font-size: 1.2em;
+      color: #333;
     }
 
     .language-selector {
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .language-selector select {
+      padding: 10px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      border: 2px solid #ccc;
+      transition: border-color 0.3s ease;
+    }
+
+    .language-selector select:focus {
+      border-color: #2a5298;
+      outline: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="language-selector">
-      <label class="input-label" id="languageLabel">زمان هەڵبژێرە</label>
       <select class="input-field" id="language" onchange="changeLanguage()">
         <option value="ku" selected>کوردی</option>
         <option value="ar">العربية</option>
@@ -194,12 +236,20 @@
         <input type="number" class="input-field" id="amps" placeholder="ئەمپێر داخل بکە">
       </div>
       <div class="input-group">
-        <label class="input-label" id="panelWattLabel"><i class="fas fa-bolt"></i> هێزی پانێڥ (وات)</label>
-        <input type="number" class="input-field" id="panelWatt" placeholder="هێزی پانێڥ بە وات داخل بکە">
+        <label class="input-label" id="panelWattLabel"><i class="fas fa-bolt"></i> هێزی پانێل (وات)</label>
+        <input type="number" class="input-field" id="panelWatt" placeholder="هێزی پانێل بە وات داخل بکە">
       </div>
       <div class="input-group">
-        <label class="input-label" id="panelPriceLabel"><i class="fas fa-dollar-sign"></i> نرخی یەک پانێڥ (دۆلار)</label>
-        <input type="number" class="input-field" id="panelPrice" placeholder="نرخی یەک پانێڥ بە دۆلار داخل بکە">
+        <label class="input-label" id="panelPriceLabel"><i class="fas fa-dollar-sign"></i> نرخی یەک پانێل (دۆلار)</label>
+        <input type="number" class="input-field" id="panelPrice" placeholder="نرخی یەک پانێل بە دۆلار داخل بکە">
+      </div>
+      <div class="input-group">
+        <label class="input-label" id="structureCostLabel"><i class="fas fa-tools"></i> بەستنی ئاسنگەری بۆ هەر پانێل (دۆلار)</label>
+        <input type="number" class="input-field" id="structureCost" placeholder="نرخی بەستنی ئاسنگەری داخل بکە" value="30">
+      </div>
+      <div class="input-group">
+        <label class="input-label" id="electricalCostLabel"><i class="fas fa-plug"></i> بەستنی کارەبایات بۆ هەر پانێل (دۆلار)</label>
+        <input type="number" class="input-field" id="electricalCost" placeholder="نرخی بەستنی کارەبایات داخل بکە" value="15">
       </div>
       <div class="checkbox-group">
         <input type="checkbox" id="useBattery" checked>
@@ -240,10 +290,14 @@
         formTitle: "سینگڵ فەیز - حیسابکردن بە ئەمپێر",
         ampsLabel: "ئەمپێر",
         ampsPlaceholder: "ئەمپێر داخل بکە",
-        panelWattLabel: "هێزی پانێڥ (وات)",
-        panelWattPlaceholder: "هێزی پانێڥ بە وات داخل بکە",
-        panelPriceLabel: "نرخی یەک پانێڥ (دۆلار)",
-        panelPricePlaceholder: "نرخی یەک پانێڥ بە دۆلار داخل بکە",
+        panelWattLabel: "هێزی پانێل (وات)",
+        panelWattPlaceholder: "هێزی پانێل بە وات داخل بکە",
+        panelPriceLabel: "نرخی یەک پانێل (دۆلار)",
+        panelPricePlaceholder: "نرخی یەک پانێل بە دۆلار داخل بکە",
+        structureCostLabel: "بەستنی ئاسنگەری بۆ هەر پانێل (دۆلار)",
+        structureCostPlaceholder: "نرخی بەستنی ئاسنگەری داخل بکە",
+        electricalCostLabel: "بەستنی کارەبایات بۆ هەر پانێل (دۆلار)",
+        electricalCostPlaceholder: "نرخی بەستنی کارەبایات داخل بکە",
         useBatteryLabel: "بەکارهێنانی باتری",
         batteryAmpsLabel: "ئەمپێری باتری",
         batteryAmpsPlaceholder: "ئەمپێری باتری داخل بکە",
@@ -255,8 +309,8 @@
         resultsTitle: "ئەنجامەکانی سینگڵ فەیز",
         inverterPowerLabel: "هێزی ئینڤێرتەر",
         ampsResultLabel: "ئەمپێر",
-        panelCountLabel: "ژمارەی پانێڥەکان",
-        panelTotalPriceLabel: "کۆی نرخی پانێڥەکان",
+        panelCountLabel: "ژمارەی پانێلەکان",
+        panelTotalPriceLabel: "کۆی نرخی پانێلەکان",
         structureCostLabel: "بەستنی ئاسنگەری",
         electricalCostLabel: "بەستنی کارەبایات",
         totalCostLabel: "کۆی گشتی نرخەکان",
@@ -281,6 +335,10 @@
         panelWattPlaceholder: "أدخل قدرة اللوح بالواط",
         panelPriceLabel: "سعر اللوح الواحد (دولار)",
         panelPricePlaceholder: "أدخل سعر اللوح الواحد بالدولار",
+        structureCostLabel: "تكلفة الهيكل لكل لوح (دولار)",
+        structureCostPlaceholder: "أدخل تكلفة الهيكل",
+        electricalCostLabel: "تكلفة التوصيلات الكهربائية لكل لوح (دولار)",
+        electricalCostPlaceholder: "أدخل تكلفة التوصيلات الكهربائية",
         useBatteryLabel: "استخدام بطارية",
         batteryAmpsLabel: "أمبير البطارية",
         batteryAmpsPlaceholder: "أدخل أمبير البطارية",
@@ -318,6 +376,10 @@
         panelWattPlaceholder: "Enter Panel Power in Watts",
         panelPriceLabel: "Price per Panel (USD)",
         panelPricePlaceholder: "Enter Price per Panel in USD",
+        structureCostLabel: "Structure Cost per Panel (USD)",
+        structureCostPlaceholder: "Enter Structure Cost",
+        electricalCostLabel: "Electrical Connections Cost per Panel (USD)",
+        electricalCostPlaceholder: "Enter Electrical Connections Cost",
         useBatteryLabel: "Use Battery",
         batteryAmpsLabel: "Battery Amps",
         batteryAmpsPlaceholder: "Enter Battery Amps",
@@ -360,6 +422,10 @@
       document.getElementById("panelWatt").placeholder = t.panelWattPlaceholder;
       document.getElementById("panelPriceLabel").innerText = t.panelPriceLabel;
       document.getElementById("panelPrice").placeholder = t.panelPricePlaceholder;
+      document.getElementById("structureCostLabel").innerText = t.structureCostLabel;
+      document.getElementById("structureCost").placeholder = t.structureCostPlaceholder;
+      document.getElementById("electricalCostLabel").innerText = t.electricalCostLabel;
+      document.getElementById("electricalCost").placeholder = t.electricalCostPlaceholder;
       document.getElementById("useBatteryLabel").innerText = t.useBatteryLabel;
       document.getElementById("batteryAmpsLabel").innerText = t.batteryAmpsLabel;
       document.getElementById("batteryAmps").placeholder = t.batteryAmpsPlaceholder;
@@ -377,6 +443,8 @@
       document.getElementById("ampsLabel").innerHTML = `<i class="fas fa-tachometer-alt"></i> ${t.ampsLabel}`;
       document.getElementById("panelWattLabel").innerHTML = `<i class="fas fa-bolt"></i> ${t.panelWattLabel}`;
       document.getElementById("panelPriceLabel").innerHTML = `<i class="fas fa-dollar-sign"></i> ${t.panelPriceLabel}`;
+      document.getElementById("structureCostLabel").innerHTML = `<i class="fas fa-tools"></i> ${t.structureCostLabel}`;
+      document.getElementById("electricalCostLabel").innerHTML = `<i class="fas fa-plug"></i> ${t.electricalCostLabel}`;
       document.getElementById("batteryAmpsLabel").innerHTML = `<i class="fas fa-tachometer-alt"></i> ${t.batteryAmpsLabel}`;
       document.getElementById("backupHoursLabel").innerHTML = `<i class="fas fa-clock"></i> ${t.backupHoursLabel}`;
       document.getElementById("batteryVoltageLabel").innerHTML = `<i class="fas fa-battery-half"></i> ${t.batteryVoltageLabel}`;
@@ -473,7 +541,7 @@
         { capacity: 15, price: 1680 }
       ];
       const requiredKWh = (batteryAmps * batteryVoltage * backupHours) / 1000;
-      let bestBattery = batteryOptions[batteryOptions.length - 1]; // Default to 15 kWh
+      let bestBattery = batteryOptions.find(b => b.capacity >= requiredKWh) || batteryOptions[batteryOptions.length - 1];
       let actualBackupHours = (bestBattery.capacity * 1000) / (batteryAmps * batteryVoltage);
       let totalAh = batteryAmps * backupHours;
 
@@ -514,12 +582,14 @@
       let amps = parseFloat(document.getElementById("amps").value);
       let panelWatt = parseFloat(document.getElementById("panelWatt").value);
       let panelPrice = parseFloat(document.getElementById("panelPrice").value);
+      let structureCostPerPanel = parseFloat(document.getElementById("structureCost").value);
+      let electricalCostPerPanel = parseFloat(document.getElementById("electricalCost").value);
       let useBattery = document.getElementById("useBattery").checked;
       let batteryAmps = parseFloat(document.getElementById("batteryAmps").value);
       let backupHours = parseFloat(document.getElementById("backupHours").value);
       let batteryVoltage = parseFloat(document.getElementById("batteryVoltage").value);
 
-      if (isNaN(amps) || isNaN(panelWatt) || isNaN(panelPrice) || amps <= 0 || panelWatt <= 0 || panelPrice <= 0) {
+      if (isNaN(amps) || isNaN(panelWatt) || isNaN(panelPrice) || isNaN(structureCostPerPanel) || isNaN(electricalCostPerPanel) || amps <= 0 || panelWatt <= 0 || panelPrice <= 0 || structureCostPerPanel < 0 || electricalCostPerPanel < 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
@@ -542,8 +612,8 @@
       let totalKW = totalWatt / 1000;
       let panelCount = Math.ceil(totalWatt / panelWatt);
       let panelTotalPrice = panelCount * panelPrice;
-      let structureCost = panelCount * 30;
-      let electricalCost = panelCount * 15;
+      let structureCost = panelCount * structureCostPerPanel;
+      let electricalCost = panelCount * electricalCostPerPanel;
       let inverterSuggestion = suggestInverters(totalKW, lang);
       let batterySuggestion = useBattery ? suggestBatteries(batteryAmps, backupHours, batteryVoltage, lang) : { html: "", totalPrice: 0, totalAh: 0 };
       let totalCost = panelTotalPrice + structureCost + electricalCost + inverterSuggestion.totalPrice + batterySuggestion.totalPrice;
@@ -613,17 +683,41 @@
       };
     }
 
-    // Download PDF
+    // Download PDF with Amiri font
     function downloadPDF() {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
       const lang = window.currentResults.lang;
       const font = lang === "en" ? "Helvetica" : "Amiri";
+      
+      // Add Amiri font (you need to include the base64 font or host it locally)
+      const amiriFont = 'data:application/font-ttf;base64,...'; // Replace with actual base64 of Amiri-Regular.ttf
+      doc.addFileToVFS('Amiri-Regular.ttf', amiriFont);
+      doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
+
       doc.setFont(font, "normal");
       doc.setFontSize(16);
-      doc.text(window.currentResults.title, lang === "en" ? 10 : 190, 10, { align: lang === "en" ? "left" : "right" });
+
+      // Split text for proper wrapping
+      const title = window.currentResults.title;
+      const content = window.currentResults.content.split('\n').map(line => line.trim()).filter(line => line);
+
+      // Add title
+      doc.text(title, lang === "en" ? 10 : 190, 10, { align: lang === "en" ? "left" : "right" });
+
+      // Add content with line breaks
       doc.setFontSize(12);
-      doc.text(window.currentResults.content, lang === "en" ? 10 : 190, 20, { align: lang === "en" ? "left" : "right" });
+      let y = 20;
+      content.forEach(line => {
+        doc.text(line, lang === "en" ? 10 : 190, y, { align: lang === "en" ? "left" : "right" });
+        y += 7;
+      });
+
       doc.save("Solar_System_Calculation.pdf");
     }
   </script>

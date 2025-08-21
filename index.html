@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حیساباتی سیستەمی خۆر</title>
+  <title id="pageTitle">حیساباتی سیستەمی خۆر</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
@@ -168,74 +168,56 @@
       font-size: 1.1em;
       color: #555;
     }
+
+    .language-selector {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 class="main-title"><i class="fas fa-solar-panel"></i> حیساباتی سیستەمی خۆر</h1>
+    <div class="language-selector">
+      <label class="input-label" id="languageLabel">زمان هەڵبژێرە</label>
+      <select class="input-field" id="language" onchange="changeLanguage()">
+        <option value="ku" selected>کوردی</option>
+        <option value="ar">العربية</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+    <h1 class="main-title" id="mainTitle"><i class="fas fa-solar-panel"></i> حیساباتی سیستەمی خۆر</h1>
     
-    <!-- Single Phase Form (By Panels) -->
+    <!-- Single Phase Form (By Amps) -->
     <div class="form-section">
-      <h2 class="form-title"><i class="fas fa-plug"></i> سینگڵ فەیز - حیسابکردن بە ژمارەی پانێڵ</h2>
+      <h2 class="form-title" id="formTitle"><i class="fas fa-plug"></i> سینگڵ فەیز - حیسابکردن بە ئەمپێر</h2>
       <div class="input-group">
-        <label class="input-label"><i class="fas fa-solar-panel"></i> ژمارەی پانێڵەکان</label>
-        <input type="number" class="input-field" id="panelCount" placeholder="ژمارەی پانێڵەکان داخل بکە">
+        <label class="input-label" id="ampsLabel"><i class="fas fa-tachometer-alt"></i> ئەمپێر</label>
+        <input type="number" class="input-field" id="amps" placeholder="ئەمپێر داخل بکە">
       </div>
       <div class="input-group">
-        <label class="input-label"><i class="fas fa-bolt"></i> هێزی پانێڵ (وات)</label>
-        <input type="number" class="input-field" id="panelWatt" placeholder="هێزی پانێڵ بە وات داخل بکە">
+        <label class="input-label" id="panelWattLabel"><i class="fas fa-bolt"></i> هێزی پانێڥ (وات)</label>
+        <input type="number" class="input-field" id="panelWatt" placeholder="هێزی پانێڥ بە وات داخل بکە">
       </div>
       <div class="input-group">
-        <label class="input-label"><i class="fas fa-dollar-sign"></i> نرخی یەک پانێڥ (دۆلار)</label>
+        <label class="input-label" id="panelPriceLabel"><i class="fas fa-dollar-sign"></i> نرخی یەک پانێڥ (دۆلار)</label>
         <input type="number" class="input-field" id="panelPrice" placeholder="نرخی یەک پانێڥ بە دۆلار داخل بکە">
       </div>
       <div class="checkbox-group">
         <input type="checkbox" id="useBattery" checked>
-        <label class="checkbox-label" for="useBattery"><i class="fas fa-battery-half"></i> بەکارهێنانی باتری</label>
+        <label class="checkbox-label" id="useBatteryLabel" for="useBattery"><i class="fas fa-battery-half"></i> بەکارهێنانی باتری</label>
       </div>
       <div class="input-group" id="batteryOptions">
-        <label class="input-label"><i class="fas fa-clock"></i> کاتژمێرەکانی پشتگیری (سەعات)</label>
+        <label class="input-label" id="batteryAmpsLabel"><i class="fas fa-tachometer-alt"></i> ئەمپێری باتری</label>
+        <input type="number" class="input-field" id="batteryAmps" placeholder="ئەمپێری باتری داخل بکە" value="5">
+        <label class="input-label" id="backupHoursLabel"><i class="fas fa-clock"></i> کاتژمێرەکانی پشتگیری (سەعات)</label>
         <input type="number" class="input-field" id="backupHours" placeholder="کاتژمێرەکان داخل بکە" value="8">
-        <label class="input-label"><i class="fas fa-battery-half"></i> فۆڵتاژی سیستەمی باتری</label>
+        <label class="input-label" id="batteryVoltageLabel"><i class="fas fa-battery-half"></i> فۆڵتاژی سیستەمی باتری</label>
         <select class="input-field" id="batteryVoltage">
           <option value="12">12V</option>
           <option value="24">24V</option>
           <option value="48" selected>48V</option>
         </select>
       </div>
-      <button class="calculate-btn" onclick="calculateByPanels()"><i class="fas fa-calculator"></i> حیسابکردن</button>
-    </div>
-
-    <!-- Single Phase Form (By Amps) -->
-    <div class="form-section">
-      <h2 class="form-title"><i class="fas fa-plug"></i> سینگڵ فەیز - حیسابکردن بە ئەمپێر</h2>
-      <div class="input-group">
-        <label class="input-label"><i class="fas fa-tachometer-alt"></i> ئەمپێر</label>
-        <input type="number" class="input-field" id="amps" placeholder="ئەمپێر داخل بکە">
-      </div>
-      <div class="input-group">
-        <label class="input-label"><i class="fas fa-bolt"></i> هێزی پانێڥ (وات)</label>
-        <input type="number" class="input-field" id="panelWattAmp" placeholder="هێزی پانێڥ بە وات داخل بکە">
-      </div>
-      <div class="input-group">
-        <label class="input-label"><i class="fas fa-dollar-sign"></i> نرخی یەک پانێڥ (دۆلار)</label>
-        <input type="number" class="input-field" id="panelPriceAmp" placeholder="نرخی یەک پانێڥ بە دۆلار داخل بکە">
-      </div>
-      <div class="checkbox-group">
-        <input type="checkbox" id="useBatteryAmp" checked>
-        <label class="checkbox-label" for="useBatteryAmp"><i class="fas fa-battery-half"></i> بەکارهێنانی باتری</label>
-      </div>
-      <div class="input-group" id="batteryOptionsAmp">
-        <label class="input-label"><i class="fas fa-clock"></i> کاتژمێرەکانی پشتگیری (سەعات)</label>
-        <input type="number" class="input-field" id="backupHoursAmp" placeholder="کاتژمێرەکان داخل بکە" value="8">
-        <label class="input-label"><i class="fas fa-battery-half"></i> فۆڵتاژی سیستەمی باتری</label>
-        <select class="input-field" id="batteryVoltageAmp">
-          <option value="12">12V</option>
-          <option value="24">24V</option>
-          <option value="48" selected>48V</option>
-        </select>
-      </div>
-      <button class="calculate-btn" onclick="calculateByAmps()"><i class="fas fa-calculator"></i> حیسابکردن</button>
+      <button class="calculate-btn" id="calculateButton" onclick="calculateByAmps()"><i class="fas fa-calculator"></i> حیسابکردن</button>
     </div>
 
     <!-- Results Section -->
@@ -243,23 +225,173 @@
 
     <!-- Download PDF Button -->
     <div class="download-section" id="downloadSection" style="display: none;">
-      <button class="download-btn" onclick="downloadPDF()"><i class="fas fa-download"></i> داگرتنی PDF</button>
+      <button class="download-btn" id="downloadButton"><i class="fas fa-download"></i> داگرتنی PDF</button>
     </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
+    // Language translations
+    const translations = {
+      ku: {
+        pageTitle: "حیساباتی سیستەمی خۆر",
+        languageLabel: "زمان هەڵبژێرە",
+        mainTitle: "حیساباتی سیستەمی خۆر",
+        formTitle: "سینگڵ فەیز - حیسابکردن بە ئەمپێر",
+        ampsLabel: "ئەمپێر",
+        ampsPlaceholder: "ئەمپێر داخل بکە",
+        panelWattLabel: "هێزی پانێڥ (وات)",
+        panelWattPlaceholder: "هێزی پانێڥ بە وات داخل بکە",
+        panelPriceLabel: "نرخی یەک پانێڥ (دۆلار)",
+        panelPricePlaceholder: "نرخی یەک پانێڥ بە دۆلار داخل بکە",
+        useBatteryLabel: "بەکارهێنانی باتری",
+        batteryAmpsLabel: "ئەمپێری باتری",
+        batteryAmpsPlaceholder: "ئەمپێری باتری داخل بکە",
+        backupHoursLabel: "کاتژمێرەکانی پشتگیری (سەعات)",
+        backupHoursPlaceholder: "کاتژمێرەکان داخل بکە",
+        batteryVoltageLabel: "فۆڵتاژی سیستەمی باتری",
+        calculateButton: "حیسابکردن",
+        downloadButton: "داگرتنی PDF",
+        resultsTitle: "ئەنجامەکانی سینگڵ فەیز",
+        inverterPowerLabel: "هێزی ئینڤێرتەر",
+        ampsResultLabel: "ئەمپێر",
+        panelCountLabel: "ژمارەی پانێڥەکان",
+        panelTotalPriceLabel: "کۆی نرخی پانێڥەکان",
+        structureCostLabel: "بەستنی ئاسنگەری",
+        electricalCostLabel: "بەستنی کارەبایات",
+        totalCostLabel: "کۆی گشتی نرخەکان",
+        inverterSuggestionsHeader: "پێشنیارەکان بۆ {0} kW:",
+        noInverterWarning: "هیچ ئینڤێرتەرێک لە لیستی قەبارەکاندا گونجاو نییە بۆ {0} kW.",
+        batterySuggestionsHeader: "پێشنیاری باتری بۆ {0} kWh:",
+        batterySuggestion: "1 باتری {0} kWh = {1}$ (پشتگیری: {2} کاتژمێر، {3} Ah)",
+        batteryWarning: "تێبینی: یەک باتری {0} kWh تەنها {1} کاتژمێر پشتگیری دەدات بەجای {2} کاتژمێر.",
+        noBatteryWarning: "باتری بەکارنەهێنراوە.",
+        errorInvalidInput: "تکایە ژمارەیەکی دروست و نەرێ داخل بکە!",
+        errorBatteryInput: "تکایە ئەمپێری باتری، کاتژمێرەکان و فۆڵتاژی باتری بە دروستی داخل بکە!",
+        resultsPDFTitle: "ئەنجامەکانی سینگڵ فەیز - حیسابکردن بە ئەمپێر"
+      },
+      ar: {
+        pageTitle: "حسابات نظام الطاقة الشمسية",
+        languageLabel: "اختر اللغة",
+        mainTitle: "حسابات نظام الطاقة الشمسية",
+        formTitle: "مرحلة واحدة - الحساب بالأمبير",
+        ampsLabel: "الأمبير",
+        ampsPlaceholder: "أدخل الأمبير",
+        panelWattLabel: "قدرة اللوح (واط)",
+        panelWattPlaceholder: "أدخل قدرة اللوح بالواط",
+        panelPriceLabel: "سعر اللوح الواحد (دولار)",
+        panelPricePlaceholder: "أدخل سعر اللوح الواحد بالدولار",
+        useBatteryLabel: "استخدام بطارية",
+        batteryAmpsLabel: "أمبير البطارية",
+        batteryAmpsPlaceholder: "أدخل أمبير البطارية",
+        backupHoursLabel: "ساعات الدعم",
+        backupHoursPlaceholder: "أدخل عدد الساعات",
+        batteryVoltageLabel: "جهد نظام البطارية",
+        calculateButton: "حساب",
+        downloadButton: "تنزيل PDF",
+        resultsTitle: "نتائج المرحلة الواحدة",
+        inverterPowerLabel: "قدرة العاكس",
+        ampsResultLabel: "الأمبير",
+        panelCountLabel: "عدد الألواح",
+        panelTotalPriceLabel: "إجمالي سعر الألواح",
+        structureCostLabel: "تكلفة الهيكل",
+        electricalCostLabel: "تكلفة التوصيلات الكهربائية",
+        totalCostLabel: "إجمالي التكلفة",
+        inverterSuggestionsHeader: "الاقتراحات لـ {0} كيلوواط:",
+        noInverterWarning: "لا يوجد عاكس مناسب في قائمة الأحجام لـ {0} كيلوواط.",
+        batterySuggestionsHeader: "اقتراح البطارية لـ {0} كيلوواط ساعة:",
+        batterySuggestion: "1 بطارية {0} كيلوواط ساعة = {1}$ (الدعم: {2} ساعة، {3} أمبير ساعة)",
+        batteryWarning: "ملاحظة: بطارية واحدة {0} كيلوواط ساعة تدعم فقط {1} ساعة بدلاً من {2} ساعة.",
+        noBatteryWarning: "لم يتم استخدام بطارية.",
+        errorInvalidInput: "الرجاء إدخال أرقام صحيحة وغير سالبة!",
+        errorBatteryInput: "الرجاء إدخال أمبير البطارية، ساعات الدعم وجهد البطارية بشكل صحيح!",
+        resultsPDFTitle: "نتائج المرحلة الواحدة - الحساب بالأمبير"
+      },
+      en: {
+        pageTitle: "Solar System Calculator",
+        languageLabel: "Select Language",
+        mainTitle: "Solar System Calculator",
+        formTitle: "Single Phase - Calculation by Amps",
+        ampsLabel: "Amps",
+        ampsPlaceholder: "Enter Amps",
+        panelWattLabel: "Panel Power (Watts)",
+        panelWattPlaceholder: "Enter Panel Power in Watts",
+        panelPriceLabel: "Price per Panel (USD)",
+        panelPricePlaceholder: "Enter Price per Panel in USD",
+        useBatteryLabel: "Use Battery",
+        batteryAmpsLabel: "Battery Amps",
+        batteryAmpsPlaceholder: "Enter Battery Amps",
+        backupHoursLabel: "Backup Hours",
+        backupHoursPlaceholder: "Enter Number of Hours",
+        batteryVoltageLabel: "Battery System Voltage",
+        calculateButton: "Calculate",
+        downloadButton: "Download PDF",
+        resultsTitle: "Single Phase Results",
+        inverterPowerLabel: "Inverter Power",
+        ampsResultLabel: "Amps",
+        panelCountLabel: "Number of Panels",
+        panelTotalPriceLabel: "Total Panels Price",
+        structureCostLabel: "Structure Cost",
+        electricalCostLabel: "Electrical Connections Cost",
+        totalCostLabel: "Total Cost",
+        inverterSuggestionsHeader: "Suggestions for {0} kW:",
+        noInverterWarning: "No suitable inverter found in the size list for {0} kW.",
+        batterySuggestionsHeader: "Battery Suggestion for {0} kWh:",
+        batterySuggestion: "1 Battery {0} kWh = {1}$ (Backup: {2} hours, {3} Ah)",
+        batteryWarning: "Note: One {0} kWh battery supports only {1} hours instead of {2} hours.",
+        noBatteryWarning: "Battery not used.",
+        errorInvalidInput: "Please enter valid and non-negative numbers!",
+        errorBatteryInput: "Please enter battery amps, backup hours, and battery voltage correctly!",
+        resultsPDFTitle: "Single Phase Results - Calculation by Amps"
+      }
+    };
+
+    // Change language
+    function changeLanguage() {
+      const lang = document.getElementById("language").value;
+      const t = translations[lang];
+      document.getElementById("pageTitle").innerText = t.pageTitle;
+      document.getElementById("languageLabel").innerText = t.languageLabel;
+      document.getElementById("mainTitle").innerText = t.mainTitle;
+      document.getElementById("formTitle").innerText = t.formTitle;
+      document.getElementById("ampsLabel").innerText = t.ampsLabel;
+      document.getElementById("amps").placeholder = t.ampsPlaceholder;
+      document.getElementById("panelWattLabel").innerText = t.panelWattLabel;
+      document.getElementById("panelWatt").placeholder = t.panelWattPlaceholder;
+      document.getElementById("panelPriceLabel").innerText = t.panelPriceLabel;
+      document.getElementById("panelPrice").placeholder = t.panelPricePlaceholder;
+      document.getElementById("useBatteryLabel").innerText = t.useBatteryLabel;
+      document.getElementById("batteryAmpsLabel").innerText = t.batteryAmpsLabel;
+      document.getElementById("batteryAmps").placeholder = t.batteryAmpsPlaceholder;
+      document.getElementById("backupHoursLabel").innerText = t.backupHoursLabel;
+      document.getElementById("backupHours").placeholder = t.backupHoursPlaceholder;
+      document.getElementById("batteryVoltageLabel").innerText = t.batteryVoltageLabel;
+      document.getElementById("calculateButton").innerText = t.calculateButton;
+      document.getElementById("downloadButton").innerText = t.downloadButton;
+
+      // Update direction for English
+      document.body.style.direction = lang === "en" ? "ltr" : "rtl";
+      document.getElementById("mainTitle").innerHTML = `<i class="fas fa-solar-panel"></i> ${t.mainTitle}`;
+      document.getElementById("formTitle").innerHTML = `<i class="fas fa-plug"></i> ${t.formTitle}`;
+      document.getElementById("useBatteryLabel").innerHTML = `<i class="fas fa-battery-half"></i> ${t.useBatteryLabel}`;
+      document.getElementById("ampsLabel").innerHTML = `<i class="fas fa-tachometer-alt"></i> ${t.ampsLabel}`;
+      document.getElementById("panelWattLabel").innerHTML = `<i class="fas fa-bolt"></i> ${t.panelWattLabel}`;
+      document.getElementById("panelPriceLabel").innerHTML = `<i class="fas fa-dollar-sign"></i> ${t.panelPriceLabel}`;
+      document.getElementById("batteryAmpsLabel").innerHTML = `<i class="fas fa-tachometer-alt"></i> ${t.batteryAmpsLabel}`;
+      document.getElementById("backupHoursLabel").innerHTML = `<i class="fas fa-clock"></i> ${t.backupHoursLabel}`;
+      document.getElementById("batteryVoltageLabel").innerHTML = `<i class="fas fa-battery-half"></i> ${t.batteryVoltageLabel}`;
+      document.getElementById("calculateButton").innerHTML = `<i class="fas fa-calculator"></i> ${t.calculateButton}`;
+      document.getElementById("downloadButton").innerHTML = `<i class="fas fa-download"></i> ${t.downloadButton}`;
+    }
+
     // Show/hide battery options based on checkbox
     function toggleBatteryOptions() {
       const useBattery = document.getElementById("useBattery").checked;
-      const useBatteryAmp = document.getElementById("useBatteryAmp").checked;
       document.getElementById("batteryOptions").style.display = useBattery ? "block" : "none";
-      document.getElementById("batteryOptionsAmp").style.display = useBatteryAmp ? "block" : "none";
     }
 
-    // Initialize checkbox event listeners
+    // Initialize checkbox event listener
     document.getElementById("useBattery").addEventListener("change", toggleBatteryOptions);
-    document.getElementById("useBatteryAmp").addEventListener("change", toggleBatteryOptions);
     toggleBatteryOptions();
 
     // Show results and toggle PDF download button
@@ -269,7 +401,8 @@
     }
 
     // Suggest inverters based on total kW
-    function suggestInverters(totalKW) {
+    function suggestInverters(totalKW, lang) {
+      const t = translations[lang];
       const inverterOptions = [
         { size: 3.2, price: 250 },
         { size: 4, price: 350 },
@@ -282,7 +415,7 @@
         let count = Math.round(totalKW / inv.size);
         if (count > 0 && count <= 3 && Math.abs(count * inv.size - totalKW) <= 1) {
           suggestions.push({
-            text: `${count} ئینڤێرتەری ${inv.size} kW = ${count * inv.price}$`,
+            text: `${count} ${lang === "ku" ? "ئینڤێرتەری" : lang === "ar" ? "عاكس" : "inverter"} ${inv.size} ${lang === "ku" || lang === "ar" ? "kW" : "kW"} = ${count * inv.price}$`,
             totalPrice: count * inv.price
           });
         }
@@ -292,7 +425,7 @@
           let total = count * inv.size;
           if (Math.abs(total - totalKW) <= 1 && total >= totalKW) {
             suggestions.push({
-              text: `${count} ئینڤێرتەری ${inv.size} kW = ${count * inv.price}$`,
+              text: `${count} ${lang === "ku" ? "ئینڤێرتەری" : lang === "ar" ? "عاكس" : "inverter"} ${inv.size} ${lang === "ku" || lang === "ar" ? "kW" : "kW"} = ${count * inv.price}$`,
               totalPrice: count * inv.price
             });
           }
@@ -312,7 +445,7 @@
           ? `<div class="suggestions-box">
                <div class="suggestions-header">
                  <i class="fas fa-lightbulb"></i>
-                 پێشنیارەکان بۆ ${totalKW.toFixed(2)} kW:
+                 ${t.inverterSuggestionsHeader.replace("{0}", totalKW.toFixed(2))}
                </div>
                ${suggestions.map(s => `
                  <div class="suggestion-item">
@@ -324,40 +457,48 @@
           : `<div class="warning-box">
                <div class="warning-header">
                  <i class="fas fa-exclamation-triangle"></i>
-                 هیچ ئینڤێرتەرێک لە لیستی قەبارەکاندا گونجاو نییە بۆ ${totalKW.toFixed(2)} kW.
+                 ${t.noInverterWarning.replace("{0}", totalKW.toFixed(2))}
                </div>
              </div>`,
         totalPrice: bestSuggestion ? bestSuggestion.totalPrice : 0
       };
     }
 
-    // Suggest a single battery based on total kW
-    function suggestBatteries(totalKW, backupHours, batteryVoltage) {
+    // Suggest a single battery based on battery amps
+    function suggestBatteries(batteryAmps, backupHours, batteryVoltage, lang) {
+      const t = translations[lang];
       const batteryOptions = [
         { capacity: 5, price: 840 },
         { capacity: 10, price: 1400 },
         { capacity: 15, price: 1680 }
       ];
-      const requiredKWh = totalKW * backupHours;
+      const requiredKWh = (batteryAmps * batteryVoltage * backupHours) / 1000;
       let bestBattery = batteryOptions[batteryOptions.length - 1]; // Default to 15 kWh
-      let actualBackupHours = bestBattery.capacity / totalKW;
-      let totalAh = (bestBattery.capacity * 1000) / batteryVoltage;
+      let actualBackupHours = (bestBattery.capacity * 1000) / (batteryAmps * batteryVoltage);
+      let totalAh = batteryAmps * backupHours;
 
       return {
         html: `<div class="suggestions-box">
                  <div class="suggestions-header">
                    <i class="fas fa-battery-half"></i>
-                   پێشنیاری باتری بۆ ${requiredKWh.toFixed(2)} kWh:
+                   ${t.batterySuggestionsHeader.replace("{0}", requiredKWh.toFixed(2))}
                  </div>
                  <div class="suggestion-item">
                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
-                   1 باتری ${bestBattery.capacity} kWh = ${bestBattery.price}$ (پشتگیری: ${actualBackupHours.toFixed(2)} کاتژمێر، ${totalAh.toFixed(2)} Ah)
+                   ${t.batterySuggestion
+                     .replace("{0}", bestBattery.capacity)
+                     .replace("{1}", bestBattery.price)
+                     .replace("{2}", actualBackupHours.toFixed(2))
+                     .replace("{3}", totalAh.toFixed(2))}
                  </div>
                  ${requiredKWh > bestBattery.capacity ? `
                    <div class="warning-box">
                      <div class="warning-header">
                        <i class="fas fa-exclamation-triangle"></i>
-                       تێبینی: یەک باتری ${bestBattery.capacity} kWh تەنها ${actualBackupHours.toFixed(2)} کاتژمێر پشتگیری دەدات بەجای ${backupHours} کاتژمێر.
+                       ${t.batteryWarning
+                         .replace("{0}", bestBattery.capacity)
+                         .replace("{1}", actualBackupHours.toFixed(2))
+                         .replace("{2}", backupHours)}
                      </div>
                    </div>` : ''}
                </div>`,
@@ -366,131 +507,32 @@
       };
     }
 
-    // Calculate by number of panels
-    function calculateByPanels() {
-      let panelCount = parseFloat(document.getElementById("panelCount").value);
+    // Calculate by amps
+    function calculateByAmps() {
+      const lang = document.getElementById("language").value;
+      const t = translations[lang];
+      let amps = parseFloat(document.getElementById("amps").value);
       let panelWatt = parseFloat(document.getElementById("panelWatt").value);
       let panelPrice = parseFloat(document.getElementById("panelPrice").value);
       let useBattery = document.getElementById("useBattery").checked;
+      let batteryAmps = parseFloat(document.getElementById("batteryAmps").value);
       let backupHours = parseFloat(document.getElementById("backupHours").value);
       let batteryVoltage = parseFloat(document.getElementById("batteryVoltage").value);
-
-      if (isNaN(panelCount) || isNaN(panelWatt) || isNaN(panelPrice) || panelCount <= 0 || panelWatt <= 0 || panelPrice <= 0) {
-        showResults(`
-          <div class="error-message">
-            <i class="fas fa-exclamation-triangle"></i>
-            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
-          </div>
-        `);
-        return;
-      }
-      if (useBattery && (isNaN(backupHours) || isNaN(batteryVoltage) || backupHours <= 0 || batteryVoltage <= 0)) {
-        showResults(`
-          <div class="error-message">
-            <i class="fas fa-exclamation-triangle"></i>
-            تکایە کاتژمێرەکان و فۆڵتاژی باتری بە دروستی داخل بکە!
-          </div>
-        `);
-        return;
-      }
-
-      let totalWatt = panelCount * panelWatt;
-      let totalKW = totalWatt / 1000;
-      let amps = (totalWatt / 230) * 0.8;
-      let panelTotalPrice = panelCount * panelPrice;
-      let structureCost = panelCount * 30;
-      let electricalCost = panelCount * 15;
-      let inverterSuggestion = suggestInverters(totalKW);
-      let batterySuggestion = useBattery ? suggestBatteries(totalKW, backupHours, batteryVoltage) : { html: "", totalPrice: 0, totalAh: 0 };
-      let totalCost = panelTotalPrice + structureCost + electricalCost + inverterSuggestion.totalPrice + batterySuggestion.totalPrice;
-
-      showResults(`
-        <div class="results-section">
-          <div class="results-header">
-            <div class="results-icon">
-              <i class="fas fa-check-circle"></i>
-            </div>
-            <h3 class="results-title">ئەنجامەکانی سینگڵ فەیز</h3>
-          </div>
-          <div class="result-item">
-            <div class="result-label"><i class="fas fa-microchip"></i> هێزی ئینڤێرتەر</div>
-            <div class="result-value">${totalKW.toFixed(2)} kW</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label"><i class="fas fa-tachometer-alt"></i> ئەمپێر</div>
-            <div class="result-value">${amps.toFixed(2)} A</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label"><i class="fas fa-solar-panel"></i> ژمارەی پانێڵەکان</div>
-            <div class="result-value">${panelCount}</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label"><i class="fas fa-dollar-sign"></i> کۆی نرخی پانێڥەکان</div>
-            <div class="result-value">${panelTotalPrice.toFixed(2)}$</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label"><i class="fas fa-tools"></i> بەستنی ئاسنگەری</div>
-            <div class="result-value">${structureCost.toFixed(2)}$</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label"><i class="fas fa-plug"></i> بەستنی کارەبایات</div>
-            <div class="result-value">${electricalCost.toFixed(2)}$</div>
-          </div>
-          ${inverterSuggestion.html}
-          ${useBattery ? batterySuggestion.html : `
-            <div class="warning-box">
-              <div class="warning-header">
-                <i class="fas fa-exclamation-triangle"></i>
-                باتری بەکارنەهێنراوە.
-              </div>
-            </div>`}
-          <div class="result-item">
-            <div class="result-label"><i class="fas fa-dollar-sign"></i> کۆی گشتی نرخەکان</div>
-            <div class="result-value">${totalCost.toFixed(2)}$</div>
-          </div>
-        </div>
-      `);
-
-      // Save results for PDF
-      window.currentResults = {
-        title: "ئەنجامەکانی سینگڵ فەیز - حیسابکردن بە ژمارەی پانێڥ",
-        content: `
-          هێزی ئینڤێرتەر: ${totalKW.toFixed(2)} kW
-          ئەمپێر: ${amps.toFixed(2)} A
-          ژمارەی پانێڥەکان: ${panelCount}
-          کۆی نرخی پانێڥەکان: ${panelTotalPrice.toFixed(2)}$
-          بەستنی ئاسنگەری: ${structureCost.toFixed(2)}$
-          بەستنی کارەبایات: ${electricalCost.toFixed(2)}$
-          ${inverterSuggestion.html.replace(/<[^>]+>/g, '')}
-          ${useBattery ? batterySuggestion.html.replace(/<[^>]+>/g, '') : 'باتری بەکارنەهێنراوە.'}
-          کۆی گشتی نرخەکان: ${totalCost.toFixed(2)}$
-        `
-      };
-    }
-
-    // Calculate by amps
-    function calculateByAmps() {
-      let amps = parseFloat(document.getElementById("amps").value);
-      let panelWatt = parseFloat(document.getElementById("panelWattAmp").value);
-      let panelPrice = parseFloat(document.getElementById("panelPriceAmp").value);
-      let useBattery = document.getElementById("useBatteryAmp").checked;
-      let backupHours = parseFloat(document.getElementById("backupHoursAmp").value);
-      let batteryVoltage = parseFloat(document.getElementById("batteryVoltageAmp").value);
 
       if (isNaN(amps) || isNaN(panelWatt) || isNaN(panelPrice) || amps <= 0 || panelWatt <= 0 || panelPrice <= 0) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
-            تکایە ژمارەیەکی دروست و نەرێ داخل بکە!
+            ${t.errorInvalidInput}
           </div>
         `);
         return;
       }
-      if (useBattery && (isNaN(backupHours) || isNaN(batteryVoltage) || backupHours <= 0 || batteryVoltage <= 0)) {
+      if (useBattery && (isNaN(batteryAmps) || isNaN(backupHours) || isNaN(batteryVoltage) || batteryAmps <= 0 || backupHours <= 0 || batteryVoltage <= 0)) {
         showResults(`
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
-            تکایە کاتژمێرەکان و فۆڵتاژی باتری بە دروستی داخل بکە!
+            ${t.errorBatteryInput}
           </div>
         `);
         return;
@@ -502,8 +544,8 @@
       let panelTotalPrice = panelCount * panelPrice;
       let structureCost = panelCount * 30;
       let electricalCost = panelCount * 15;
-      let inverterSuggestion = suggestInverters(totalKW);
-      let batterySuggestion = useBattery ? suggestBatteries(totalKW, backupHours, batteryVoltage) : { html: "", totalPrice: 0, totalAh: 0 };
+      let inverterSuggestion = suggestInverters(totalKW, lang);
+      let batterySuggestion = useBattery ? suggestBatteries(batteryAmps, backupHours, batteryVoltage, lang) : { html: "", totalPrice: 0, totalAh: 0 };
       let totalCost = panelTotalPrice + structureCost + electricalCost + inverterSuggestion.totalPrice + batterySuggestion.totalPrice;
 
       showResults(`
@@ -512,30 +554,30 @@
             <div class="results-icon">
               <i class="fas fa-check-circle"></i>
             </div>
-            <h3 class="results-title">ئەنجامەکانی سینگڵ فەیز</h3>
+            <h3 class="results-title">${t.resultsTitle}</h3>
           </div>
           <div class="result-item">
-            <div class="result-label"><i class="fas fa-microchip"></i> هێزی ئینڤێرتەر</div>
+            <div class="result-label"><i class="fas fa-microchip"></i> ${t.inverterPowerLabel}</div>
             <div class="result-value">${totalKW.toFixed(2)} kW</div>
           </div>
           <div class="result-item">
-            <div class="result-label"><i class="fas fa-tachometer-alt"></i> ئەمپێر</div>
+            <div class="result-label"><i class="fas fa-tachometer-alt"></i> ${t.ampsResultLabel}</div>
             <div class="result-value">${amps.toFixed(2)} A</div>
           </div>
           <div class="result-item">
-            <div class="result-label"><i class="fas fa-solar-panel"></i> ژمارەی پانێڥەکان</div>
+            <div class="result-label"><i class="fas fa-solar-panel"></i> ${t.panelCountLabel}</div>
             <div class="result-value">${panelCount}</div>
           </div>
           <div class="result-item">
-            <div class="result-label"><i class="fas fa-dollar-sign"></i> کۆی نرخی پانێڥەکان</div>
+            <div class="result-label"><i class="fas fa-dollar-sign"></i> ${t.panelTotalPriceLabel}</div>
             <div class="result-value">${panelTotalPrice.toFixed(2)}$</div>
           </div>
           <div class="result-item">
-            <div class="result-label"><i class="fas fa-tools"></i> بەستنی ئاسنگەری</div>
+            <div class="result-label"><i class="fas fa-tools"></i> ${t.structureCostLabel}</div>
             <div class="result-value">${structureCost.toFixed(2)}$</div>
           </div>
           <div class="result-item">
-            <div class="result-label"><i class="fas fa-plug"></i> بەستنی کارەبایات</div>
+            <div class="result-label"><i class="fas fa-plug"></i> ${t.electricalCostLabel}</div>
             <div class="result-value">${electricalCost.toFixed(2)}$</div>
           </div>
           ${inverterSuggestion.html}
@@ -543,11 +585,11 @@
             <div class="warning-box">
               <div class="warning-header">
                 <i class="fas fa-exclamation-triangle"></i>
-                باتری بەکارنەهێنراوە.
+                ${t.noBatteryWarning}
               </div>
             </div>`}
           <div class="result-item">
-            <div class="result-label"><i class="fas fa-dollar-sign"></i> کۆی گشتی نرخەکان</div>
+            <div class="result-label"><i class="fas fa-dollar-sign"></i> ${t.totalCostLabel}</div>
             <div class="result-value">${totalCost.toFixed(2)}$</div>
           </div>
         </div>
@@ -555,18 +597,19 @@
 
       // Save results for PDF
       window.currentResults = {
-        title: "ئەنجامەکانی سینگڵ فەیز - حیسابکردن بە ئەمپێر",
+        title: t.resultsPDFTitle,
         content: `
-          هێزی ئینڤێرتەر: ${totalKW.toFixed(2)} kW
-          ئەمپێر: ${amps.toFixed(2)} A
-          ژمارەی پانێڥەکان: ${panelCount}
-          کۆی نرخی پانێڥەکان: ${panelTotalPrice.toFixed(2)}$
-          بەستنی ئاسنگەری: ${structureCost.toFixed(2)}$
-          بەستنی کارەبایات: ${electricalCost.toFixed(2)}$
+          ${t.inverterPowerLabel}: ${totalKW.toFixed(2)} kW
+          ${t.ampsResultLabel}: ${amps.toFixed(2)} A
+          ${t.panelCountLabel}: ${panelCount}
+          ${t.panelTotalPriceLabel}: ${panelTotalPrice.toFixed(2)}$
+          ${t.structureCostLabel}: ${structureCost.toFixed(2)}$
+          ${t.electricalCostLabel}: ${electricalCost.toFixed(2)}$
           ${inverterSuggestion.html.replace(/<[^>]+>/g, '')}
-          ${useBattery ? batterySuggestion.html.replace(/<[^>]+>/g, '') : 'باتری بەکارنەهێنراوە.'}
-          کۆی گشتی نرخەکان: ${totalCost.toFixed(2)}$
-        `
+          ${useBattery ? batterySuggestion.html.replace(/<[^>]+>/g, '') : t.noBatteryWarning}
+          ${t.totalCostLabel}: ${totalCost.toFixed(2)}$
+        `,
+        lang: lang
       };
     }
 
@@ -574,11 +617,13 @@
     function downloadPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      doc.setFont("Amiri", "normal");
+      const lang = window.currentResults.lang;
+      const font = lang === "en" ? "Helvetica" : "Amiri";
+      doc.setFont(font, "normal");
       doc.setFontSize(16);
-      doc.text(window.currentResults.title, 190, 10, { align: "right" });
+      doc.text(window.currentResults.title, lang === "en" ? 10 : 190, 10, { align: lang === "en" ? "left" : "right" });
       doc.setFontSize(12);
-      doc.text(window.currentResults.content, 190, 20, { align: "right" });
+      doc.text(window.currentResults.content, lang === "en" ? 10 : 190, 20, { align: lang === "en" ? "left" : "right" });
       doc.save("Solar_System_Calculation.pdf");
     }
   </script>
